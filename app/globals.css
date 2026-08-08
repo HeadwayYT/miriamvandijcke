@@ -1398,9 +1398,12 @@ footer a {
   #about,
   #classes,
   #schedule,
-  #experiences,
   #contact {
     scroll-margin-top: 150px;
+  }
+
+  #experiences {
+    scroll-margin-top: 112px;
   }
 
   .bento-chapter .classes-heading,
@@ -1435,6 +1438,7 @@ footer a {
   .bento-lead {
     grid-column: auto;
     grid-row: auto;
+    min-height: clamp(270px, 76vw, 300px);
   }
 
   .work-option {
@@ -1463,11 +1467,12 @@ footer a {
   }
 
   .hero-kicker {
-    font-size: 0.6rem;
-    gap: 4px;
+    font-size: 0.53rem;
+    gap: 3px;
+    white-space: nowrap;
   }
 
   .hero-kicker::before {
-    flex-basis: 16px;
+    flex-basis: 12px;
   }
 }
