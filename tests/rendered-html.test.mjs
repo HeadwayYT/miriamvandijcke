@@ -33,7 +33,6 @@ test("server-renders the two distinct visitor journeys", async () => {
   assert.match(html, /href="#schedule">Find a class<\/a>/i);
   assert.match(html, /href="#experiences">Private experiences/i);
   assert.match(html, /href="#contact">Book Miriam<\/a>/i);
-  assert.match(html, /BODYATTACK · BODYPUMP · RIDE: PERFORMANCE/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
   assert.match(html, /No\. Miriam is a group fitness and indoor cycling instructor/i);
   assert.doesNotMatch(html, />Book now</i);

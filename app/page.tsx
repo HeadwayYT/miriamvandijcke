@@ -178,7 +178,7 @@ export default function Home() {
         toggleClass: { targets: ".site-header", className: "is-scrolled" },
       });
 
-      gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-context, .hero-actions, .hero-proof", {
+      gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-context, .hero-actions", {
         y: 34,
         opacity: 0,
         filter: "blur(10px)",
@@ -294,10 +294,6 @@ export default function Home() {
             <a className="hero-experience-link" href="#experiences">
               Private experiences <span aria-hidden="true">&rarr;</span>
             </a>
-          </div>
-          <div className="hero-proof" aria-label="Class formats and teaching locations">
-            <p>BODYATTACK &middot; BODYPUMP &middot; RIDE: PERFORMANCE</p>
-            <span>Mechelen &middot; Antwerp</span>
           </div>
         </div>
       </section>

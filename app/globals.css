@@ -277,28 +277,6 @@ p {
   transform: translateX(3px);
 }
 
-.hero-proof {
-  border-left: 2px solid rgba(239, 68, 68, 0.7);
-  margin-top: 22px;
-  padding-left: 14px;
-}
-
-.hero-proof p {
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1.4;
-  margin: 0;
-}
-
-.hero-proof > span {
-  color: rgba(255, 255, 255, 0.42);
-  display: block;
-  font-size: 0.68rem;
-  line-height: 1.4;
-  margin-top: 4px;
-}
-
 .button,
 .contact-form button {
   align-items: center;
@@ -1387,15 +1365,6 @@ footer a {
     font-size: 0.74rem;
     gap: 7px;
     padding-block: 8px 6px;
-  }
-
-  .hero-proof {
-    margin-top: 18px;
-  }
-
-  .hero-proof p,
-  .hero-proof > span {
-    font-size: 0.64rem;
   }
 
   .class-bento,
