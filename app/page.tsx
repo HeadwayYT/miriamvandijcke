@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, type FormEvent, useRef, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -136,10 +136,6 @@ const faqItems = [
   ],
 ];
 
-const revealWords =
-  "Energy from the studio floor. Precision from clinical regulatory affairs. Miriam brings music, movement and clear coaching together in group experiences people want to be part of."
-    .split(" ");
-
 const formspreeEndpoint = "https://formspree.io/f/mzepdael";
 
 export default function Home() {
@@ -217,18 +213,33 @@ export default function Home() {
         );
       });
 
-      gsap.to(".reveal-word", {
-        opacity: 1,
-        y: 0,
-        stagger: 0.045,
-        ease: "none",
+      gsap.from(".about-copy > *, .about-fact", {
+        y: 28,
+        opacity: 0,
+        stagger: 0.09,
+        duration: 0.9,
+        ease: "power3.out",
         scrollTrigger: {
-          trigger: ".reveal-copy",
-          start: "top 78%",
-          end: "bottom 45%",
-          scrub: true,
+          trigger: ".about-chapter",
+          start: "top 72%",
         },
       });
+
+      gsap.fromTo(
+        ".about-portrait-wrap",
+        { scale: 0.9, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".about-visual",
+            start: "top 88%",
+            end: "top 54%",
+            scrub: true,
+          },
+        },
+      );
     },
     { scope: root },
   );
@@ -272,14 +283,53 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter intro-chapter">
-        <div className="reveal-copy" aria-label="Miriam coaching positioning">
-          {revealWords.map((word, index) => (
-            <Fragment key={`${word}-${index}`}>
-              <span className="reveal-word">{word}</span>
-              {index < revealWords.length - 1 ? " " : ""}
-            </Fragment>
-          ))}
+      <section className="chapter about-chapter" id="about">
+        <div className="about-grid">
+          <div className="about-copy">
+            <p className="eyebrow">About Miriam</p>
+            <h2>Movement is more than a class.</h2>
+            <p className="about-lead">
+              Miriam Van Dijcke is a group fitness and indoor cycling instructor who
+              brings music, clear coaching and genuine energy to every room.
+            </p>
+            <p>
+              Join her regular classes at Basic-Fit Mechelen Bruul and Pulsate Antwerp,
+              or book her to shape a private group workout, cycling experience or event.
+              Her focus is always the shared experience: people moving together with
+              confidence, options and a strong sense of community.
+            </p>
+          </div>
+
+          <div className="about-facts" aria-label="Miriam's background and credentials">
+            <div className="about-fact">
+              <span>Certified</span>
+              <strong>Les Mills Bodypump, Bodyattack &amp; Strength Development</strong>
+            </div>
+            <div className="about-fact">
+              <span>Indoor cycling</span>
+              <strong>Spinning certified through Fitness NRG</strong>
+            </div>
+            <div className="about-fact">
+              <span>Beyond the studio</span>
+              <strong>Clinical Regulatory Affairs Specialist at GC Europe</strong>
+            </div>
+          </div>
+
+          <figure className="about-visual">
+            <div className="about-image-glow" aria-hidden="true" />
+            <div className="about-portrait-wrap">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="about-portrait"
+                src="/images/miriam-runner-cutout.png"
+                alt="Miriam smiling after a run, wearing sports sunglasses and a hydration vest"
+                width={1448}
+                height={1086}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </figure>
         </div>
       </section>
 
