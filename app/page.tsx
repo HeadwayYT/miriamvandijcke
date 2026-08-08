@@ -175,12 +175,27 @@ export default function Home() {
     () => {
       gsap.registerPlugin(ScrollTrigger);
 
-      gsap.from(".hero-title span, .hero-text, .hero-actions", {
+      gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-actions", {
         y: 34,
         opacity: 0,
-        duration: 1,
+        filter: "blur(10px)",
+        duration: 1.15,
         stagger: 0.08,
         ease: "power3.out",
+        clearProps: "filter",
+      });
+
+      gsap.to(".hero-media", {
+        scale: 1.05,
+        filter: "blur(14px) brightness(0.58)",
+        opacity: 0.86,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
       });
 
       gsap.utils.toArray<HTMLElement>(".motion-image").forEach((image) => {
@@ -232,12 +247,15 @@ export default function Home() {
       </header>
 
       <section className="hero" id="home">
+        <div className="hero-media" aria-hidden="true" />
         <div className="hero-wash" />
         <div className="hero-inner">
           <p className="hero-kicker">Group fitness / Indoor cycling / Fitness experiences</p>
           <h1 className="hero-title">
-            <span>Move together</span>
-            <span>with Miriam.</span>
+            <span>Move together.</span>
+            <span>
+              With <em>Miriam.</em>
+            </span>
           </h1>
           <p className="hero-text">
             Join Miriam in a regular studio class, or book her to create a private
