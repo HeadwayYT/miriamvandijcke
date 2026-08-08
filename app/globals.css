@@ -549,8 +549,10 @@ p {
 }
 
 .bodyattack-card .class-card-image {
-  background-position: 50% 28%;
-  transform-origin: 50% 28%;
+  background-color: #111111;
+  background-position: 50% 50%;
+  background-size: auto 112%;
+  transform-origin: 50% 50%;
 }
 
 .spinning-card .class-card-image {
