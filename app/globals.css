@@ -98,19 +98,6 @@ textarea {
   white-space: nowrap;
 }
 
-.brand-mark {
-  align-items: center;
-  background: #ffffff;
-  color: #0a0a0a;
-  display: inline-flex;
-  font-size: 0.72rem;
-  font-weight: 900;
-  height: 38px;
-  justify-content: center;
-  letter-spacing: 0;
-  width: 48px;
-}
-
 .site-header nav {
   backdrop-filter: blur(16px);
   background: rgba(23, 23, 23, 0.5);
@@ -197,22 +184,6 @@ p {
   line-height: 0.88;
   margin: 0 0 28px;
   max-width: 1040px;
-}
-
-.inline-photo {
-  background:
-    linear-gradient(90deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.48)),
-    url("/images/miriam-headset.jpg");
-  background-position: center 40%;
-  background-size: cover;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 9999px;
-  display: inline-block;
-  height: clamp(40px, 6vw, 72px);
-  margin: 0 10px;
-  transform: translateY(9px);
-  vertical-align: baseline;
-  width: clamp(86px, 13vw, 176px);
 }
 
 .hero-text {
@@ -323,7 +294,6 @@ p {
 }
 
 .chapter-heading h2,
-.proof-copy h2,
 .contact-inner h2 {
   color: var(--ink);
   font-size: clamp(2.25rem, 5vw, 5.2rem);
@@ -389,7 +359,6 @@ p {
 
 .bento-lead p,
 .compact-card p,
-.proof-copy p,
 .contact-inner p,
 .faq-grid p {
   line-height: 1.68;
@@ -539,35 +508,10 @@ p {
   line-height: 1.7;
 }
 
-.proof-chapter {
-  align-items: center;
-  background: var(--paper);
-  display: grid;
-  gap: clamp(30px, 6vw, 92px);
-  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1fr);
-}
-
-.proof-media {
-  aspect-ratio: 4 / 5;
-  background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.76)),
-    url("/images/miriam-indoor-strength.jpg");
-  background-position: center 28%;
-  background-size: cover;
-  filter: grayscale(0.9) contrast(1.24);
-  min-height: 520px;
-}
-
-.proof-copy p,
 .contact-inner p,
 .faq-grid p {
   color: #d4d4d4;
   font-size: 1.02rem;
-}
-
-.proof-copy p:last-child {
-  margin-top: 26px;
-  max-width: 680px;
 }
 
 .faq-chapter {
@@ -708,7 +652,6 @@ footer a {
   }
 
   .offer-accordion,
-  .proof-chapter,
   .contact-inner {
     grid-template-columns: 1fr;
   }
@@ -722,9 +665,6 @@ footer a {
     flex: 1;
   }
 
-  .proof-chapter {
-    display: grid;
-  }
 }
 
 @media (max-width: 680px) {
@@ -767,8 +707,7 @@ footer a {
     grid-row: auto;
   }
 
-  .panel-media,
-  .proof-media {
+  .panel-media {
     min-height: 340px;
   }
 

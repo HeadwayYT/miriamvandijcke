@@ -161,7 +161,6 @@ export default function Home() {
     <main ref={root} className="site-shell">
       <header className="site-header" aria-label="Main navigation">
         <a className="brand" href="#home" aria-label="Miriam Van Dijcke home">
-          <span className="brand-mark">MVD</span>
           <span>Miriam Van Dijcke</span>
         </a>
         <nav>
@@ -177,14 +176,7 @@ export default function Home() {
           <p className="hero-kicker">Group fitness instructor in Mechelen and Antwerp</p>
           <h1 className="hero-title">
             <span>Train stronger</span>
-            <span>
-              with{" "}
-              <i
-                className="inline-photo"
-                aria-label="Fitness atmosphere placeholder"
-              />{" "}
-              Miriam.
-            </span>
+            <span>with Miriam.</span>
           </h1>
           <p className="hero-text">
             Bodypump, Strength Development, Bodyattack and Spinning with a
@@ -286,20 +278,6 @@ export default function Home() {
               </div>
             </article>
           ))}
-        </div>
-      </section>
-
-      <section className="chapter proof-chapter">
-        <div className="proof-media motion-image" />
-        <div className="proof-copy">
-          <p className="eyebrow">Professional rhythm</p>
-          <h2>Structured enough for progress. Human enough to keep people coming back.</h2>
-          <p>
-            Miriam also works as a Clinical Regulatory Affairs Specialist at GC
-            Europe. That professional precision shows up in her fitness work:
-            thoughtful preparation, safe progression and calm control in a busy
-            room.
-          </p>
         </div>
       </section>
 
