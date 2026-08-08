@@ -150,6 +150,13 @@ textarea {
   z-index: 0;
 }
 
+@media (min-width: 981px) and (min-aspect-ratio: 19 / 10) {
+  .hero-media {
+    background-position: right 18%;
+    background-size: auto 116%;
+  }
+}
+
 .hero-wash {
   background:
     radial-gradient(circle at 16% 72%, rgba(239, 68, 68, 0.34), transparent 24%);
