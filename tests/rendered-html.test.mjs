@@ -63,5 +63,7 @@ test("renders the compact venue schedules and private enquiry options", async ()
   );
   assert.match(source, /https:\/\/www\.basic-fit\.com\/en-be\/clubs\/basic-fit-mechelen-bruul-/);
   assert.match(source, /https:\/\/pulsate\.be\/timetable\//);
+  assert.match(source, /https:\/\/formspree\.io\/f\/mzepdael/);
+  assert.doesNotMatch(source, /mailto:/);
   assert.match(source, /target="_blank" rel="noreferrer"/);
 });

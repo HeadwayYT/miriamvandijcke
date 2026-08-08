@@ -959,9 +959,29 @@ p {
   margin: 0;
 }
 
+.contact-form .form-status {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.contact-form .form-status.success {
+  color: #86efac;
+}
+
+.contact-form .form-status.error {
+  color: #fca5a5;
+}
+
 .contact-form button {
   background: var(--oxide);
   color: #fff;
+}
+
+.contact-form button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+  transform: none;
 }
 
 footer {

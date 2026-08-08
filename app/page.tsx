@@ -140,38 +140,35 @@ const revealWords =
   "Energy from the studio floor. Precision from clinical regulatory affairs. Miriam brings music, movement and clear coaching together in group experiences people want to be part of."
     .split(" ");
 
+const formspreeEndpoint = "https://formspree.io/f/mzepdael";
+
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [requestType, setRequestType] = useState("Private Indoor Cycling Experience");
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">(
+    "idle",
+  );
 
-  function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    setFormStatus("submitting");
 
-    const formData = new FormData(event.currentTarget);
-    const name = String(formData.get("name") ?? "").trim();
-    const email = String(formData.get("email") ?? "").trim();
-    const request = String(formData.get("request") ?? "").trim();
-    const venue = String(formData.get("venue") ?? "").trim();
-    const groupSize = String(formData.get("groupSize") ?? "").trim();
-    const timing = String(formData.get("timing") ?? "").trim();
-    const message = String(formData.get("message") ?? "").trim();
-    const subject = `Private fitness experience request${name ? ` from ${name}` : ""}`;
-    const body = [
-      name ? `Name: ${name}` : "",
-      email ? `Email: ${email}` : "",
-      request ? `Experience type: ${request}` : "",
-      venue ? `Location / venue: ${venue}` : "",
-      groupSize ? `Estimated group size: ${groupSize}` : "",
-      timing ? `Preferred date / timing: ${timing}` : "",
-      "",
-      message,
-    ]
-      .filter((line) => line.length > 0)
-      .join("\n");
+    try {
+      const response = await fetch(formspreeEndpoint, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
 
-    window.location.href = `mailto:miriam.s.presas@gmail.com?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
+      if (!response.ok) throw new Error("Formspree rejected the submission");
+
+      form.reset();
+      setRequestType("Private Indoor Cycling Experience");
+      setFormStatus("success");
+    } catch {
+      setFormStatus("error");
+    }
   }
 
   useGSAP(
@@ -430,10 +427,10 @@ export default function Home() {
           </div>
           <form
             className="contact-form"
-            action="mailto:miriam.s.presas@gmail.com"
+            action={formspreeEndpoint}
             method="post"
-            encType="text/plain"
             onSubmit={handleContactSubmit}
+            aria-busy={formStatus === "submitting"}
           >
             <label>
               Name
@@ -494,7 +491,19 @@ export default function Home() {
               Indoor cycling experiences require access to a suitable studio and
               bikes; these need to be available or arranged.
             </p>
-            <button type="submit">Send enquiry</button>
+            {formStatus === "success" ? (
+              <p className="form-status success" role="status">
+                Thank you. Your enquiry has been sent to Miriam.
+              </p>
+            ) : null}
+            {formStatus === "error" ? (
+              <p className="form-status error" role="alert">
+                Something went wrong. Please try again in a moment.
+              </p>
+            ) : null}
+            <button type="submit" disabled={formStatus === "submitting"}>
+              {formStatus === "submitting" ? "Sending..." : "Send enquiry"}
+            </button>
           </form>
         </div>
       </section>
