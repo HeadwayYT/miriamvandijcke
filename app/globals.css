@@ -202,28 +202,6 @@ p {
   margin-top: 34px;
 }
 
-.hero-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 24px;
-}
-
-.hero-stats span {
-  backdrop-filter: blur(18px);
-  background: rgba(23, 23, 23, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 9999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  color: #d4d4d4;
-  display: inline-flex;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  padding: 8px 12px;
-  text-transform: uppercase;
-}
-
 .button,
 .contact-form button {
   align-items: center;
@@ -260,6 +238,13 @@ p {
   padding: clamp(96px, 13vw, 176px) clamp(18px, 5vw, 76px);
 }
 
+#classes,
+#schedule,
+#experiences,
+#contact {
+  scroll-margin-top: 96px;
+}
+
 .intro-chapter {
   background: var(--paper);
 }
@@ -289,6 +274,14 @@ p {
 
 .chapter-heading.wide {
   max-width: 1160px;
+}
+
+.chapter-intro {
+  color: var(--body);
+  font-size: clamp(1rem, 1.3vw, 1.16rem);
+  line-height: 1.7;
+  margin: 28px 0 0;
+  max-width: 720px;
 }
 
 .chapter-heading h2,
@@ -527,6 +520,102 @@ p {
   font-weight: 500;
   letter-spacing: 0;
   margin: 0;
+}
+
+.schedule-block {
+  border-top: 1px solid var(--line);
+  margin-top: clamp(56px, 8vw, 104px);
+  padding-top: clamp(48px, 6vw, 78px);
+}
+
+.schedule-heading {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(150px, 0.36fr) minmax(0, 1fr);
+  margin-bottom: 30px;
+}
+
+.schedule-heading .eyebrow {
+  margin: 6px 0 0;
+}
+
+.schedule-heading h3 {
+  color: var(--ink);
+  font-size: clamp(2rem, 4vw, 4.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  margin: 0;
+  max-width: 760px;
+}
+
+.venue-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.venue-card {
+  background:
+    linear-gradient(150deg, rgba(239, 68, 68, 0.1), transparent 42%),
+    rgba(23, 23, 23, 0.44);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  display: grid;
+  gap: 40px;
+  min-height: 300px;
+  padding: clamp(26px, 3.2vw, 42px);
+}
+
+.venue-format {
+  color: var(--oxide);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+}
+
+.venue-card h3 {
+  color: var(--ink);
+  font-size: clamp(1.7rem, 2.8vw, 3rem);
+  font-weight: 500;
+  line-height: 1;
+  margin: 0 0 16px;
+}
+
+.venue-card p {
+  color: var(--body);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.venue-action {
+  align-items: end;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding-top: 20px;
+}
+
+.venue-action p {
+  color: var(--ash);
+  font-size: 0.88rem;
+}
+
+.venue-action a {
+  border-bottom: 2px solid var(--oxide);
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.schedule-note {
+  color: var(--ash);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  margin: 18px 0 0;
 }
 
 .compact-card:hover h3,
@@ -784,6 +873,19 @@ p {
   resize: vertical;
 }
 
+.form-row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.contact-form .form-note {
+  color: var(--ash);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
 .contact-form button {
   background: var(--oxide);
   color: #fff;
@@ -826,7 +928,8 @@ footer a {
   }
 
   .work-options,
-  .contact-inner {
+  .contact-inner,
+  .venue-grid {
     grid-template-columns: 1fr;
   }
 
@@ -869,6 +972,23 @@ footer a {
   .class-bento,
   .faq-grid {
     grid-template-columns: 1fr;
+  }
+
+  #classes,
+  #schedule,
+  #experiences,
+  #contact {
+    scroll-margin-top: 150px;
+  }
+
+  .schedule-heading,
+  .venue-action,
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .venue-card {
+    min-height: 0;
   }
 
   .bento-lead {

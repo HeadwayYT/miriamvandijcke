@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, type FormEvent, useRef } from "react";
+import { Fragment, type FormEvent, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -32,24 +32,48 @@ const classTypes = [
   },
 ];
 
-const offers = [
+const pathways = [
   {
-    title: "Personal Training",
-    copy:
-      "A focused setting for people who want structure, accountability and a training rhythm that fits real life.",
-    items: ["Goal intake", "Technique-first sessions", "Strength and conditioning"],
+    title: "Join a Class",
+    copy: "Find me on the schedule at the studios where I teach.",
+    items: ["Regular studio classes", "Venue-managed access", "Weekly group energy"],
+    href: "#schedule",
+    cta: "View classes",
   },
   {
-    title: "Group Classes",
-    copy:
-      "Recurring or substitute group classes for gyms, studios and community spaces that need reliable energy.",
-    items: ["Basic-Fit Mechelen, Bruul", "Pulsate Antwerp", "Mixed-level coaching"],
+    title: "Private Experiences",
+    copy: "Your group. Your music. Your workout.",
+    items: ["Private Ride", "Private Group Workout", "Themed Fitness Experience"],
+    href: "#contact",
+    cta: "Explore experiences",
+    request: "Private Ride",
   },
   {
-    title: "Collaborations",
-    copy:
-      "Fitness-led collaborations for companies, events, sport days, pop-ups and larger movement programmes.",
-    items: ["Corporate wellness", "Event sessions", "Custom workshops"],
+    title: "Corporate & Events",
+    copy: "Bring the energy to your team, community or event.",
+    items: ["Corporate Fitness Event", "Team Building Workout", "Brand / Community Event"],
+    href: "#contact",
+    cta: "Book Miriam",
+    request: "Corporate Fitness Event",
+  },
+];
+
+const venues = [
+  {
+    name: "Basic-Fit Mechelen Bruul",
+    location: "Bruul 107, 2800 Mechelen",
+    formats: "Group fitness",
+    timing: "Check the club page or Basic-Fit app for the current schedule.",
+    href: "https://www.basic-fit.com/en-be/clubs/basic-fit-mechelen-bruul-bf2005d2d2594349b27bdf33aa77ac73.html",
+    cta: "Check studio",
+  },
+  {
+    name: "Pulsate Antwerp",
+    location: "Van der Meydenstraat 23-25, 2140 Antwerp",
+    formats: "Indoor cycling and group fitness",
+    timing: "Check the Pulsate timetable for current classes and times.",
+    href: "https://pulsate.be/timetable/",
+    cta: "View class schedule",
   },
 ];
 
@@ -60,28 +84,29 @@ const faqItems = [
   ],
   [
     "Where does Miriam teach?",
-    "She teaches group classes at the Basic-Fit gym on Bruul in Mechelen and at Pulsate in Antwerp. Personal training or projects can be discussed separately.",
+    "She teaches regular classes at Basic-Fit Mechelen Bruul and Pulsate Antwerp. Access and booking are handled directly by each venue.",
   ],
   [
     "Can beginners join?",
     "Yes. Miriam adapts coaching and intensity so different levels can train in the same room with confidence.",
   ],
   [
-    "Can she be booked for projects?",
-    "Yes. The site is set up for requests around group classes, company sessions, events, workshops and collaborations.",
+    "Can I book Miriam directly?",
+    "Yes, for private group workouts, rides, corporate sessions and fitness events. Her regular weekly studio classes are accessed through the respective venue.",
   ],
   [
-    "How does the form work?",
-    "The form opens an email to Miriam at miriam.s.presas@gmail.com with your request details ready to send.",
+    "Does Miriam offer personal training?",
+    "No. Miriam is a group fitness and indoor cycling instructor, and a fitness experience coach and host. Her focus is shared energy, music, movement and community.",
   ],
 ];
 
 const revealWords =
-  "Precision from clinical regulatory affairs. Energy from the studio floor. Miriam brings both into the way she coaches: composed, clear and genuinely motivating."
+  "Energy from the studio floor. Precision from clinical regulatory affairs. Miriam brings music, movement and clear coaching together in group experiences people want to be part of."
     .split(" ");
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
+  const [requestType, setRequestType] = useState("Private Ride");
 
   function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -90,12 +115,18 @@ export default function Home() {
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const request = String(formData.get("request") ?? "").trim();
+    const venue = String(formData.get("venue") ?? "").trim();
+    const groupSize = String(formData.get("groupSize") ?? "").trim();
+    const timing = String(formData.get("timing") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
-    const subject = `Website request${name ? ` from ${name}` : ""}`;
+    const subject = `Private fitness experience request${name ? ` from ${name}` : ""}`;
     const body = [
       name ? `Name: ${name}` : "",
       email ? `Email: ${email}` : "",
-      request ? `Request type: ${request}` : "",
+      request ? `Experience type: ${request}` : "",
+      venue ? `Location / venue: ${venue}` : "",
+      groupSize ? `Estimated group size: ${groupSize}` : "",
+      timing ? `Preferred date / timing: ${timing}` : "",
       "",
       message,
     ]
@@ -162,7 +193,7 @@ export default function Home() {
         </a>
         <nav>
           <a href="#classes">Classes</a>
-          <a href="#work">Work</a>
+          <a href="#experiences">Experiences</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>
@@ -170,25 +201,22 @@ export default function Home() {
       <section className="hero" id="home">
         <div className="hero-wash" />
         <div className="hero-inner">
-          <p className="hero-kicker">Group fitness instructor in Mechelen and Antwerp</p>
+          <p className="hero-kicker">Group fitness / Indoor cycling / Fitness experiences</p>
           <h1 className="hero-title">
-            <span>Train stronger</span>
+            <span>Move together</span>
             <span>with Miriam.</span>
           </h1>
           <p className="hero-text">
-            Bodypump, Strength Development, Bodyattack and Spinning with a
-            coaching style that feels precise, powerful and welcoming.
+            Join Miriam in a regular studio class, or book her to create a private
+            fitness experience for your group, team or event.
           </p>
           <div className="hero-actions">
-            <a className="button primary" href="#contact">
-              Request training
+            <a className="button primary" href="#schedule">
+              Find a class
             </a>
-            <a className="button secondary" href="#classes">
-              Explore classes
+            <a className="button secondary" href="#experiences">
+              Book an experience
             </a>
-          </div>
-          <div className="hero-stats" aria-label="Miriam training highlights">
-            <span>4 class formats</span>
           </div>
         </div>
       </section>
@@ -208,6 +236,11 @@ export default function Home() {
         <div className="chapter-heading">
           <p className="eyebrow">Classes</p>
           <h2>Four formats built for strength, rhythm and room energy.</h2>
+          <p className="chapter-intro">
+            Want to work out with me? You&apos;ll find me teaching regular classes at
+            selected gyms and studios. Access and booking are handled directly by
+            each venue.
+          </p>
         </div>
         <div className="class-bento">
           <article className="bento-lead motion-image">
@@ -235,6 +268,34 @@ export default function Home() {
             </article>
           ))}
         </div>
+
+        <div className="schedule-block" id="schedule">
+          <div className="schedule-heading">
+            <p className="eyebrow">Find a class</p>
+            <h3>Check the schedule at each studio.</h3>
+          </div>
+          <div className="venue-grid">
+            {venues.map((venue) => (
+              <article className="venue-card" key={venue.name}>
+                <div>
+                  <p className="venue-format">{venue.formats}</p>
+                  <h3>{venue.name}</h3>
+                  <p>{venue.location}</p>
+                </div>
+                <div className="venue-action">
+                  <p>{venue.timing}</p>
+                  <a href={venue.href} target="_blank" rel="noreferrer">
+                    {venue.cta}
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="schedule-note">
+            Membership or studio access may be required. Check the venue for
+            current booking and trial options.
+          </p>
+        </div>
       </section>
 
       <section className="marquee-band" aria-label="Class formats">
@@ -245,32 +306,34 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter accordion-chapter" id="work">
+      <section className="chapter accordion-chapter" id="experiences">
         <div className="chapter-heading wide">
-          <p className="eyebrow">Work with Miriam</p>
+          <p className="eyebrow">Move with Miriam</p>
           <h2>
-            Individual coaching, group rooms and larger fitness moments can all
-            start from one request.
+            Join her regular classes, or bring the experience to your own group.
           </h2>
         </div>
         <div className="work-options">
-          {offers.map((offer) => (
+          {pathways.map((pathway) => (
             <a
               className="work-option"
-              href="#contact"
-              key={offer.title}
-              aria-label={`Contact Miriam about ${offer.title}`}
+              href={pathway.href}
+              key={pathway.title}
+              aria-label={`${pathway.cta}: ${pathway.title}`}
+              onClick={() => {
+                if (pathway.request) setRequestType(pathway.request);
+              }}
             >
               <div>
-                <h3>{offer.title}</h3>
-                <p>{offer.copy}</p>
+                <h3>{pathway.title}</h3>
+                <p>{pathway.copy}</p>
               </div>
               <ul>
-                {offer.items.map((item) => (
+                {pathway.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <span className="work-option-cta">Start a request</span>
+              <span className="work-option-cta">{pathway.cta}</span>
             </a>
           ))}
         </div>
@@ -295,10 +358,10 @@ export default function Home() {
         <div className="contact-inner">
           <div>
             <p className="eyebrow">Contact</p>
-            <h2>Request a session, class or project.</h2>
+            <h2>Book a private fitness experience.</h2>
             <p>
-              Share the type of request, timing, location and what you want the
-              session to achieve. Miriam can follow up by email.
+              Tell Miriam about your group, preferred format, timing and venue.
+              Regular studio classes are booked directly through the venue.
             </p>
             <a
               className="instagram-link"
@@ -325,14 +388,45 @@ export default function Home() {
               <input type="email" name="email" placeholder="you@example.com" required />
             </label>
             <label>
-              Request type
-              <select name="request">
-                <option>Personal training</option>
-                <option>Group class</option>
-                <option>Larger project</option>
-                <option>Other collaboration</option>
+              Experience type
+              <select
+                name="request"
+                value={requestType}
+                onChange={(event) => setRequestType(event.target.value)}
+                required
+              >
+                <option>Private Ride</option>
+                <option>Private Group Workout</option>
+                <option>Corporate Fitness Event</option>
+                <option>Team Building Workout</option>
+                <option>Brand / Community Event</option>
+                <option>Themed Fitness Experience</option>
+                <option>Other</option>
               </select>
             </label>
+            <label>
+              Location / Venue
+              <select name="venue" required defaultValue="Not sure yet">
+                <option>I already have a venue</option>
+                <option>I need help finding a suitable venue</option>
+                <option>Not sure yet</option>
+              </select>
+            </label>
+            <div className="form-row">
+              <label>
+                Group size
+                <input
+                  type="number"
+                  name="groupSize"
+                  min="2"
+                  placeholder="Estimated number"
+                />
+              </label>
+              <label>
+                Date / Timing
+                <input type="text" name="timing" placeholder="Preferred timing" />
+              </label>
+            </div>
             <label>
               Message
               <textarea
@@ -342,7 +436,11 @@ export default function Home() {
                 rows={5}
               />
             </label>
-            <button type="submit">Send request</button>
+            <p className="form-note">
+              Private rides require access to a suitable cycling studio and bikes;
+              these need to be available or arranged.
+            </p>
+            <button type="submit">Send experience request</button>
           </form>
         </div>
       </section>
