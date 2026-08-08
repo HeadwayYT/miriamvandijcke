@@ -215,7 +215,7 @@ export default function Home() {
           </article>
           {classTypes.map((classType) => (
             <article
-              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}`}
+              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}${classType.name === "Bodypump" ? " bodypump-card" : ""}${classType.name === "Bodyattack" ? " bodyattack-card" : ""}${classType.name === "Spinning" ? " spinning-card" : ""}`}
               key={classType.name}
             >
               <div

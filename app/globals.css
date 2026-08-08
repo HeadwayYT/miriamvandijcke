@@ -427,6 +427,21 @@ p {
   z-index: 0;
 }
 
+.bodypump-card .class-card-image {
+  transform: scale(1.1);
+  transform-origin: 55% 45%;
+}
+
+.bodyattack-card .class-card-image {
+  background-position: 50% 28%;
+  transform-origin: 50% 28%;
+}
+
+.spinning-card .class-card-image {
+  background-color: #111111;
+  background-size: auto 142%;
+}
+
 .class-card-shade {
   background: linear-gradient(180deg, rgba(10, 10, 10, 0.06) 18%, rgba(10, 10, 10, 0.9) 100%);
   inset: 0;
@@ -477,6 +492,18 @@ p {
 .compact-card:focus-within .class-card-image {
   filter: grayscale(0.28) contrast(1.12);
   transform: scale(1.055);
+}
+
+.bodypump-card:hover .class-card-image,
+.bodypump-card:focus-visible .class-card-image,
+.bodypump-card:focus-within .class-card-image {
+  transform: scale(1.15);
+}
+
+.spinning-card:hover .class-card-image,
+.spinning-card:focus-visible .class-card-image,
+.spinning-card:focus-within .class-card-image {
+  transform: scale(1.025);
 }
 
 .compact-card:hover .class-card-shade,
