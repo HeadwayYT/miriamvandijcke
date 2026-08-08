@@ -302,7 +302,6 @@ export default function Home() {
         <div className="chapter-heading classes-heading">
           <p className="eyebrow">Classes</p>
           <div>
-            <h2>Four formats built for strength, rhythm and room energy.</h2>
             <p className="chapter-intro">
               Want to work out with me? You&apos;ll find me teaching regular classes at
               selected gyms and studios. Access and booking are handled directly by
