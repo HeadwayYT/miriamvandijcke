@@ -38,21 +38,18 @@ const offers = [
     copy:
       "A focused setting for people who want structure, accountability and a training rhythm that fits real life.",
     items: ["Goal intake", "Technique-first sessions", "Strength and conditioning"],
-    image: "/images/miriam-portrait-close.jpg",
   },
   {
     title: "Group Classes",
     copy:
       "Recurring or substitute group classes for gyms, studios and community spaces that need reliable energy.",
     items: ["Basic-Fit Mechelen, Bruul", "Pulsate Antwerp", "Mixed-level coaching"],
-    image: "/images/miriam-spinning.jpg",
   },
   {
-    title: "Projects",
+    title: "Collaborations",
     copy:
       "Fitness-led collaborations for companies, events, sport days, pop-ups and larger movement programmes.",
     items: ["Corporate wellness", "Event sessions", "Custom workshops"],
-    image: "/images/miriam-portrait-wide.jpg",
   },
 ];
 
@@ -191,8 +188,6 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-stats" aria-label="Miriam training highlights">
-            <span>Basic-Fit Mechelen</span>
-            <span>Pulsate Antwerp</span>
             <span>4 class formats</span>
           </div>
         </div>
@@ -215,7 +210,7 @@ export default function Home() {
           <h2>Four formats built for strength, rhythm and room energy.</h2>
         </div>
         <div className="class-bento">
-          <article className="bento-card bento-lead motion-image">
+          <article className="bento-lead motion-image">
             <h3>Move with purpose.</h3>
           </article>
           {classTypes.map((classType) => (
@@ -258,29 +253,25 @@ export default function Home() {
             start from one request.
           </h2>
         </div>
-        <div className="offer-accordion">
-          {offers.map((offer, index) => (
-            <article className="offer-panel" key={offer.title}>
-              <div
-                className="panel-media motion-image"
-                style={{
-                  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.68)), url(${offer.image})`,
-                }}
-              >
-                <span className="panel-stat">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <div className="panel-copy">
+        <div className="work-options">
+          {offers.map((offer) => (
+            <a
+              className="work-option"
+              href="#contact"
+              key={offer.title}
+              aria-label={`Contact Miriam about ${offer.title}`}
+            >
+              <div>
                 <h3>{offer.title}</h3>
                 <p>{offer.copy}</p>
-                <ul>
-                  {offer.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
               </div>
-            </article>
+              <ul>
+                {offer.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <span className="work-option-cta">Start a request</span>
+            </a>
           ))}
         </div>
       </section>
