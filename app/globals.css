@@ -134,11 +134,13 @@ textarea {
 }
 
 .hero {
-  align-items: center;
+  align-items: flex-end;
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.96)),
-    url("/images/miriam-spinning.jpg");
-  background-position: center 38%;
+    linear-gradient(90deg, rgba(10, 10, 10, 0.96) 0%, rgba(10, 10, 10, 0.72) 42%, rgba(10, 10, 10, 0.28) 100%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.98)),
+    url("/images/miriam-kettlebell-coach.jpg");
+  background-attachment: fixed;
+  background-position: center 42%;
   background-size: cover;
   color: #fff;
   display: flex;
@@ -149,19 +151,19 @@ textarea {
 
 .hero-wash {
   background:
-    radial-gradient(circle at 18% 18%, rgba(239, 68, 68, 0.38), transparent 32%),
-    radial-gradient(circle at 82% 76%, rgba(220, 38, 38, 0.22), transparent 30%);
+    radial-gradient(circle at 14% 70%, rgba(239, 68, 68, 0.42), transparent 24%),
+    radial-gradient(circle at 88% 18%, rgba(220, 38, 38, 0.22), transparent 28%);
   inset: 0;
-  mix-blend-mode: screen;
-  opacity: 0.74;
+  mix-blend-mode: color-dodge;
+  opacity: 0.6;
   position: absolute;
 }
 
 .hero-inner {
-  margin: 0 auto;
-  max-width: 1160px;
+  margin: 0;
+  max-width: 1060px;
   position: relative;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 
@@ -189,19 +191,19 @@ p {
 .hero-title {
   color: #fff;
   display: grid;
-  font-size: clamp(3.35rem, 7.2vw, 6.8rem);
+  font-size: clamp(4.4rem, 9.2vw, 8rem);
   font-weight: 500;
   letter-spacing: 0;
-  line-height: 0.92;
-  margin: 0 auto 28px;
-  max-width: 1120px;
+  line-height: 0.88;
+  margin: 0 0 28px;
+  max-width: 1040px;
 }
 
 .inline-photo {
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.38)),
-    url("/images/miriam-portrait-close.jpg");
-  background-position: center 34%;
+    linear-gradient(90deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.48)),
+    url("/images/miriam-headset.jpg");
+  background-position: center 40%;
   background-size: cover;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
@@ -217,15 +219,40 @@ p {
   color: #d4d4d4;
   font-size: clamp(1.02rem, 1.35vw, 1.28rem);
   line-height: 1.72;
-  margin: 0 auto;
+  margin: 0;
   max-width: 720px;
 }
 
 .hero-actions {
   display: flex;
   gap: 12px;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 34px;
+}
+
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.hero-stats span,
+.floating-stat,
+.class-metric,
+.panel-stat {
+  backdrop-filter: blur(18px);
+  background: rgba(23, 23, 23, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  color: #d4d4d4;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 8px 12px;
+  text-transform: uppercase;
 }
 
 .button,
@@ -327,7 +354,9 @@ p {
 }
 
 .bento-card::before {
-  background: radial-gradient(circle at 20% 8%, rgba(239, 68, 68, 0.34), transparent 32%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 32%),
+    radial-gradient(circle at 20% 8%, rgba(239, 68, 68, 0.34), transparent 32%);
   content: "";
   inset: 0;
   opacity: 0.72;
@@ -341,13 +370,21 @@ p {
 .bento-lead {
   align-items: end;
   background:
-    linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.82)),
-    url("/images/miriam-spinning.jpg");
+    linear-gradient(180deg, rgba(10, 10, 10, 0.05), rgba(10, 10, 10, 0.84)),
+    url("/images/miriam-overhead-weights.jpg");
   background-position: center 42%;
   background-size: cover;
   display: flex;
   grid-column: span 2;
   grid-row: span 2;
+  filter: grayscale(0.8) contrast(1.25);
+}
+
+.floating-stat {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  z-index: 2;
 }
 
 .bento-lead p,
@@ -373,12 +410,24 @@ p {
 }
 
 .compact-card {
+  align-content: end;
+  background-position: center;
+  background-size: cover;
+  display: grid;
+  filter: grayscale(0.92) contrast(1.25);
   transition: transform 420ms ease, background 420ms ease;
 }
 
 .compact-card:hover {
-  background: rgba(38, 38, 38, 0.4);
+  filter: grayscale(0.45) contrast(1.2);
   transform: translateY(-6px);
+}
+
+.class-metric {
+  align-self: start;
+  color: #ffffff;
+  justify-self: start;
+  margin-bottom: 74px;
 }
 
 .compact-card h3,
@@ -391,7 +440,7 @@ p {
 }
 
 .marquee-band {
-  background: var(--oxide);
+  background: linear-gradient(90deg, #dc2626, #ef4444, #991b1b);
   color: #fff;
   overflow: hidden;
   padding: 20px 0;
@@ -436,7 +485,7 @@ p {
 }
 
 .offer-panel {
-  background: rgba(23, 23, 23, 0.3);
+  background: rgba(23, 23, 23, 0.46);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
@@ -455,9 +504,18 @@ p {
 .panel-media {
   background-position: center;
   background-size: cover;
-  filter: grayscale(1) contrast(1.15);
+  filter: grayscale(1) contrast(1.28);
   min-height: 390px;
   mix-blend-mode: luminosity;
+  position: relative;
+}
+
+.panel-stat {
+  background: rgba(239, 68, 68, 0.86);
+  color: #ffffff;
+  left: 22px;
+  position: absolute;
+  top: 22px;
 }
 
 .panel-copy {
@@ -493,9 +551,10 @@ p {
   aspect-ratio: 4 / 5;
   background:
     linear-gradient(180deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.76)),
-    url("/images/miriam-portrait-wide.jpg");
+    url("/images/miriam-indoor-strength.jpg");
   background-position: center 28%;
   background-size: cover;
+  filter: grayscale(0.9) contrast(1.24);
   min-height: 520px;
 }
 

@@ -44,3 +44,8 @@ yarn-error.log*
 /.codex-devserver*.log
 /skills-lock.json
 /*.tar.gz
+/.codex-testserver*.log
+/*-check.png
+/.*check*.png
+/.photo-contact-sheet.jpg
+/fotos/

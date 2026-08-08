@@ -10,25 +10,29 @@ const classTypes = [
     name: "Bodypump",
     detail:
       "Barbell strength work with musical momentum, clean cueing and scalable options for mixed-level rooms.",
-    image: "bodypump-barbell-room",
+    image: "/images/miriam-group-bodypump.jpg",
+    metric: "Barbell strength",
   },
   {
     name: "Strength Development",
     detail:
       "Progressive strength sessions where technique, control and confidence become visible week after week.",
-    image: "strength-development-training",
+    image: "/images/miriam-barbell-lunge.jpg",
+    metric: "Progressive work",
   },
   {
     name: "Bodyattack",
     detail:
       "Athletic cardio with sharp transitions, big-room energy and the kind of rhythm that pulls people in.",
-    image: "bodyattack-cardio-studio",
+    image: "/images/miriam-track-lunge.jpg",
+    metric: "Cardio drive",
   },
   {
     name: "Spinning",
     detail:
       "Indoor cycling built around climbs, intervals, endurance and music-led drive from first track to finish.",
-    image: "spinning-class-lights",
+    image: "/images/miriam-spinning.jpg",
+    metric: "Ride energy",
   },
 ];
 
@@ -170,6 +174,11 @@ export default function Home() {
               Explore classes
             </a>
           </div>
+          <div className="hero-stats" aria-label="Miriam training highlights">
+            <span>Basic-Fit Bruul</span>
+            <span>Pulsate Antwerp</span>
+            <span>4 class formats</span>
+          </div>
         </div>
       </section>
 
@@ -190,13 +199,21 @@ export default function Home() {
         </div>
         <div className="class-bento">
           <article className="bento-card bento-lead motion-image">
+            <span className="floating-stat">Live coaching</span>
             <div>
               <p>Currently teaching at Basic-Fit Bruul Mechelen and Pulsate Antwerp.</p>
               <h3>Clear cueing. Strong tempo. No one left guessing.</h3>
             </div>
           </article>
           {classTypes.map((classType) => (
-            <article className="bento-card compact-card" key={classType.name}>
+            <article
+              className="bento-card compact-card"
+              key={classType.name}
+              style={{
+                backgroundImage: `linear-gradient(180deg, rgba(10,10,10,.22), rgba(10,10,10,.86)), url(${classType.image})`,
+              }}
+            >
+              <span className="class-metric">{classType.metric}</span>
               <h3>{classType.name}</h3>
               <p>{classType.detail}</p>
             </article>
@@ -228,7 +245,11 @@ export default function Home() {
                 style={{
                   backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.68)), url(${offer.image})`,
                 }}
-              />
+              >
+                <span className="panel-stat">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
               <div className="panel-copy">
                 <h3>{offer.title}</h3>
                 <p>{offer.copy}</p>
