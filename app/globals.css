@@ -67,18 +67,17 @@ textarea {
 
 .site-header {
   align-items: center;
-  backdrop-filter: blur(24px);
-  background: var(--glass);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.38);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   display: flex;
   gap: 26px;
   justify-content: space-between;
   left: 50%;
   max-width: min(1120px, calc(100vw - 32px));
-  padding: 10px 12px;
+  padding: 0;
   position: fixed;
-  top: 18px;
+  top: 28px;
   transform: translateX(-50%);
   width: 100%;
   z-index: 60;
@@ -95,12 +94,14 @@ textarea {
   font-size: 0.92rem;
   font-weight: 600;
   gap: 12px;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
   white-space: nowrap;
 }
 
 .site-header nav {
   backdrop-filter: blur(16px);
-  background: rgba(23, 23, 23, 0.5);
+  background: rgba(10, 10, 10, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 9999px;
   gap: 3px;
   padding: 4px;
