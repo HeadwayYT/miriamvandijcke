@@ -133,7 +133,7 @@ textarea {
   color: #fff;
   display: flex;
   isolation: isolate;
-  min-height: 88svh;
+  min-height: 100svh;
   overflow: hidden;
   padding: 128px clamp(18px, 5vw, 76px) 52px;
   position: relative;
