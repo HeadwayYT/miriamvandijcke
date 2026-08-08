@@ -9,30 +9,30 @@ const classTypes = [
   {
     name: "Bodypump",
     detail:
-      "Barbell strength work with musical momentum, clean cueing and scalable options for mixed-level rooms.",
+      "Les Mills certified barbell strength work with musical momentum, clean cueing and scalable options for mixed-level rooms.",
     image: "/images/miriam-group-bodypump.jpg",
-    metric: "Barbell strength",
+    metric: "Les Mills certified",
   },
   {
     name: "Strength Development",
     detail:
-      "Progressive strength sessions where technique, control and confidence become visible week after week.",
+      "Les Mills certified progressive strength sessions where technique, control and confidence become visible week after week.",
     image: "/images/miriam-barbell-lunge.jpg",
-    metric: "Progressive work",
+    metric: "Les Mills certified",
   },
   {
     name: "Bodyattack",
     detail:
-      "Athletic cardio with sharp transitions, big-room energy and the kind of rhythm that pulls people in.",
+      "Les Mills certified athletic cardio with sharp transitions, big-room energy and the kind of rhythm that pulls people in.",
     image: "/images/miriam-track-lunge.jpg",
-    metric: "Cardio drive",
+    metric: "Les Mills certified",
   },
   {
     name: "Spinning",
     detail:
-      "Indoor cycling built around climbs, intervals, endurance and music-led drive from first track to finish.",
+      "Fitness NRG certified indoor cycling built around climbs, intervals, endurance and music-led drive from first track to finish.",
     image: "/images/miriam-spinning.jpg",
-    metric: "Ride energy",
+    metric: "Fitness NRG certified",
   },
 ];
 
@@ -61,6 +61,10 @@ const offers = [
 ];
 
 const faqItems = [
+  [
+    "Which certifications does Miriam have?",
+    "Miriam is Les Mills certified in Strength Development, Bodypump and Bodyattack. She earned her Spinning certificate at Fitness NRG.",
+  ],
   [
     "Where does Miriam teach?",
     "She teaches at Basic-Fit Bruul in Mechelen and Pulsate in Antwerp. Personal training or projects can be discussed separately.",
