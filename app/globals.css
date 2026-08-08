@@ -137,8 +137,8 @@ textarea {
   align-items: center;
   background:
     linear-gradient(180deg, rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.96)),
-    url("https://picsum.photos/seed/miriam-cinematic-fitness/2200/1400");
-  background-position: center;
+    url("/images/miriam-spinning.jpg");
+  background-position: center 38%;
   background-size: cover;
   color: #fff;
   display: flex;
@@ -200,8 +200,8 @@ p {
 .inline-photo {
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.38)),
-    url("https://picsum.photos/seed/miriam-inline-motion/600/320");
-  background-position: center;
+    url("/images/miriam-portrait-close.jpg");
+  background-position: center 34%;
   background-size: cover;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
@@ -342,8 +342,8 @@ p {
   align-items: end;
   background:
     linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.82)),
-    url("https://picsum.photos/seed/miriam-group-class-room/1400/1000");
-  background-position: center;
+    url("/images/miriam-spinning.jpg");
+  background-position: center 42%;
   background-size: cover;
   display: flex;
   grid-column: span 2;
@@ -493,8 +493,8 @@ p {
   aspect-ratio: 4 / 5;
   background:
     linear-gradient(180deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.76)),
-    url("https://picsum.photos/seed/miriam-clinical-precision-fitness/1100/1400");
-  background-position: center;
+    url("/images/miriam-portrait-wide.jpg");
+  background-position: center 28%;
   background-size: cover;
   min-height: 520px;
 }

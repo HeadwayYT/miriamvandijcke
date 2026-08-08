@@ -38,18 +38,21 @@ const offers = [
     copy:
       "A focused setting for people who want structure, accountability and a training rhythm that fits real life.",
     items: ["Goal intake", "Technique-first sessions", "Strength and conditioning"],
+    image: "/images/miriam-portrait-close.jpg",
   },
   {
     title: "Group Classes",
     copy:
       "Recurring or substitute group classes for gyms, studios and community spaces that need reliable energy.",
     items: ["Basic-Fit Bruul Mechelen", "Pulsate Antwerp", "Mixed-level coaching"],
+    image: "/images/miriam-spinning.jpg",
   },
   {
     title: "Projects",
     copy:
       "Fitness-led collaborations for companies, events, sport days, pop-ups and larger movement programmes.",
     items: ["Corporate wellness", "Event sessions", "Custom workshops"],
+    image: "/images/miriam-portrait-wide.jpg",
   },
 ];
 
@@ -223,7 +226,7 @@ export default function Home() {
               <div
                 className="panel-media motion-image"
                 style={{
-                  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.68)), url(https://picsum.photos/seed/miriam-${index}/1200/1500)`,
+                  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.68)), url(${offer.image})`,
                 }}
               />
               <div className="panel-copy">
