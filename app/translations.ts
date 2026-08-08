@@ -50,7 +50,7 @@ export const nlTranslations: Record<string, string> = {
   "Your group. Your music. Your workout.": "Jouw groep. Jouw muziek. Jouw workout.",
   "Planning something different? Miriam can create and lead a high-energy fitness experience for your group, team or event.":
     "Iets bijzonders gepland? Miriam kan een energieke fitnessbeleving uitwerken en begeleiden voor je groep, team of evenement.",
-  "Private Indoor Cycling Experience": "Privé indoorcyclingbeleving",
+  "Private Indoor Cycling Experience": "Privé indoor cycling",
   "A custom indoor cycling experience for your private group. A suitable studio and bikes must be available or arranged.":
     "Een indoorcyclingbeleving op maat van je groep. Een geschikte studio en fietsen moeten beschikbaar zijn of geregeld worden.",
   "Friends and celebrations": "Vrienden en vieringen",

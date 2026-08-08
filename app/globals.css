@@ -1006,6 +1006,7 @@ p {
   font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 0.98;
   margin-bottom: 24px;
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 981px) {
@@ -1134,6 +1135,7 @@ p {
   font-size: 0.9rem;
   font-weight: 820;
   gap: 8px;
+  min-width: 0;
 }
 
 .contact-form input,
@@ -1142,6 +1144,7 @@ p {
   background: rgba(10, 10, 10, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #ffffff;
+  min-width: 0;
   outline: none;
   padding: 14px 15px;
   width: 100%;
@@ -1442,5 +1445,29 @@ footer a {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+}
+
+@media (max-width: 350px) {
+  .site-header nav {
+    gap: 2px;
+  }
+
+  .site-header nav a {
+    font-size: 0.6rem;
+    padding-inline: 2px;
+  }
+
+  .site-header nav a.nav-cta {
+    padding-inline: 6px;
+  }
+
+  .hero-kicker {
+    font-size: 0.6rem;
+    gap: 4px;
+  }
+
+  .hero-kicker::before {
+    flex-basis: 16px;
   }
 }
