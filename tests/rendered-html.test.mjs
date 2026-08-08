@@ -33,7 +33,7 @@ test("renders an accessible English and Dutch language switch", async () => {
   assert.match(translations, /"Move together\.": "Samen in beweging\."/);
   assert.match(translations, /"Book Miriam": "Boek Miriam"/);
   assert.match(translations, /"Send enquiry": "Verstuur aanvraag"/);
-  assert.match(translations, /"I bring energy into the room\.": "Ik breng energie in de zaal\."/);
+  assert.match(translations, /"My energy is contagious\.": "Mijn energie werkt aanstekelijk\."/);
   assert.doesNotMatch(source, /about-certified/);
 });
 

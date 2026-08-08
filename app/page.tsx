@@ -488,7 +488,7 @@ export default function Home() {
         <div className="about-grid" id="about">
           <div className="about-copy">
             <p className="eyebrow">{t("About Miriam")}</p>
-            <h2>{t("I bring energy into the room.")}</h2>
+            <h2>{t("My energy is contagious.")}</h2>
             <p className="about-lead">
               {t(
                 "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.",

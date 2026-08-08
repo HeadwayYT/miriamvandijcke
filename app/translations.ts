@@ -70,7 +70,7 @@ export const nlTranslations: Record<string, string> = {
   "Team building": "Teambuilding",
   "Brand and community events": "Merk- en community-evenementen",
   "About Miriam": "Over Miriam",
-  "I bring energy into the room.": "Ik breng energie in de zaal.",
+  "My energy is contagious.": "Mijn energie werkt aanstekelijk.",
   "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.":
     "Ik ben Miriam, groepsfitness- en indoorcyclinginstructeur. Wat ik het liefste doe, is muziek, beweging en mensen samenbrengen.",
   "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in. I'm Les Mills certified in BODYATTACK, BODYPUMP and Strength Development, and earned my indoor cycling certificate at Fitness NRG.":
