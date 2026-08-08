@@ -34,46 +34,82 @@ const classTypes = [
 
 const pathways = [
   {
-    title: "Join a Class",
-    copy: "Find me on the schedule at the studios where I teach.",
-    items: ["Regular studio classes", "Venue-managed access", "Weekly group energy"],
-    href: "#schedule",
-    cta: "View classes",
-  },
-  {
-    title: "Private Experiences",
-    copy: "Your group. Your music. Your workout.",
-    items: ["Private Ride", "Private Group Workout", "Themed Fitness Experience"],
+    title: "Private Ride",
+    copy:
+      "A custom indoor cycling experience for your private group. A suitable studio and bikes must be available or arranged.",
+    items: ["Friends and celebrations", "Themed rides", "Special occasions"],
     href: "#contact",
-    cta: "Explore experiences",
+    cta: "Enquire about an experience",
     request: "Private Ride",
   },
   {
-    title: "Corporate & Events",
-    copy: "Bring the energy to your team, community or event.",
-    items: ["Corporate Fitness Event", "Team Building Workout", "Brand / Community Event"],
+    title: "Private Group Workout",
+    copy: "A music-driven strength and cardio workout shaped around the occasion and group.",
+    items: ["Strength and cardio", "Adapted to the occasion", "Group-focused coaching"],
     href: "#contact",
-    cta: "Book Miriam",
-    request: "Corporate Fitness Event",
+    cta: "Enquire about an experience",
+    request: "Private Group Workout",
+  },
+  {
+    title: "Corporate & Events",
+    copy: "Bring movement, music and shared energy to your team, community or event.",
+    items: ["Corporate wellness", "Team building", "Brand and community events"],
+    href: "#contact",
+    cta: "Enquire about an experience",
+    request: "Corporate / Team Event",
   },
 ];
 
-const venues = [
+type Venue = {
+  name: string;
+  location: string;
+  formats: string;
+  days: Array<{
+    day: string;
+    classes: Array<{ time: string; name: string; meta?: string }>;
+  }>;
+  href: string;
+  cta: string;
+};
+
+const venues: Venue[] = [
   {
     name: "Basic-Fit Mechelen Bruul",
     location: "Bruul 107, 2800 Mechelen",
     formats: "Group fitness",
-    timing: "Check the club page or Basic-Fit app for the current schedule.",
+    days: [
+      {
+        day: "Thu",
+        classes: [
+          { time: "19:00 - 20:00", name: "BODYATTACK" },
+          { time: "20:00 - 21:00", name: "BODYPUMP" },
+        ],
+      },
+      {
+        day: "Sun",
+        classes: [
+          { time: "10:00 - 11:00", name: "BODYPUMP" },
+          { time: "11:00 - 12:00", name: "BODYATTACK" },
+        ],
+      },
+    ],
     href: "https://www.basic-fit.com/en-be/clubs/basic-fit-mechelen-bruul-bf2005d2d2594349b27bdf33aa77ac73.html",
-    cta: "Check studio",
+    cta: "View Basic-Fit schedule",
   },
   {
     name: "Pulsate Antwerp",
-    location: "Van der Meydenstraat 23-25, 2140 Antwerp",
-    formats: "Indoor cycling and group fitness",
-    timing: "Check the Pulsate timetable for current classes and times.",
+    location: "Van der Meydenstraat 23/25, 2140 Antwerpen",
+    formats: "Indoor cycling",
+    days: [
+      {
+        day: "Sat",
+        classes: [
+          { time: "10:00 - 10:50", name: "RIDE: PERFORMANCE", meta: "50 min" },
+        ],
+      },
+    ],
     href: "https://pulsate.be/timetable/",
-    cta: "View class schedule",
+    cta: "View Pulsate schedule",
   },
 ];
 
@@ -271,19 +307,37 @@ export default function Home() {
 
         <div className="schedule-block" id="schedule">
           <div className="schedule-heading">
-            <p className="eyebrow">Find a class</p>
-            <h3>Check the schedule at each studio.</h3>
+            <p className="eyebrow">Weekly schedule</p>
+            <div>
+              <h3>Find me in class every week in Mechelen and Antwerp.</h3>
+              <p>Booking and access are handled directly through each gym or studio.</p>
+            </div>
           </div>
           <div className="venue-grid">
             {venues.map((venue) => (
               <article className="venue-card" key={venue.name}>
-                <div>
+                <div className="venue-card-heading">
                   <p className="venue-format">{venue.formats}</p>
                   <h3>{venue.name}</h3>
-                  <p>{venue.location}</p>
+                </div>
+                <div className="venue-schedule">
+                  {venue.days.map((day) => (
+                    <div className="schedule-day" key={day.day}>
+                      <p>{day.day}</p>
+                      <div className="session-list">
+                        {day.classes.map((classItem) => (
+                          <div className="class-session" key={`${day.day}-${classItem.time}`}>
+                            <time>{classItem.time}</time>
+                            <strong>{classItem.name}</strong>
+                            {classItem.meta ? <span>{classItem.meta}</span> : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 <div className="venue-action">
-                  <p>{venue.timing}</p>
+                  <address>{venue.location}</address>
                   <a href={venue.href} target="_blank" rel="noreferrer">
                     {venue.cta}
                   </a>
@@ -292,8 +346,8 @@ export default function Home() {
             ))}
           </div>
           <p className="schedule-note">
-            Membership or studio access may be required. Check the venue for
-            current booking and trial options.
+            Schedules may change. Check the studio for the latest availability.
+            Studio access or membership may be required.
           </p>
         </div>
       </section>
@@ -308,10 +362,12 @@ export default function Home() {
 
       <section className="chapter accordion-chapter" id="experiences">
         <div className="chapter-heading wide">
-          <p className="eyebrow">Move with Miriam</p>
-          <h2>
-            Join her regular classes, or bring the experience to your own group.
-          </h2>
+          <p className="eyebrow">Private experiences</p>
+          <h2>Your group. Your music. Your workout.</h2>
+          <p className="chapter-intro">
+            Planning something different? Miriam can create and lead a high-energy
+            fitness experience for your group, team or event.
+          </p>
         </div>
         <div className="work-options">
           {pathways.map((pathway) => (
@@ -397,10 +453,8 @@ export default function Home() {
               >
                 <option>Private Ride</option>
                 <option>Private Group Workout</option>
-                <option>Corporate Fitness Event</option>
-                <option>Team Building Workout</option>
+                <option>Corporate / Team Event</option>
                 <option>Brand / Community Event</option>
-                <option>Themed Fitness Experience</option>
                 <option>Other</option>
               </select>
             </label>
@@ -408,7 +462,7 @@ export default function Home() {
               Location / Venue
               <select name="venue" required defaultValue="Not sure yet">
                 <option>I already have a venue</option>
-                <option>I need help finding a suitable venue</option>
+                <option>I need help arranging a suitable venue</option>
                 <option>Not sure yet</option>
               </select>
             </label>
@@ -423,8 +477,8 @@ export default function Home() {
                 />
               </label>
               <label>
-                Date / Timing
-                <input type="text" name="timing" placeholder="Preferred timing" />
+                Preferred date
+                <input type="text" name="timing" placeholder="Preferred date" />
               </label>
             </div>
             <label>
@@ -440,7 +494,7 @@ export default function Home() {
               Private rides require access to a suitable cycling studio and bikes;
               these need to be available or arranged.
             </p>
-            <button type="submit">Send experience request</button>
+            <button type="submit">Send enquiry</button>
           </form>
         </div>
       </section>

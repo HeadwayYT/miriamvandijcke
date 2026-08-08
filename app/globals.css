@@ -548,6 +548,13 @@ p {
   max-width: 760px;
 }
 
+.schedule-heading > div > p {
+  color: var(--body);
+  line-height: 1.65;
+  margin: 22px 0 0;
+  max-width: 650px;
+}
+
 .venue-grid {
   display: grid;
   gap: 14px;
@@ -561,9 +568,14 @@ p {
   border: 1px solid var(--line);
   border-radius: 16px;
   display: grid;
-  gap: 40px;
+  gap: 30px;
   min-height: 300px;
   padding: clamp(26px, 3.2vw, 42px);
+}
+
+.venue-card-heading {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 24px;
 }
 
 .venue-format {
@@ -588,6 +600,56 @@ p {
   margin-bottom: 0;
 }
 
+.venue-schedule {
+  display: grid;
+  gap: 22px;
+}
+
+.schedule-day {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 54px minmax(0, 1fr);
+}
+
+.schedule-day > p {
+  color: var(--oxide);
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin: 4px 0 0;
+  text-transform: uppercase;
+}
+
+.session-list {
+  display: grid;
+  gap: 13px;
+}
+
+.class-session {
+  align-items: baseline;
+  display: grid;
+  gap: 8px 18px;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+}
+
+.class-session time {
+  color: var(--body);
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.class-session strong {
+  color: var(--ink);
+  font-size: clamp(0.98rem, 1.35vw, 1.18rem);
+  font-weight: 700;
+}
+
+.class-session span {
+  color: var(--ash);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
 .venue-action {
   align-items: end;
   border-top: 1px solid var(--line);
@@ -597,9 +659,11 @@ p {
   padding-top: 20px;
 }
 
-.venue-action p {
+.venue-action address {
   color: var(--ash);
   font-size: 0.88rem;
+  font-style: normal;
+  line-height: 1.55;
 }
 
 .venue-action a {
@@ -982,13 +1046,27 @@ footer a {
   }
 
   .schedule-heading,
-  .venue-action,
   .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .venue-action {
+    align-items: start;
     grid-template-columns: 1fr;
   }
 
   .venue-card {
     min-height: 0;
+  }
+
+  .schedule-day {
+    gap: 12px;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .class-session {
+    gap: 4px;
+    grid-template-columns: 1fr;
   }
 
   .bento-lead {
