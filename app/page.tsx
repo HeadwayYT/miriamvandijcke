@@ -48,7 +48,7 @@ const offers = [
     title: "Group Classes",
     copy:
       "Recurring or substitute group classes for gyms, studios and community spaces that need reliable energy.",
-    items: ["Basic-Fit Bruul Mechelen", "Pulsate Antwerp", "Mixed-level coaching"],
+    items: ["Basic-Fit Mechelen, Bruul", "Pulsate Antwerp", "Mixed-level coaching"],
     image: "/images/miriam-spinning.jpg",
   },
   {
@@ -67,7 +67,7 @@ const faqItems = [
   ],
   [
     "Where does Miriam teach?",
-    "She teaches at Basic-Fit Bruul in Mechelen and Pulsate in Antwerp. Personal training or projects can be discussed separately.",
+    "She teaches group classes at the Basic-Fit gym on Bruul in Mechelen and at Pulsate in Antwerp. Personal training or projects can be discussed separately.",
   ],
   [
     "Can beginners join?",
@@ -195,7 +195,7 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-stats" aria-label="Miriam training highlights">
-            <span>Basic-Fit Bruul</span>
+            <span>Basic-Fit Mechelen</span>
             <span>Pulsate Antwerp</span>
             <span>4 class formats</span>
           </div>
@@ -222,7 +222,7 @@ export default function Home() {
           <article className="bento-card bento-lead motion-image">
             <span className="floating-stat">Live coaching</span>
             <div>
-              <p>Currently teaching at Basic-Fit Bruul Mechelen and Pulsate Antwerp.</p>
+              <p>Currently teaching group classes at the Basic-Fit gym on Bruul in Mechelen and at Pulsate Antwerp.</p>
               <h3>Clear cueing. Strong tempo. No one left guessing.</h3>
             </div>
           </article>
