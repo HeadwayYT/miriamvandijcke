@@ -9,30 +9,26 @@ const classTypes = [
   {
     name: "Bodypump",
     detail:
-      "Les Mills certified barbell strength work with musical momentum, clean cueing and scalable options for mixed-level rooms.",
+      "Full-body barbell training with high repetitions, music and options for every level.",
     image: "/images/miriam-track-lunge.jpg",
-    metric: "Les Mills certified",
   },
   {
     name: "Strength Development",
     detail:
-      "Les Mills certified progressive strength sessions where technique, control and confidence become visible week after week.",
-    image: "/images/miriam-barbell-lunge.jpg",
-    metric: "Les Mills certified",
+      "Progressive strength blocks that build technique, control and measurable progress.",
+    image: "/images/miriam-strength-development-cutout.png",
   },
   {
     name: "Bodyattack",
     detail:
-      "Les Mills certified athletic cardio with sharp transitions, big-room energy and the kind of rhythm that pulls people in.",
+      "Athletic cardio combining running, lunging, jumping and strength moves.",
     image: "/images/miriam-bodyattack-card.jpg",
-    metric: "Les Mills certified",
   },
   {
     name: "Spinning",
     detail:
-      "Fitness NRG certified indoor cycling built around climbs, intervals, endurance and music-led drive from first track to finish.",
+      "Music-led indoor cycling with climbs, intervals and endurance work.",
     image: "/images/miriam-spinning.jpg",
-    metric: "Fitness NRG certified",
   },
 ];
 
@@ -220,23 +216,27 @@ export default function Home() {
         </div>
         <div className="class-bento">
           <article className="bento-card bento-lead motion-image">
-            <span className="floating-stat">Live coaching</span>
-            <div>
-              <p>Currently teaching group classes at the Basic-Fit gym on Bruul in Mechelen and at Pulsate Antwerp.</p>
-              <h3>Clear cueing. Strong tempo. No one left guessing.</h3>
-            </div>
+            <h3>Move with purpose.</h3>
           </article>
           {classTypes.map((classType) => (
             <article
-              className="bento-card compact-card"
+              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}`}
               key={classType.name}
-              style={{
-                backgroundImage: `linear-gradient(180deg, rgba(10,10,10,.22), rgba(10,10,10,.86)), url(${classType.image})`,
-              }}
             >
-              <span className="class-metric">{classType.metric}</span>
-              <h3>{classType.name}</h3>
-              <p>{classType.detail}</p>
+              <div
+                className="class-card-image"
+                style={{ backgroundImage: `url(${classType.image})` }}
+              />
+              <div className="class-card-shade" />
+              <div className="class-card-copy">
+                <h3>{classType.name}</h3>
+                <p>{classType.detail}</p>
+              </div>
+              <button
+                className="class-card-trigger"
+                type="button"
+                aria-label={`Reveal ${classType.name} details`}
+              />
             </article>
           ))}
         </div>

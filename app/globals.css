@@ -210,8 +210,6 @@ p {
 }
 
 .hero-stats span,
-.floating-stat,
-.class-metric,
 .panel-stat {
   backdrop-filter: blur(18px);
   background: rgba(23, 23, 23, 0.64);
@@ -341,78 +339,144 @@ p {
 }
 
 .bento-lead {
-  align-items: end;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(239, 68, 68, 0.3), transparent 28%),
-    linear-gradient(135deg, rgba(23, 23, 23, 0.96), rgba(10, 10, 10, 0.92));
+  align-items: center;
+  background: #141414;
   display: flex;
   grid-column: span 2;
   grid-row: span 2;
-  filter: contrast(1.12);
+  padding: clamp(30px, 5vw, 64px);
 }
 
 .bento-lead::after {
-  color: rgba(255, 255, 255, 0.1);
-  content: "STRENGTH\A RHYTHM\A ENERGY";
-  font-size: clamp(4.5rem, 10vw, 9.4rem);
-  font-weight: 900;
-  left: 26px;
-  letter-spacing: 0;
-  line-height: 0.82;
-  pointer-events: none;
+  background: var(--oxide);
+  bottom: clamp(30px, 5vw, 64px);
+  content: "";
+  height: 3px;
+  left: clamp(30px, 5vw, 64px);
   position: absolute;
-  top: 42px;
-  white-space: pre;
-  z-index: 0;
+  width: 52px;
+  z-index: 1;
 }
 
-.floating-stat {
-  position: absolute;
-  right: 24px;
-  top: 24px;
-  z-index: 2;
-}
-
-.bento-lead p,
 .compact-card p,
 .contact-inner p,
 .faq-grid p {
   line-height: 1.68;
 }
 
-.bento-lead p,
 .compact-card p {
   color: #d4d4d4;
 }
 
 .bento-lead h3 {
   color: #fff;
-  font-size: clamp(1.9rem, 4vw, 4rem);
+  font-size: clamp(3rem, 7vw, 7.4rem);
   font-weight: 500;
   letter-spacing: 0;
-  line-height: 0.98;
-  max-width: 640px;
+  line-height: 0.88;
+  margin: 0 0 34px;
+  max-width: 520px;
 }
 
 .compact-card {
-  align-content: end;
-  background-position: center;
-  background-size: cover;
-  display: grid;
-  filter: grayscale(0.92) contrast(1.25);
-  transition: transform 420ms ease, background 420ms ease;
+  cursor: default;
+  padding: 0;
+  transition: border-color 420ms ease, transform 420ms ease;
 }
 
-.compact-card:hover {
-  filter: grayscale(0.45) contrast(1.2);
+.cutout-card {
+  background:
+    radial-gradient(circle at 68% 26%, rgba(239, 68, 68, 0.32), transparent 42%),
+    #101010;
+}
+
+.compact-card:hover,
+.compact-card:focus-visible,
+.compact-card:focus-within {
+  border-color: rgba(255, 255, 255, 0.24);
   transform: translateY(-6px);
 }
 
-.class-metric {
-  align-self: start;
-  color: #ffffff;
-  justify-self: start;
-  margin-bottom: 74px;
+.compact-card:focus-visible {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.72);
+  outline: none;
+}
+
+.class-card-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: grayscale(0.88) contrast(1.18);
+  inset: 0;
+  position: absolute;
+  transition: filter 700ms ease, transform 700ms ease;
+  z-index: 0;
+}
+
+.class-card-shade {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.06) 18%, rgba(10, 10, 10, 0.9) 100%);
+  inset: 0;
+  position: absolute;
+  transition: background 520ms ease;
+  z-index: 1;
+}
+
+.class-card-copy {
+  bottom: 0;
+  left: 0;
+  padding: clamp(22px, 3vw, 32px);
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
+
+.class-card-trigger {
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  cursor: pointer;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 3;
+}
+
+.class-card-trigger:focus-visible {
+  box-shadow: inset 0 0 0 3px rgba(239, 68, 68, 0.82);
+  outline: none;
+}
+
+.compact-card p {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 0;
+  max-width: 34ch;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(16px);
+  transition: max-height 520ms ease, opacity 360ms ease, transform 420ms ease;
+}
+
+.compact-card:hover .class-card-image,
+.compact-card:focus-visible .class-card-image,
+.compact-card:focus-within .class-card-image {
+  filter: grayscale(0.28) contrast(1.12);
+  transform: scale(1.055);
+}
+
+.compact-card:hover .class-card-shade,
+.compact-card:focus-visible .class-card-shade,
+.compact-card:focus-within .class-card-shade {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.28), rgba(10, 10, 10, 0.96));
+}
+
+.compact-card:hover p,
+.compact-card:focus-visible p,
+.compact-card:focus-within p {
+  max-height: 140px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .compact-card h3,
@@ -421,6 +485,12 @@ p {
   font-size: clamp(1.25rem, 2vw, 1.85rem);
   font-weight: 500;
   letter-spacing: 0;
+  margin: 0;
+}
+
+.compact-card:hover h3,
+.compact-card:focus-visible h3,
+.compact-card:focus-within h3 {
   margin-bottom: 14px;
 }
 
