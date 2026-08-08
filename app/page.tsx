@@ -288,21 +288,22 @@ export default function Home() {
         <div className="about-grid">
           <div className="about-copy">
             <p className="eyebrow">About Miriam</p>
-            <h2>Good coaching changes the whole room.</h2>
+            <h2>I love what happens when a room moves together.</h2>
             <p className="about-lead">
-              Miriam is a group fitness and indoor cycling instructor who loves the
-              point where music, movement and people come together.
+              I&apos;m Miriam, a group fitness and indoor cycling instructor. What I
+              enjoy most is bringing music, movement and people together.
             </p>
             <p>
-              Whether she&apos;s coaching a BODYATTACK floor, loading a bar in BODYPUMP
-              or leading a ride, her focus stays the same: clear coaching, purposeful
-              intensity and an atmosphere where everyone feels part of the room.
+              In every class, I try to coach clearly, offer options for different
+              levels and create an atmosphere where everyone can feel welcome and
+              involved. Whether it&apos;s BODYATTACK, BODYPUMP, Strength Development or
+              a ride, I hope people leave feeling energised and glad they joined in.
             </p>
             <div className="about-certified" aria-label="Miriam's fitness certifications">
               <span>Certified in</span>
               <p>BODYATTACK · BODYPUMP · Strength Development · Indoor Cycling</p>
             </div>
-            <p className="about-note">You&apos;ll find her coaching weekly in Mechelen and Antwerp.</p>
+            <p className="about-note">You&apos;ll find me coaching weekly in Mechelen and Antwerp.</p>
           </div>
 
           <figure className="about-media">
