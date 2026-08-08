@@ -67,9 +67,9 @@ textarea {
 
 .site-header {
   align-items: center;
-  backdrop-filter: blur(20px);
-  background: rgba(10, 10, 10, 0.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(7px);
+  background: rgba(10, 10, 10, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
   box-shadow: none;
   display: flex;
   gap: 26px;
@@ -80,8 +80,16 @@ textarea {
   position: fixed;
   top: 0;
   transform: none;
+  transition: backdrop-filter 320ms ease, background-color 320ms ease, border-color 320ms ease, box-shadow 320ms ease;
   width: 100%;
   z-index: 60;
+}
+
+.site-header.is-scrolled {
+  backdrop-filter: blur(20px);
+  background: rgba(10, 10, 10, 0.58);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
 }
 
 .brand,
@@ -109,6 +117,7 @@ textarea {
   font-size: 0.88rem;
   font-weight: 760;
   padding: 9px 10px 7px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.68);
   transition: border-color 240ms ease, color 240ms ease;
 }
 

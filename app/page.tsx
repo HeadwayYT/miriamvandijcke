@@ -171,6 +171,13 @@ export default function Home() {
     () => {
       gsap.registerPlugin(ScrollTrigger);
 
+      ScrollTrigger.create({
+        trigger: ".hero",
+        start: "top -24px",
+        end: "max",
+        toggleClass: { targets: ".site-header", className: "is-scrolled" },
+      });
+
       gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-context, .hero-actions, .hero-proof", {
         y: 34,
         opacity: 0,
