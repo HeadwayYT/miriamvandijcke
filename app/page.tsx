@@ -488,7 +488,7 @@ export default function Home() {
         <div className="about-grid" id="about">
           <div className="about-copy">
             <p className="eyebrow">{t("About Miriam")}</p>
-            <h2>{t("I love what happens when a room moves together.")}</h2>
+            <h2>{t("I bring energy into the room.")}</h2>
             <p className="about-lead">
               {t(
                 "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.",
@@ -496,16 +496,9 @@ export default function Home() {
             </p>
             <p>
               {t(
-                "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in.",
+                "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in. I'm Les Mills certified in BODYATTACK, BODYPUMP and Strength Development, and earned my indoor cycling certificate at Fitness NRG.",
               )}
             </p>
-            <div
-              className="about-certified"
-              aria-label={t("Miriam's fitness certifications")}
-            >
-              <span>{t("Certified in")}</span>
-              <p>BODYATTACK &middot; BODYPUMP &middot; Strength Development &middot; Indoor Cycling</p>
-            </div>
             <p className="about-note">
               {t("You'll find me coaching weekly in Mechelen and Antwerp.")}
             </p>

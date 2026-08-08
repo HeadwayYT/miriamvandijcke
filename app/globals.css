@@ -412,29 +412,6 @@ p {
   margin-bottom: 20px;
 }
 
-.about-certified {
-  border-left: 2px solid var(--oxide);
-  margin-top: 36px;
-  padding: 2px 0 2px 20px;
-}
-
-.about-certified span {
-  color: var(--oxide);
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-bottom: 9px;
-  text-transform: uppercase;
-}
-
-.about-certified p {
-  color: var(--ink);
-  font-size: clamp(0.88rem, 1vw, 0.98rem);
-  font-weight: 600;
-  line-height: 1.65;
-  margin: 0;
-}
-
 .about-copy .about-note {
   color: var(--ash);
   font-size: 0.84rem;
@@ -1314,10 +1291,6 @@ footer a {
   .about-copy h2 {
     font-size: clamp(2.35rem, 11.5vw, 3.2rem);
     margin-bottom: 24px;
-  }
-
-  .about-certified {
-    margin-top: 30px;
   }
 
   .about-media {

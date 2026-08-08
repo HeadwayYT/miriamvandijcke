@@ -70,14 +70,11 @@ export const nlTranslations: Record<string, string> = {
   "Team building": "Teambuilding",
   "Brand and community events": "Merk- en community-evenementen",
   "About Miriam": "Over Miriam",
-  "I love what happens when a room moves together.":
-    "Ik hou van wat er gebeurt wanneer een hele zaal samen beweegt.",
+  "I bring energy into the room.": "Ik breng energie in de zaal.",
   "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.":
     "Ik ben Miriam, groepsfitness- en indoorcyclinginstructeur. Wat ik het liefste doe, is muziek, beweging en mensen samenbrengen.",
-  "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in.":
-    "In elke les probeer ik duidelijk te coachen, opties voor verschillende niveaus te geven en een sfeer te creëren waarin iedereen zich welkom en betrokken voelt. Of het nu BODYATTACK, BODYPUMP, Strength Development of een ride is: ik hoop dat mensen met nieuwe energie en een goed gevoel naar huis gaan.",
-  "Miriam's fitness certifications": "Miriams fitnesscertificeringen",
-  "Certified in": "Gecertificeerd in",
+  "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in. I'm Les Mills certified in BODYATTACK, BODYPUMP and Strength Development, and earned my indoor cycling certificate at Fitness NRG.":
+    "In elke les probeer ik duidelijk te coachen, opties voor verschillende niveaus te geven en een sfeer te creëren waarin iedereen zich welkom en betrokken voelt. Of het nu BODYATTACK, BODYPUMP, Strength Development of een ride is: ik hoop dat mensen met nieuwe energie en een goed gevoel naar huis gaan. Ik ben Les Mills-gecertificeerd in BODYATTACK, BODYPUMP en Strength Development en behaalde mijn indoorcyclingcertificaat bij Fitness NRG.",
   "You'll find me coaching weekly in Mechelen and Antwerp.":
     "Je vindt me wekelijks als lesgever in Mechelen en Antwerpen.",
   "Miriam smiling in a fitness studio while wearing her instructor headset":
