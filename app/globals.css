@@ -485,6 +485,29 @@ p {
   line-height: 1.02;
 }
 
+.bento-chapter .classes-heading {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(150px, 0.36fr) minmax(0, 1fr);
+  margin-bottom: clamp(36px, 4vw, 52px);
+  max-width: none;
+}
+
+.classes-heading .eyebrow {
+  margin: 6px 0 0;
+}
+
+.bento-chapter .classes-heading h2 {
+  font-size: clamp(2rem, 3vw, 3.2rem);
+  line-height: 1.04;
+  max-width: 760px;
+}
+
+.classes-heading .chapter-intro {
+  margin-top: 22px;
+  max-width: 650px;
+}
+
 .class-bento {
   display: grid;
   gap: 14px;
@@ -1379,9 +1402,14 @@ footer a {
     scroll-margin-top: 150px;
   }
 
+  .bento-chapter .classes-heading,
   .schedule-heading,
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .classes-heading .eyebrow {
+    margin-bottom: 6px;
   }
 
   .venue-action {

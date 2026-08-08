@@ -296,14 +296,16 @@ export default function Home() {
       </section>
 
       <section className="chapter bento-chapter">
-        <div className="chapter-heading">
+        <div className="chapter-heading classes-heading">
           <p className="eyebrow">Classes</p>
-          <h2>Four formats built for strength, rhythm and room energy.</h2>
-          <p className="chapter-intro">
-            Want to work out with me? You&apos;ll find me teaching regular classes at
-            selected gyms and studios. Access and booking are handled directly by
-            each venue.
-          </p>
+          <div>
+            <h2>Four formats built for strength, rhythm and room energy.</h2>
+            <p className="chapter-intro">
+              Want to work out with me? You&apos;ll find me teaching regular classes at
+              selected gyms and studios. Access and booking are handled directly by
+              each venue.
+            </p>
+          </div>
         </div>
         <div className="class-bento" id="classes">
           <article className="bento-lead motion-image">
