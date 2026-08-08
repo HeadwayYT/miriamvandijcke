@@ -171,7 +171,7 @@ export default function Home() {
     () => {
       gsap.registerPlugin(ScrollTrigger);
 
-      gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-actions", {
+      gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-context, .hero-actions, .hero-proof", {
         y: 34,
         opacity: 0,
         filter: "blur(10px)",
@@ -253,8 +253,8 @@ export default function Home() {
         <nav>
           <a href="#about">About</a>
           <a href="#classes">Classes</a>
-          <a href="#experiences">Experiences</a>
-          <a href="#contact">Contact</a>
+          <a href="#experiences">Private Experiences</a>
+          <a className="nav-cta" href="#contact">Book Miriam</a>
         </nav>
       </header>
 
@@ -262,7 +262,10 @@ export default function Home() {
         <div className="hero-media" aria-hidden="true" />
         <div className="hero-wash" />
         <div className="hero-inner">
-          <p className="hero-kicker">Group fitness / Indoor cycling / Fitness experiences</p>
+          <p className="hero-kicker">
+            Group fitness <span aria-hidden="true">&middot;</span> Indoor cycling
+            <span aria-hidden="true">&middot;</span> Events
+          </p>
           <h1 className="hero-title">
             <span>Move together.</span>
             <span>
@@ -270,55 +273,25 @@ export default function Home() {
             </span>
           </h1>
           <p className="hero-text">
-            Join Miriam in a regular studio class, or book her to create a private
-            fitness experience for your group, team or event.
+            High-energy group fitness and indoor cycling built around music, clear
+            coaching and a room that moves together.
+          </p>
+          <p className="hero-context">
+            Join Miriam weekly in Mechelen and Antwerp &mdash; or bring the energy to
+            your own group or event.
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#schedule">
               Find a class
             </a>
-            <a className="button secondary" href="#experiences">
-              Book an experience
+            <a className="hero-experience-link" href="#experiences">
+              Private experiences <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
-        </div>
-      </section>
-
-      <section className="chapter about-chapter">
-        <div className="about-grid" id="about">
-          <div className="about-copy">
-            <p className="eyebrow">About Miriam</p>
-            <h2>I love what happens when a room moves together.</h2>
-            <p className="about-lead">
-              I&apos;m Miriam, a group fitness and indoor cycling instructor. What I
-              enjoy most is bringing music, movement and people together.
-            </p>
-            <p>
-              In every class, I try to coach clearly, offer options for different
-              levels and create an atmosphere where everyone can feel welcome and
-              involved. Whether it&apos;s BODYATTACK, BODYPUMP, Strength Development or
-              a ride, I hope people leave feeling energised and glad they joined in.
-            </p>
-            <div className="about-certified" aria-label="Miriam's fitness certifications">
-              <span>Certified in</span>
-              <p>BODYATTACK · BODYPUMP · Strength Development · Indoor Cycling</p>
-            </div>
-            <p className="about-note">You&apos;ll find me coaching weekly in Mechelen and Antwerp.</p>
+          <div className="hero-proof" aria-label="Class formats and teaching locations">
+            <p>BODYATTACK &middot; BODYPUMP &middot; RIDE: PERFORMANCE</p>
+            <span>Mechelen &middot; Antwerp</span>
           </div>
-
-          <figure className="about-media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="about-photo"
-              src="/images/miriam-headset.jpg"
-              alt="Miriam smiling in a fitness studio while wearing her instructor headset"
-              width={1600}
-              height={1200}
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="about-media-shade" aria-hidden="true" />
-          </figure>
         </div>
       </section>
 
@@ -446,6 +419,44 @@ export default function Home() {
               <span className="work-option-cta">{pathway.cta}</span>
             </a>
           ))}
+        </div>
+      </section>
+
+      <section className="chapter about-chapter">
+        <div className="about-grid" id="about">
+          <div className="about-copy">
+            <p className="eyebrow">About Miriam</p>
+            <h2>I love what happens when a room moves together.</h2>
+            <p className="about-lead">
+              I&apos;m Miriam, a group fitness and indoor cycling instructor. What I
+              enjoy most is bringing music, movement and people together.
+            </p>
+            <p>
+              In every class, I try to coach clearly, offer options for different
+              levels and create an atmosphere where everyone can feel welcome and
+              involved. Whether it&apos;s BODYATTACK, BODYPUMP, Strength Development or
+              a ride, I hope people leave feeling energised and glad they joined in.
+            </p>
+            <div className="about-certified" aria-label="Miriam's fitness certifications">
+              <span>Certified in</span>
+              <p>BODYATTACK &middot; BODYPUMP &middot; Strength Development &middot; Indoor Cycling</p>
+            </div>
+            <p className="about-note">You&apos;ll find me coaching weekly in Mechelen and Antwerp.</p>
+          </div>
+
+          <figure className="about-media">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="about-photo"
+              src="/images/miriam-headset.jpg"
+              alt="Miriam smiling in a fitness studio while wearing her instructor headset"
+              width={1600}
+              height={1200}
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="about-media-shade" aria-hidden="true" />
+          </figure>
         </div>
       </section>
 
