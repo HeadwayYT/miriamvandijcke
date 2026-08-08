@@ -493,7 +493,7 @@ export default function Home() {
               </label>
               <label>
                 Preferred date
-                <input type="text" name="timing" placeholder="Preferred date" />
+                <input type="date" name="timing" />
               </label>
             </div>
             <label>

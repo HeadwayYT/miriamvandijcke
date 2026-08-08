@@ -977,6 +977,10 @@ p {
   color: #737373;
 }
 
+.contact-form input[type="date"] {
+  color-scheme: dark;
+}
+
 .contact-form textarea {
   resize: vertical;
 }
