@@ -141,7 +141,7 @@ textarea {
 }
 
 .hero-media {
-  background: #0a0a0a url("/images/miriam-kettlebell-coach.jpg") center 44% / cover no-repeat;
+  background: #0a0a0a url("/images/miriam-kettlebell-coach.jpg") center 18% / cover no-repeat;
   filter: blur(0) brightness(1);
   inset: 0;
   position: absolute;
