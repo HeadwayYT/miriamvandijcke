@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, type FormEvent, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -85,6 +85,30 @@ const revealWords =
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
+
+  function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const request = String(formData.get("request") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+    const subject = `Website request${name ? ` from ${name}` : ""}`;
+    const body = [
+      name ? `Name: ${name}` : "",
+      email ? `Email: ${email}` : "",
+      request ? `Request type: ${request}` : "",
+      "",
+      message,
+    ]
+      .filter((line) => line.length > 0)
+      .join("\n");
+
+    window.location.href = `mailto:miriam.s.presas@gmail.com?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(body)}`;
+  }
 
   useGSAP(
     () => {
@@ -185,9 +209,10 @@ export default function Home() {
       <section className="chapter intro-chapter">
         <div className="reveal-copy" aria-label="Miriam coaching positioning">
           {revealWords.map((word, index) => (
-            <span className="reveal-word" key={`${word}-${index}`}>
-              {word}
-            </span>
+            <Fragment key={`${word}-${index}`}>
+              <span className="reveal-word">{word}</span>
+              {index < revealWords.length - 1 ? " " : ""}
+            </Fragment>
           ))}
         </div>
       </section>
@@ -316,14 +341,15 @@ export default function Home() {
             action="mailto:miriam.s.presas@gmail.com"
             method="post"
             encType="text/plain"
+            onSubmit={handleContactSubmit}
           >
             <label>
               Name
-              <input type="text" name="name" placeholder="Your name" />
+              <input type="text" name="name" placeholder="Your name" required />
             </label>
             <label>
               Email
-              <input type="email" name="email" placeholder="you@example.com" />
+              <input type="email" name="email" placeholder="you@example.com" required />
             </label>
             <label>
               Request type
@@ -339,6 +365,7 @@ export default function Home() {
               <textarea
                 name="message"
                 placeholder="Tell Miriam what you are looking for"
+                required
                 rows={5}
               />
             </label>

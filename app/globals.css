@@ -308,7 +308,7 @@ p {
 
 .reveal-word {
   display: inline-block;
-  margin-right: 0.22em;
+  margin-right: 0.08em;
   opacity: 0.16;
   transform: translateY(16px);
 }
