@@ -1,9 +1,10 @@
 "use client";
 
-import { type FormEvent, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { type Language, nlTranslations } from "./translations";
 
 const classTypes = [
   {
@@ -140,10 +141,44 @@ const formspreeEndpoint = "https://formspree.io/f/mzepdael";
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
+  const [language, setLanguage] = useState<Language>("en");
   const [requestType, setRequestType] = useState("Private Indoor Cycling Experience");
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
   );
+  const t = (value: string) =>
+    language === "nl" ? (nlTranslations[value] ?? value) : value;
+
+  useEffect(() => {
+    const savedLanguage = window.localStorage.getItem("miriam-language");
+    if (savedLanguage === "en" || savedLanguage === "nl") {
+      window.queueMicrotask(() => setLanguage(savedLanguage));
+    }
+  }, []);
+
+  useEffect(() => {
+    const localizeMetadata = (value: string) =>
+      language === "nl" ? (nlTranslations[value] ?? value) : value;
+
+    document.documentElement.lang = language;
+    document.title = localizeMetadata(
+      "Miriam Van Dijcke | Group Fitness & Fitness Experiences",
+    );
+
+    const description = document.querySelector<HTMLMetaElement>(
+      'meta[name="description"]',
+    );
+    if (description) {
+      description.content = localizeMetadata(
+        "Group fitness and indoor cycling instructor in Mechelen and Antwerp. Join Miriam's regular classes or book a private fitness experience for your group, team or event.",
+      );
+    }
+  }, [language]);
+
+  function chooseLanguage(nextLanguage: Language) {
+    setLanguage(nextLanguage);
+    window.localStorage.setItem("miriam-language", nextLanguage);
+  }
 
   async function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -253,16 +288,30 @@ export default function Home() {
 
   return (
     <main ref={root} className="site-shell">
-      <header className="site-header" aria-label="Main navigation">
-        <a className="brand" href="#home" aria-label="Miriam Van Dijcke home">
+      <header className="site-header" aria-label={t("Main navigation")}>
+        <a className="brand" href="#home" aria-label={t("Miriam Van Dijcke home")}>
           <span>Miriam Van Dijcke</span>
         </a>
         <nav>
-          <a href="#about">About</a>
-          <a href="#classes">Classes</a>
-          <a href="#experiences">Private Experiences</a>
-          <a className="nav-cta" href="#contact">Book Miriam</a>
+          <a href="#about">{t("About")}</a>
+          <a href="#classes">{t("Classes")}</a>
+          <a href="#experiences">{t("Private Experiences")}</a>
+          <a className="nav-cta" href="#contact">{t("Book Miriam")}</a>
         </nav>
+        <div className="language-toggle" role="group" aria-label={t("Choose language")}>
+          {(["en", "nl"] as const).map((option) => (
+            <button
+              className={language === option ? "is-active" : undefined}
+              type="button"
+              lang={option}
+              aria-pressed={language === option}
+              onClick={() => chooseLanguage(option)}
+              key={option}
+            >
+              {option.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </header>
 
       <section className="hero" id="home">
@@ -270,29 +319,32 @@ export default function Home() {
         <div className="hero-wash" />
         <div className="hero-inner">
           <p className="hero-kicker">
-            Group fitness <span aria-hidden="true">&middot;</span> Indoor cycling
-            <span aria-hidden="true">&middot;</span> Events
+            {t("Group fitness")} <span aria-hidden="true">&middot;</span>{" "}
+            {t("Indoor cycling")} <span aria-hidden="true">&middot;</span>{" "}
+            {t("Events")}
           </p>
           <h1 className="hero-title">
-            <span>Move together.</span>
+            <span>{t("Move together.")}</span>
             <span>
-              With <em>Miriam.</em>
+              {t("With")} <em>Miriam.</em>
             </span>
           </h1>
           <p className="hero-text">
-            High-energy group fitness and indoor cycling built around music, clear
-            coaching and a room that moves together.
+            {t(
+              "High-energy group fitness and indoor cycling built around music, clear coaching and a room that moves together.",
+            )}
           </p>
           <p className="hero-context">
-            Join Miriam weekly in Mechelen and Antwerp &mdash; or bring the energy to
-            your own group or event.
+            {t(
+              "Join Miriam weekly in Mechelen and Antwerp — or bring the energy to your own group or event.",
+            )}
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#schedule">
-              Find a class
+              {t("Find a class")}
             </a>
             <a className="hero-experience-link" href="#experiences">
-              Private experiences <span aria-hidden="true">&rarr;</span>
+              {t("Private experiences")} <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>
@@ -300,18 +352,18 @@ export default function Home() {
 
       <section className="chapter bento-chapter">
         <div className="chapter-heading classes-heading">
-          <p className="eyebrow">Classes</p>
+          <p className="eyebrow">{t("Classes")}</p>
           <div>
             <p className="chapter-intro">
-              Want to work out with me? You&apos;ll find me teaching regular classes at
-              selected gyms and studios. Access and booking are handled directly by
-              each venue.
+              {t(
+                "Want to work out with me? You'll find me teaching regular classes at selected gyms and studios. Access and booking are handled directly by each venue.",
+              )}
             </p>
           </div>
         </div>
         <div className="class-bento" id="classes">
           <article className="bento-lead motion-image">
-            <h3>Move with purpose.</h3>
+            <h3>{t("Move with purpose.")}</h3>
           </article>
           {classTypes.map((classType) => (
             <article
@@ -324,13 +376,17 @@ export default function Home() {
               />
               <div className="class-card-shade" />
               <div className="class-card-copy">
-                <h3>{classType.name}</h3>
-                <p>{classType.detail}</p>
+                <h3>{t(classType.name)}</h3>
+                <p>{t(classType.detail)}</p>
               </div>
               <button
                 className="class-card-trigger"
                 type="button"
-                aria-label={`Reveal ${classType.name} details`}
+                aria-label={
+                  language === "nl"
+                    ? `Bekijk details over ${t(classType.name)}`
+                    : `Reveal ${classType.name} details`
+                }
               />
             </article>
           ))}
@@ -338,23 +394,23 @@ export default function Home() {
 
         <div className="schedule-block" id="schedule">
           <div className="schedule-heading">
-            <p className="eyebrow">Weekly schedule</p>
+            <p className="eyebrow">{t("Weekly schedule")}</p>
             <div>
-              <h3>Find me in class every week in Mechelen and Antwerp.</h3>
-              <p>Booking and access are handled directly through each gym or studio.</p>
+              <h3>{t("Find me in class every week in Mechelen and Antwerp.")}</h3>
+              <p>{t("Booking and access are handled directly through each gym or studio.")}</p>
             </div>
           </div>
           <div className="venue-grid">
             {venues.map((venue) => (
               <article className="venue-card" key={venue.name}>
                 <div className="venue-card-heading">
-                  <p className="venue-format">{venue.formats}</p>
+                  <p className="venue-format">{t(venue.formats)}</p>
                   <h3>{venue.name}</h3>
                 </div>
                 <div className="venue-schedule">
                   {venue.days.map((day) => (
                     <div className="schedule-day" key={day.day}>
-                      <p>{day.day}</p>
+                      <p>{t(day.day)}</p>
                       <div className="session-list">
                         {day.classes.map((classItem) => (
                           <div className="class-session" key={`${day.day}-${classItem.time}`}>
@@ -370,34 +426,36 @@ export default function Home() {
                 <div className="venue-action">
                   <address>{venue.location}</address>
                   <a href={venue.href} target="_blank" rel="noreferrer">
-                    {venue.cta}
+                    {t(venue.cta)}
                   </a>
                 </div>
               </article>
             ))}
           </div>
           <p className="schedule-note">
-            Schedules may change. Check the studio for the latest availability.
-            Studio access or membership may be required.
+            {t(
+              "Schedules may change. Check the studio for the latest availability. Studio access or membership may be required.",
+            )}
           </p>
         </div>
       </section>
 
-      <section className="marquee-band" aria-label="Class formats">
+      <section className="marquee-band" aria-label={t("Class formats")}>
         <div className="marquee-track">
           {[...classTypes, ...classTypes].map((classType, index) => (
-            <span key={`${classType.name}-${index}`}>{classType.name}</span>
+            <span key={`${classType.name}-${index}`}>{t(classType.name)}</span>
           ))}
         </div>
       </section>
 
       <section className="chapter accordion-chapter">
         <div className="chapter-heading wide">
-          <p className="eyebrow">Private experiences</p>
-          <h2>Your group. Your music. Your workout.</h2>
+          <p className="eyebrow">{t("Private experiences")}</p>
+          <h2>{t("Your group. Your music. Your workout.")}</h2>
           <p className="chapter-intro">
-            Planning something different? Miriam can create and lead a high-energy
-            fitness experience for your group, team or event.
+            {t(
+              "Planning something different? Miriam can create and lead a high-energy fitness experience for your group, team or event.",
+            )}
           </p>
         </div>
         <div className="work-options" id="experiences">
@@ -406,21 +464,21 @@ export default function Home() {
               className="work-option"
               href={pathway.href}
               key={pathway.title}
-              aria-label={`${pathway.cta}: ${pathway.title}`}
+              aria-label={`${t(pathway.cta)}: ${t(pathway.title)}`}
               onClick={() => {
                 if (pathway.request) setRequestType(pathway.request);
               }}
             >
               <div>
-                <h3>{pathway.title}</h3>
-                <p>{pathway.copy}</p>
+                <h3>{t(pathway.title)}</h3>
+                <p>{t(pathway.copy)}</p>
               </div>
               <ul>
                 {pathway.items.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item}>{t(item)}</li>
                 ))}
               </ul>
-              <span className="work-option-cta">{pathway.cta}</span>
+              <span className="work-option-cta">{t(pathway.cta)}</span>
             </a>
           ))}
         </div>
@@ -429,23 +487,28 @@ export default function Home() {
       <section className="chapter about-chapter">
         <div className="about-grid" id="about">
           <div className="about-copy">
-            <p className="eyebrow">About Miriam</p>
-            <h2>I love what happens when a room moves together.</h2>
+            <p className="eyebrow">{t("About Miriam")}</p>
+            <h2>{t("I love what happens when a room moves together.")}</h2>
             <p className="about-lead">
-              I&apos;m Miriam, a group fitness and indoor cycling instructor. What I
-              enjoy most is bringing music, movement and people together.
+              {t(
+                "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.",
+              )}
             </p>
             <p>
-              In every class, I try to coach clearly, offer options for different
-              levels and create an atmosphere where everyone can feel welcome and
-              involved. Whether it&apos;s BODYATTACK, BODYPUMP, Strength Development or
-              a ride, I hope people leave feeling energised and glad they joined in.
+              {t(
+                "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in.",
+              )}
             </p>
-            <div className="about-certified" aria-label="Miriam's fitness certifications">
-              <span>Certified in</span>
+            <div
+              className="about-certified"
+              aria-label={t("Miriam's fitness certifications")}
+            >
+              <span>{t("Certified in")}</span>
               <p>BODYATTACK &middot; BODYPUMP &middot; Strength Development &middot; Indoor Cycling</p>
             </div>
-            <p className="about-note">You&apos;ll find me coaching weekly in Mechelen and Antwerp.</p>
+            <p className="about-note">
+              {t("You'll find me coaching weekly in Mechelen and Antwerp.")}
+            </p>
           </div>
 
           <figure className="about-media">
@@ -453,7 +516,7 @@ export default function Home() {
             <img
               className="about-photo"
               src="/images/miriam-headset.jpg"
-              alt="Miriam smiling in a fitness studio while wearing her instructor headset"
+              alt={t("Miriam smiling in a fitness studio while wearing her instructor headset")}
               width={1600}
               height={1200}
               loading="lazy"
@@ -466,14 +529,14 @@ export default function Home() {
 
       <section className="chapter faq-chapter">
         <div className="chapter-heading">
-          <p className="eyebrow">Practical questions</p>
-          <h2>Before you send a request.</h2>
+          <p className="eyebrow">{t("Practical questions")}</p>
+          <h2>{t("Before you send a request.")}</h2>
         </div>
         <div className="faq-grid">
           {faqItems.map(([question, answer]) => (
             <article key={question}>
-              <h3>{question}</h3>
-              <p>{answer}</p>
+              <h3>{t(question)}</h3>
+              <p>{t(answer)}</p>
             </article>
           ))}
         </div>
@@ -482,11 +545,12 @@ export default function Home() {
       <section className="contact-chapter">
         <div className="contact-inner" id="contact">
           <div>
-            <p className="eyebrow">Contact</p>
-            <h2>Book a private fitness experience.</h2>
+            <p className="eyebrow">{t("Contact")}</p>
+            <h2>{t("Book a private fitness experience.")}</h2>
             <p>
-              Tell Miriam about your group, preferred format, timing and venue.
-              Regular studio classes are booked directly through the venue.
+              {t(
+                "Tell Miriam about your group, preferred format, timing and venue. Regular studio classes are booked directly through the venue.",
+              )}
             </p>
             <a
               className="instagram-link"
@@ -505,76 +569,83 @@ export default function Home() {
             aria-busy={formStatus === "submitting"}
           >
             <label>
-              Name
-              <input type="text" name="name" placeholder="Your name" required />
+              {t("Name")}
+              <input type="text" name="name" placeholder={t("Your name")} required />
             </label>
             <label>
-              Email
+              {t("Email")}
               <input type="email" name="email" placeholder="you@example.com" required />
             </label>
             <label>
-              Experience type
+              {t("Experience type")}
               <select
                 name="request"
                 value={requestType}
                 onChange={(event) => setRequestType(event.target.value)}
                 required
               >
-                <option>Private Indoor Cycling Experience</option>
-                <option>Private Group Workout</option>
-                <option>Corporate / Team Event</option>
-                <option>Brand / Community Event</option>
-                <option>Other</option>
+                <option value="Private Indoor Cycling Experience">
+                  {t("Private Indoor Cycling Experience")}
+                </option>
+                <option value="Private Group Workout">{t("Private Group Workout")}</option>
+                <option value="Corporate / Team Event">{t("Corporate / Team Event")}</option>
+                <option value="Brand / Community Event">
+                  {t("Brand / Community Event")}
+                </option>
+                <option value="Other">{t("Other")}</option>
               </select>
             </label>
             <label>
-              Location / Venue
+              {t("Location / Venue")}
               <select name="venue" required defaultValue="Not sure yet">
-                <option>I already have a venue</option>
-                <option>I need help arranging a suitable venue</option>
-                <option>Not sure yet</option>
+                <option value="I already have a venue">{t("I already have a venue")}</option>
+                <option value="I need help arranging a suitable venue">
+                  {t("I need help arranging a suitable venue")}
+                </option>
+                <option value="Not sure yet">{t("Not sure yet")}</option>
               </select>
             </label>
             <div className="form-row">
               <label>
-                Group size
+                {t("Group size")}
                 <input
                   type="number"
                   name="groupSize"
                   min="2"
-                  placeholder="Estimated number"
+                  placeholder={t("Estimated number")}
                 />
               </label>
               <label>
-                Preferred date
+                {t("Preferred date")}
                 <input type="date" name="timing" />
               </label>
             </div>
             <label>
-              Message
+              {t("Message")}
               <textarea
                 name="message"
-                placeholder="Tell Miriam what you are looking for"
+                placeholder={t("Tell Miriam what you are looking for")}
                 required
                 rows={5}
               />
             </label>
             <p className="form-note">
-              Indoor cycling experiences require access to a suitable studio and
-              bikes; these need to be available or arranged.
+              {t(
+                "Indoor cycling experiences require access to a suitable studio and bikes; these need to be available or arranged.",
+              )}
             </p>
             {formStatus === "success" ? (
               <p className="form-status success" role="status">
-                Thank you. Your enquiry has been sent to Miriam.
+                {t("Thank you. Your enquiry has been sent to Miriam.")}
               </p>
             ) : null}
             {formStatus === "error" ? (
               <p className="form-status error" role="alert">
-                Something went wrong. Please try again in a moment.
+                {t("Something went wrong. Please try again in a moment.")}
               </p>
             ) : null}
             <button type="submit" disabled={formStatus === "submitting"}>
-              {formStatus === "submitting" ? "Sending..." : "Send enquiry"}
+              {formStatus === "submitting" ? t("Sending...") : t("Send enquiry")}
             </button>
           </form>
         </div>

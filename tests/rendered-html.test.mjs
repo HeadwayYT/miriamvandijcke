@@ -17,6 +17,24 @@ test("server-renders the two distinct visitor journeys", async () => {
   assert.doesNotMatch(html, />Book now</i);
 });
 
+test("renders an accessible English and Dutch language switch", async () => {
+  const html = await render();
+  const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const translations = await readFile(
+    new URL("../app/translations.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(html, /aria-label="Choose language"/i);
+  assert.match(html, />EN<\/button>/i);
+  assert.match(html, />NL<\/button>/i);
+  assert.match(source, /localStorage\.setItem\("miriam-language"/);
+  assert.match(source, /document\.documentElement\.lang = language/);
+  assert.match(translations, /"Move together\.": "Samen in beweging\."/);
+  assert.match(translations, /"Book Miriam": "Boek Miriam"/);
+  assert.match(translations, /"Send enquiry": "Verstuur aanvraag"/);
+});
+
 test("renders the compact venue schedules and private enquiry options", async () => {
   const html = await render();
 

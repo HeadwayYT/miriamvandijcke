@@ -136,6 +136,47 @@ textarea {
   border-color: var(--oxide);
 }
 
+.language-toggle {
+  background: rgba(10, 10, 10, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(2, 1fr);
+  height: 34px;
+  overflow: hidden;
+  padding: 2px;
+  width: 76px;
+}
+
+.language-toggle button {
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.64);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0;
+  min-width: 0;
+  padding: 0;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.language-toggle button:hover {
+  color: #ffffff;
+}
+
+.language-toggle button.is-active {
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
+.language-toggle button:focus-visible {
+  box-shadow: 0 0 0 2px var(--oxide);
+  outline: none;
+}
+
 .hero {
   align-items: flex-end;
   background-color: #0a0a0a;
@@ -1287,6 +1328,12 @@ footer a {
     align-items: flex-start;
     flex-direction: column;
     padding: 13px 16px 10px;
+  }
+
+  .language-toggle {
+    position: absolute;
+    right: 16px;
+    top: 10px;
   }
 
   .site-header nav {
