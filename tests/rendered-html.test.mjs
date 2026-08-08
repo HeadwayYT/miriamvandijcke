@@ -47,7 +47,7 @@ test("renders the compact venue schedules and private enquiry options", async ()
   assert.match(html, /BODYATTACK/);
   assert.match(html, /BODYPUMP/);
   assert.match(html, /RIDE: PERFORMANCE/);
-  assert.match(html, />Private Ride<\/h3>/);
+  assert.match(html, />Private Indoor Cycling Experience<\/h3>/);
   assert.match(html, />Private Group Workout<\/h3>/);
   assert.match(html, />Corporate &amp; Events<\/h3>/);
 

@@ -25,7 +25,7 @@ const classTypes = [
     image: "/images/miriam-bodyattack-card.jpg",
   },
   {
-    name: "Spinning",
+    name: "Spinning / Ride",
     detail:
       "Music-led indoor cycling with climbs, intervals and endurance work.",
     image: "/images/miriam-spinning.jpg",
@@ -34,13 +34,13 @@ const classTypes = [
 
 const pathways = [
   {
-    title: "Private Ride",
+    title: "Private Indoor Cycling Experience",
     copy:
       "A custom indoor cycling experience for your private group. A suitable studio and bikes must be available or arranged.",
     items: ["Friends and celebrations", "Themed rides", "Special occasions"],
     href: "#contact",
     cta: "Enquire about an experience",
-    request: "Private Ride",
+    request: "Private Indoor Cycling Experience",
   },
   {
     title: "Private Group Workout",
@@ -124,11 +124,11 @@ const faqItems = [
   ],
   [
     "Can beginners join?",
-    "Yes. Miriam adapts coaching and intensity so different levels can train in the same room with confidence.",
+    "Yes. Miriam coaches different levels in the same room and consistently offers lighter or lower-impact options, as is typical in Les Mills classes, so beginners can move with confidence.",
   ],
   [
     "Can I book Miriam directly?",
-    "Yes, for private group workouts, rides, corporate sessions and fitness events. Her regular weekly studio classes are accessed through the respective venue.",
+    "Yes, for private group workouts, indoor cycling experiences, corporate sessions and fitness events. Her regular weekly studio classes are accessed through the respective venue.",
   ],
   [
     "Does Miriam offer personal training?",
@@ -142,7 +142,7 @@ const revealWords =
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
-  const [requestType, setRequestType] = useState("Private Ride");
+  const [requestType, setRequestType] = useState("Private Indoor Cycling Experience");
 
   function handleContactSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -284,7 +284,7 @@ export default function Home() {
           </article>
           {classTypes.map((classType) => (
             <article
-              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}${classType.name === "Bodypump" ? " bodypump-card" : ""}${classType.name === "Bodyattack" ? " bodyattack-card" : ""}${classType.name === "Spinning" ? " spinning-card" : ""}`}
+              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}${classType.name === "Bodypump" ? " bodypump-card" : ""}${classType.name === "Bodyattack" ? " bodyattack-card" : ""}${classType.name === "Spinning / Ride" ? " spinning-card" : ""}`}
               key={classType.name}
             >
               <div
@@ -451,7 +451,7 @@ export default function Home() {
                 onChange={(event) => setRequestType(event.target.value)}
                 required
               >
-                <option>Private Ride</option>
+                <option>Private Indoor Cycling Experience</option>
                 <option>Private Group Workout</option>
                 <option>Corporate / Team Event</option>
                 <option>Brand / Community Event</option>
@@ -491,8 +491,8 @@ export default function Home() {
               />
             </label>
             <p className="form-note">
-              Private rides require access to a suitable cycling studio and bikes;
-              these need to be available or arranged.
+              Indoor cycling experiences require access to a suitable studio and
+              bikes; these need to be available or arranged.
             </p>
             <button type="submit">Send enquiry</button>
           </form>
