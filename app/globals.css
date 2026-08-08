@@ -572,6 +572,7 @@ p {
   border-radius: 16px;
   display: grid;
   gap: 30px;
+  grid-template-rows: auto 1fr auto;
   min-height: 300px;
   padding: clamp(26px, 3.2vw, 42px);
 }
@@ -773,7 +774,6 @@ p {
     linear-gradient(180deg, rgba(239, 68, 68, 0.12), transparent 54%),
     rgba(29, 29, 29, 0.84);
   border-color: rgba(255, 255, 255, 0.22);
-  transform: translateY(-7px);
 }
 
 .work-option:hover::before,
@@ -790,6 +790,12 @@ p {
   font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 0.98;
   margin-bottom: 24px;
+}
+
+@media (min-width: 981px) {
+  .work-option > div {
+    min-height: 260px;
+  }
 }
 
 .work-option p {

@@ -104,7 +104,7 @@ const venues: Venue[] = [
       {
         day: "Sat",
         classes: [
-          { time: "10:00 - 10:50", name: "RIDE: PERFORMANCE", meta: "50 min" },
+          { time: "10:00 - 10:50", name: "RIDE: PERFORMANCE" },
         ],
       },
     ],
@@ -268,7 +268,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter bento-chapter" id="classes">
+      <section className="chapter bento-chapter">
         <div className="chapter-heading">
           <p className="eyebrow">Classes</p>
           <h2>Four formats built for strength, rhythm and room energy.</h2>
@@ -278,7 +278,7 @@ export default function Home() {
             each venue.
           </p>
         </div>
-        <div className="class-bento">
+        <div className="class-bento" id="classes">
           <article className="bento-lead motion-image">
             <h3>Move with purpose.</h3>
           </article>
@@ -360,7 +360,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter accordion-chapter" id="experiences">
+      <section className="chapter accordion-chapter">
         <div className="chapter-heading wide">
           <p className="eyebrow">Private experiences</p>
           <h2>Your group. Your music. Your workout.</h2>
@@ -369,7 +369,7 @@ export default function Home() {
             fitness experience for your group, team or event.
           </p>
         </div>
-        <div className="work-options">
+        <div className="work-options" id="experiences">
           {pathways.map((pathway) => (
             <a
               className="work-option"
@@ -410,8 +410,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="contact-chapter" id="contact">
-        <div className="contact-inner">
+      <section className="contact-chapter">
+        <div className="contact-inner" id="contact">
           <div>
             <p className="eyebrow">Contact</p>
             <h2>Book a private fitness experience.</h2>
