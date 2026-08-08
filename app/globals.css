@@ -457,6 +457,7 @@ p {
 .accordion-chapter {
   background: var(--bone);
   color: #fff;
+  padding-bottom: clamp(70px, 8vw, 112px);
 }
 
 .accordion-chapter .chapter-heading h2 {
@@ -532,6 +533,8 @@ p {
 
 .faq-chapter {
   background: var(--bone);
+  padding-bottom: clamp(56px, 6vw, 88px);
+  padding-top: clamp(72px, 7vw, 104px);
 }
 
 .faq-grid {
@@ -552,7 +555,7 @@ p {
 .contact-chapter {
   background: var(--bone);
   color: #fff;
-  padding: clamp(86px, 12vw, 156px) clamp(18px, 5vw, 76px) 42px;
+  padding: clamp(64px, 7vw, 104px) clamp(18px, 5vw, 76px) 42px;
 }
 
 .contact-inner {

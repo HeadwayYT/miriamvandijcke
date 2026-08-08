@@ -10,7 +10,7 @@ const classTypes = [
     name: "Bodypump",
     detail:
       "Les Mills certified barbell strength work with musical momentum, clean cueing and scalable options for mixed-level rooms.",
-    image: "/images/miriam-group-bodypump.jpg",
+    image: "/images/miriam-track-lunge.jpg",
     metric: "Les Mills certified",
   },
   {
@@ -24,7 +24,7 @@ const classTypes = [
     name: "Bodyattack",
     detail:
       "Les Mills certified athletic cardio with sharp transitions, big-room energy and the kind of rhythm that pulls people in.",
-    image: "/images/miriam-track-lunge.jpg",
+    image: "/images/miriam-bodyattack-card.jpg",
     metric: "Les Mills certified",
   },
   {
