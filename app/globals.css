@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bone: #f2eee6;
-  --ink: #11110f;
-  --ash: #7b746a;
-  --paper: #fffaf0;
-  --line: rgba(17, 17, 15, 0.14);
-  --oxide: #d94f2b;
-  --sage: #bcd8c7;
-  --chrome: #d7cec0;
-  --night: #121615;
+  --bone: #0a0a0a;
+  --ink: #ffffff;
+  --ash: #737373;
+  --paper: #171717;
+  --line: rgba(255, 255, 255, 0.1);
+  --oxide: #ef4444;
+  --sage: #dc2626;
+  --chrome: #525252;
+  --night: #171717;
+  --body: #d4d4d4;
+  --glass: rgba(10, 10, 10, 0.4);
 }
 
 @theme inline {
@@ -29,17 +31,17 @@ html {
 
 body {
   background: var(--bone);
-  color: var(--ink);
+  color: var(--body);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   margin: 0;
 }
 
 body::before {
-  background-image: radial-gradient(rgba(17, 17, 15, 0.11) 0.65px, transparent 0.65px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 0.65px, transparent 0.65px);
   background-size: 5px 5px;
   content: "";
   inset: 0;
-  opacity: 0.22;
+  opacity: 0.12;
   pointer-events: none;
   position: fixed;
   z-index: 50;
@@ -65,9 +67,10 @@ textarea {
 
 .site-header {
   align-items: center;
-  background: rgba(242, 238, 230, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  box-shadow: 0 22px 70px rgba(17, 17, 15, 0.13);
+  backdrop-filter: blur(24px);
+  background: var(--glass);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.38);
   display: flex;
   gap: 26px;
   justify-content: space-between;
@@ -78,7 +81,7 @@ textarea {
   top: 18px;
   transform: translateX(-50%);
   width: 100%;
-  z-index: 20;
+  z-index: 60;
 }
 
 .brand,
@@ -90,15 +93,15 @@ textarea {
 .brand {
   color: var(--ink);
   font-size: 0.92rem;
-  font-weight: 860;
+  font-weight: 600;
   gap: 12px;
   white-space: nowrap;
 }
 
 .brand-mark {
   align-items: center;
-  background: var(--ink);
-  color: #fff;
+  background: #ffffff;
+  color: #0a0a0a;
   display: inline-flex;
   font-size: 0.72rem;
   font-weight: 900;
@@ -109,13 +112,16 @@ textarea {
 }
 
 .site-header nav {
-  background: rgba(255, 250, 240, 0.78);
+  backdrop-filter: blur(16px);
+  background: rgba(23, 23, 23, 0.5);
+  border-radius: 9999px;
   gap: 3px;
   padding: 4px;
 }
 
 .site-header nav a {
-  color: rgba(17, 17, 15, 0.72);
+  border-radius: 9999px;
+  color: #d4d4d4;
   font-size: 0.88rem;
   font-weight: 760;
   padding: 10px 14px;
@@ -123,14 +129,14 @@ textarea {
 }
 
 .site-header nav a:hover {
-  background: var(--ink);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .hero {
   align-items: center;
   background:
-    linear-gradient(180deg, rgba(18, 22, 21, 0.08), rgba(18, 22, 21, 0.9)),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.32), rgba(10, 10, 10, 0.96)),
     url("https://picsum.photos/seed/miriam-cinematic-fitness/2200/1400");
   background-position: center;
   background-size: cover;
@@ -143,8 +149,8 @@ textarea {
 
 .hero-wash {
   background:
-    radial-gradient(circle at 18% 18%, rgba(217, 79, 43, 0.44), transparent 32%),
-    radial-gradient(circle at 82% 76%, rgba(188, 216, 199, 0.28), transparent 30%);
+    radial-gradient(circle at 18% 18%, rgba(239, 68, 68, 0.38), transparent 32%),
+    radial-gradient(circle at 82% 76%, rgba(220, 38, 38, 0.22), transparent 30%);
   inset: 0;
   mix-blend-mode: screen;
   opacity: 0.74;
@@ -163,7 +169,7 @@ textarea {
 .eyebrow {
   color: var(--oxide);
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 600;
   letter-spacing: 0;
   margin: 0 0 18px;
   text-transform: uppercase;
@@ -184,7 +190,7 @@ p {
   color: #fff;
   display: grid;
   font-size: clamp(3.35rem, 7.2vw, 6.8rem);
-  font-weight: 920;
+  font-weight: 500;
   letter-spacing: 0;
   line-height: 0.92;
   margin: 0 auto 28px;
@@ -197,7 +203,8 @@ p {
     url("https://picsum.photos/seed/miriam-inline-motion/600/320");
   background-position: center;
   background-size: cover;
-  border: 2px solid rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
   display: inline-block;
   height: clamp(40px, 6vw, 72px);
   margin: 0 10px;
@@ -207,7 +214,7 @@ p {
 }
 
 .hero-text {
-  color: rgba(255, 255, 255, 0.78);
+  color: #d4d4d4;
   font-size: clamp(1.02rem, 1.35vw, 1.28rem);
   line-height: 1.72;
   margin: 0 auto;
@@ -231,6 +238,7 @@ p {
   justify-content: center;
   min-height: 54px;
   padding: 15px 22px;
+  border-radius: 9999px;
   transition: transform 240ms ease, background 240ms ease, color 240ms ease;
 }
 
@@ -242,13 +250,14 @@ p {
 .button.primary,
 .contact-form button {
   background: #fff;
-  color: var(--ink);
+  color: #0a0a0a;
 }
 
 .button.secondary {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.52);
-  color: #fff;
+  backdrop-filter: blur(16px);
+  background: rgba(23, 23, 23, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e5e5e5;
 }
 
 .chapter {
@@ -262,7 +271,7 @@ p {
 .reveal-copy {
   color: var(--ink);
   font-size: clamp(2rem, 5.5vw, 5.8rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: 0;
   line-height: 1.02;
   margin: 0 auto;
@@ -291,7 +300,7 @@ p {
 .contact-inner h2 {
   color: var(--ink);
   font-size: clamp(2.25rem, 5vw, 5.2rem);
-  font-weight: 910;
+  font-weight: 500;
   letter-spacing: 0;
   line-height: 0.96;
   margin: 0;
@@ -306,8 +315,10 @@ p {
 }
 
 .bento-card {
-  background: var(--night);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(23, 23, 23, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
   color: #fff;
   min-height: 230px;
   overflow: hidden;
@@ -316,7 +327,7 @@ p {
 }
 
 .bento-card::before {
-  background: radial-gradient(circle at 20% 8%, rgba(217, 79, 43, 0.45), transparent 32%);
+  background: radial-gradient(circle at 20% 8%, rgba(239, 68, 68, 0.34), transparent 32%);
   content: "";
   inset: 0;
   opacity: 0.72;
@@ -330,7 +341,7 @@ p {
 .bento-lead {
   align-items: end;
   background:
-    linear-gradient(180deg, rgba(17, 17, 15, 0.06), rgba(17, 17, 15, 0.78)),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.82)),
     url("https://picsum.photos/seed/miriam-group-class-room/1400/1000");
   background-position: center;
   background-size: cover;
@@ -349,13 +360,13 @@ p {
 
 .bento-lead p,
 .compact-card p {
-  color: rgba(255, 255, 255, 0.72);
+  color: #d4d4d4;
 }
 
 .bento-lead h3 {
   color: #fff;
   font-size: clamp(1.9rem, 4vw, 4rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: 0;
   line-height: 0.98;
   max-width: 640px;
@@ -366,7 +377,7 @@ p {
 }
 
 .compact-card:hover {
-  background: #1e2523;
+  background: rgba(38, 38, 38, 0.4);
   transform: translateY(-6px);
 }
 
@@ -374,7 +385,7 @@ p {
 .offer-panel h3,
 .faq-grid h3 {
   font-size: clamp(1.25rem, 2vw, 1.85rem);
-  font-weight: 880;
+  font-weight: 500;
   letter-spacing: 0;
   margin-bottom: 14px;
 }
@@ -396,7 +407,7 @@ p {
 
 .marquee-track span {
   font-size: clamp(1.15rem, 2.6vw, 2.4rem);
-  font-weight: 910;
+  font-weight: 500;
   letter-spacing: 0;
 }
 
@@ -410,7 +421,7 @@ p {
 }
 
 .accordion-chapter {
-  background: var(--night);
+  background: var(--bone);
   color: #fff;
 }
 
@@ -425,7 +436,10 @@ p {
 }
 
 .offer-panel {
-  background: #1b201f;
+  background: rgba(23, 23, 23, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
   display: grid;
   flex: 1;
   grid-template-rows: 1fr auto;
@@ -441,7 +455,9 @@ p {
 .panel-media {
   background-position: center;
   background-size: cover;
+  filter: grayscale(1) contrast(1.15);
   min-height: 390px;
+  mix-blend-mode: luminosity;
 }
 
 .panel-copy {
@@ -449,19 +465,19 @@ p {
 }
 
 .panel-copy p {
-  color: rgba(255, 255, 255, 0.68);
+  color: #d4d4d4;
   line-height: 1.64;
 }
 
 .panel-copy ul {
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   list-style: none;
   margin: 24px 0 0;
   padding: 18px 0 0;
 }
 
 .panel-copy li {
-  color: rgba(255, 255, 255, 0.82);
+  color: #d4d4d4;
   line-height: 1.7;
 }
 
@@ -476,7 +492,7 @@ p {
 .proof-media {
   aspect-ratio: 4 / 5;
   background:
-    linear-gradient(180deg, rgba(17, 17, 15, 0.03), rgba(17, 17, 15, 0.54)),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.12), rgba(10, 10, 10, 0.76)),
     url("https://picsum.photos/seed/miriam-clinical-precision-fitness/1100/1400");
   background-position: center;
   background-size: cover;
@@ -486,7 +502,7 @@ p {
 .proof-copy p,
 .contact-inner p,
 .faq-grid p {
-  color: var(--ash);
+  color: #d4d4d4;
   font-size: 1.02rem;
 }
 
@@ -506,14 +522,16 @@ p {
 }
 
 .faq-grid article {
-  background: rgba(255, 250, 240, 0.78);
+  background: rgba(23, 23, 23, 0.3);
   border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
   min-height: 210px;
   padding: clamp(22px, 3vw, 34px);
 }
 
 .contact-chapter {
-  background: var(--ink);
+  background: var(--bone);
   color: #fff;
   padding: clamp(86px, 12vw, 156px) clamp(18px, 5vw, 76px) 42px;
 }
@@ -531,7 +549,7 @@ p {
 }
 
 .contact-inner > div > p:last-of-type {
-  color: rgba(255, 255, 255, 0.72);
+  color: #d4d4d4;
   margin-top: 24px;
   max-width: 620px;
 }
@@ -546,8 +564,11 @@ p {
 }
 
 .contact-form {
-  background: #fff;
-  color: var(--ink);
+  background: rgba(23, 23, 23, 0.3);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02);
+  color: #ffffff;
   display: grid;
   gap: 16px;
   padding: clamp(22px, 3vw, 34px);
@@ -563,9 +584,9 @@ p {
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
-  background: #f3efe7;
-  border: 1px solid rgba(17, 17, 15, 0.18);
-  color: var(--ink);
+  background: rgba(10, 10, 10, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
   outline: none;
   padding: 14px 15px;
   width: 100%;
@@ -575,6 +596,11 @@ p {
 .contact-form select:focus,
 .contact-form textarea:focus {
   border-color: var(--oxide);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #737373;
 }
 
 .contact-form textarea {
@@ -588,7 +614,7 @@ p {
 
 footer {
   align-items: center;
-  background: var(--ink);
+  background: var(--bone);
   border-top: 1px solid rgba(255, 255, 255, 0.14);
   color: #fff;
   display: flex;
