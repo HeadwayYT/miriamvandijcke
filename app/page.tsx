@@ -284,8 +284,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter about-chapter" id="about">
-        <div className="about-grid">
+      <section className="chapter about-chapter">
+        <div className="about-grid" id="about">
           <div className="about-copy">
             <p className="eyebrow">About Miriam</p>
             <h2>I love what happens when a room moves together.</h2>
