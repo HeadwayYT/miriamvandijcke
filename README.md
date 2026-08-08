@@ -1,100 +1,65 @@
-# vinext-starter
+# Miriam Van Dijcke
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Personal website for Miriam Van Dijcke, built with Next.js App Router, React,
+TypeScript, GSAP and Tailwind CSS.
 
-## Prerequisites
+## Local development
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+Use Node.js 22 and install the locked dependencies:
 
 ```bash
-npm install
+npm ci
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+The local site is available at `http://localhost:3000`.
 
-## Included Shape
+## Validation
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm run lint
+npm run typecheck
+npm test
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+`npm test` runs a production `next build`, checks the statically prerendered
+root route, verifies the two visitor journeys, and confirms that generated
+Next.js chunks and referenced public images exist.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Deploying on Vercel
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+Import the GitHub repository as a new Vercel project. Vercel should detect the
+project as **Next.js** and use the repository root.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+Keep the auto-detected defaults:
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+- Framework Preset: `Next.js`
+- Root Directory: repository root (`.`)
+- Install Command: `npm install` or `npm ci`
+- Build Command: `npm run build`
+- Output Directory: leave unset (`Next.js default`)
+- Node.js Version: `22.x`
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+No `vercel.json` file is required.
 
-## Useful Commands
+## Environment variables
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+No Vercel environment variables are required. The enquiry form submits from the
+browser to the public Formspree endpoint configured in `app/page.tsx`; it does
+not require a server-side API key.
 
-## Learn More
+## What belongs in GitHub
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+Push the source and lockfile, including:
+
+- `app/`
+- `public/`
+- `tests/`
+- `package.json` and `package-lock.json`
+- `next.config.ts`, `tsconfig.json`, `postcss.config.mjs`, and ESLint config
+
+Do not commit generated or local-only folders such as `node_modules/`, `.next/`,
+`.vercel/`, `dist/`, local log files, screenshots, or `.env*` files.
+
+Every push to the production branch creates a Vercel production deployment;
+other branches and pull requests receive preview deployments.

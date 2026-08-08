@@ -1,34 +1,13 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
+  return readFile(new URL("../.next/server/app/index.html", import.meta.url), "utf8");
 }
 
 test("server-renders the two distinct visitor journeys", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
+  const html = await render();
   assert.match(html, /<title>Miriam Van Dijcke \| Group Fitness &amp; Fitness Experiences<\/title>/i);
   assert.match(html, /href="#schedule">Find a class<\/a>/i);
   assert.match(html, /href="#experiences">Private experiences/i);
@@ -39,8 +18,7 @@ test("server-renders the two distinct visitor journeys", async () => {
 });
 
 test("renders the compact venue schedules and private enquiry options", async () => {
-  const response = await render();
-  const html = await response.text();
+  const html = await render();
 
   assert.match(html, /19:00 - 20:00/);
   assert.match(html, /20:00 - 21:00/);
@@ -68,4 +46,41 @@ test("renders the compact venue schedules and private enquiry options", async ()
   assert.doesNotMatch(source, /mailto:/);
   assert.match(source, /type="date" name="timing"/);
   assert.match(source, /target="_blank" rel="noreferrer"/);
+});
+
+test("produces a static root route with resolvable Vercel assets", async () => {
+  const html = await render();
+  const prerenderManifest = JSON.parse(
+    await readFile(new URL("../.next/prerender-manifest.json", import.meta.url), "utf8"),
+  );
+
+  assert.equal(prerenderManifest.routes["/"]?.compute, "static");
+  assert.deepEqual(prerenderManifest.dynamicRoutes, {});
+
+  const nextAssets = new Set(
+    [...html.matchAll(/(?:href|src)="(\/_next\/static\/[^"?]+)/g)].map(
+      (match) => match[1],
+    ),
+  );
+  assert.ok(nextAssets.size > 0);
+
+  for (const asset of nextAssets) {
+    const relativePath = asset.replace("/_next/static/", "");
+    await access(new URL(`../.next/static/${relativePath}`, import.meta.url));
+  }
+
+  const source = [
+    await readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    await readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+  ].join("\n");
+  const publicAssets = new Set(
+    [...source.matchAll(/\/(images\/[^"')\s]+|favicon\.svg)/g)].map(
+      (match) => match[1],
+    ),
+  );
+
+  for (const asset of publicAssets) {
+    await access(new URL(`../public/${asset}`, import.meta.url));
+  }
 });
