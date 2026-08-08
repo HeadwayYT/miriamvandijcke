@@ -151,9 +151,14 @@ textarea {
 }
 
 @media (min-width: 981px) and (min-aspect-ratio: 19 / 10) {
-  .hero-media {
-    background-position: right 18%;
-    background-size: auto 116%;
+  .hero-media::after {
+    background: url("/images/miriam-kettlebell-coach.jpg") right 18% / auto 116% no-repeat;
+    content: "";
+    inset: 0;
+    mask-image: linear-gradient(90deg, transparent 0%, transparent 28%, rgba(0, 0, 0, 0.18) 38%, #000 56%, #000 100%);
+    pointer-events: none;
+    position: absolute;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 28%, rgba(0, 0, 0, 0.18) 38%, #000 56%, #000 100%);
   }
 }
 
