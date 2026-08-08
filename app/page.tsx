@@ -213,7 +213,7 @@ export default function Home() {
         );
       });
 
-      gsap.from(".about-copy > *, .about-fact", {
+      gsap.from(".about-copy > *", {
         y: 28,
         opacity: 0,
         stagger: 0.09,
@@ -226,14 +226,14 @@ export default function Home() {
       });
 
       gsap.fromTo(
-        ".about-portrait-wrap",
-        { scale: 0.9, opacity: 0 },
+        ".about-media",
+        { scale: 0.94, opacity: 0 },
         {
           scale: 1,
           opacity: 1,
           ease: "none",
           scrollTrigger: {
-            trigger: ".about-visual",
+            trigger: ".about-media",
             start: "top 88%",
             end: "top 54%",
             scrub: true,
@@ -287,48 +287,35 @@ export default function Home() {
         <div className="about-grid">
           <div className="about-copy">
             <p className="eyebrow">About Miriam</p>
-            <h2>Movement is more than a class.</h2>
+            <h2>Good coaching changes the whole room.</h2>
             <p className="about-lead">
-              Miriam Van Dijcke is a group fitness and indoor cycling instructor who
-              brings music, clear coaching and genuine energy to every room.
+              Miriam is a group fitness and indoor cycling instructor who loves the
+              point where music, movement and people come together.
             </p>
             <p>
-              Join her regular classes at Basic-Fit Mechelen Bruul and Pulsate Antwerp,
-              or book her to shape a private group workout, cycling experience or event.
-              Her focus is always the shared experience: people moving together with
-              confidence, options and a strong sense of community.
+              Whether she&apos;s coaching a BODYATTACK floor, loading a bar in BODYPUMP
+              or leading a ride, her focus stays the same: clear coaching, purposeful
+              intensity and an atmosphere where everyone feels part of the room.
             </p>
+            <div className="about-certified" aria-label="Miriam's fitness certifications">
+              <span>Certified in</span>
+              <p>BODYATTACK · BODYPUMP · Strength Development · Indoor Cycling</p>
+            </div>
+            <p className="about-note">You&apos;ll find her coaching weekly in Mechelen and Antwerp.</p>
           </div>
 
-          <div className="about-facts" aria-label="Miriam's background and credentials">
-            <div className="about-fact">
-              <span>Certified</span>
-              <strong>Les Mills Bodypump, Bodyattack &amp; Strength Development</strong>
-            </div>
-            <div className="about-fact">
-              <span>Indoor cycling</span>
-              <strong>Spinning certified through Fitness NRG</strong>
-            </div>
-            <div className="about-fact">
-              <span>Beyond the studio</span>
-              <strong>Clinical Regulatory Affairs Specialist at GC Europe</strong>
-            </div>
-          </div>
-
-          <figure className="about-visual">
-            <div className="about-image-glow" aria-hidden="true" />
-            <div className="about-portrait-wrap">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="about-portrait"
-                src="/images/miriam-runner-cutout.png"
-                alt="Miriam smiling after a run, wearing sports sunglasses and a hydration vest"
-                width={1448}
-                height={1086}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
+          <figure className="about-media">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="about-photo"
+              src="/images/miriam-headset.jpg"
+              alt="Miriam smiling in a fitness studio while wearing her instructor headset"
+              width={1600}
+              height={1200}
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="about-media-shade" aria-hidden="true" />
           </figure>
         </div>
       </section>
