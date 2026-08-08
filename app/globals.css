@@ -267,6 +267,7 @@ p {
   padding: clamp(96px, 13vw, 176px) clamp(18px, 5vw, 76px);
 }
 
+#about,
 #classes,
 #schedule,
 #experiences,
@@ -1218,12 +1219,15 @@ footer a {
   }
 
   .site-header nav {
+    gap: 2px;
     justify-content: space-between;
     width: 100%;
   }
 
   .site-header nav a {
     flex: 1;
+    font-size: 0.76rem;
+    padding-inline: 3px;
     text-align: center;
   }
 
@@ -1280,6 +1284,7 @@ footer a {
     grid-template-columns: 1fr;
   }
 
+  #about,
   #classes,
   #schedule,
   #experiences,

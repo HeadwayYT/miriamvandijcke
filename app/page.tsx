@@ -251,6 +251,7 @@ export default function Home() {
           <span>Miriam Van Dijcke</span>
         </a>
         <nav>
+          <a href="#about">About</a>
           <a href="#classes">Classes</a>
           <a href="#experiences">Experiences</a>
           <a href="#contact">Contact</a>
