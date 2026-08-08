@@ -1,83 +1,139 @@
+"use client";
+
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 const classTypes = [
   {
     name: "Bodypump",
     detail:
-      "Barbell-based strength training with clear coaching, strong music and scalable options.",
+      "Barbell strength work with musical momentum, clean cueing and scalable options for mixed-level rooms.",
+    image: "bodypump-barbell-room",
   },
   {
     name: "Strength Development",
     detail:
-      "Progressive strength work focused on technique, confidence and measurable progress.",
+      "Progressive strength sessions where technique, control and confidence become visible week after week.",
+    image: "strength-development-training",
   },
   {
     name: "Bodyattack",
     detail:
-      "High-energy cardio conditioning with athletic movement, rhythm and group motivation.",
+      "Athletic cardio with sharp transitions, big-room energy and the kind of rhythm that pulls people in.",
+    image: "bodyattack-cardio-studio",
   },
   {
     name: "Spinning",
     detail:
-      "Indoor cycling sessions built around endurance, intervals, music and momentum.",
+      "Indoor cycling built around climbs, intervals, endurance and music-led drive from first track to finish.",
+    image: "spinning-class-lights",
   },
 ];
 
 const offers = [
   {
-    eyebrow: "For individuals",
     title: "Personal Training",
     copy:
-      "One-to-one coaching for people who want structure, accountability and a plan that fits their level.",
-    items: ["Intake and goal setting", "Technique-focused sessions", "Strength and conditioning plans"],
+      "A focused setting for people who want structure, accountability and a training rhythm that fits real life.",
+    items: ["Goal intake", "Technique-first sessions", "Strength and conditioning"],
   },
   {
-    eyebrow: "For gyms and studios",
     title: "Group Classes",
     copy:
-      "Energetic, well-structured classes for mixed-level groups in Antwerp and surrounding areas.",
-    items: ["Substitute or recurring classes", "Clear cueing and safe progressions", "Motivating group atmosphere"],
+      "Recurring or substitute group classes for gyms, studios and community spaces that need reliable energy.",
+    items: ["Basic-Fit Bruul Mechelen", "Pulsate Antwerp", "Mixed-level coaching"],
   },
   {
-    eyebrow: "For teams and events",
-    title: "Projects & Workshops",
+    title: "Projects",
     copy:
-      "Fitness sessions for companies, communities, wellness days, sport events or larger movement projects.",
-    items: ["Corporate wellness", "Pop-up classes", "Custom movement programmes"],
+      "Fitness-led collaborations for companies, events, sport days, pop-ups and larger movement programmes.",
+    items: ["Corporate wellness", "Event sessions", "Custom workshops"],
   },
 ];
 
-const faqs = [
-  {
-    question: "Where is Miriam based?",
-    answer:
-      "Miriam is based in Antwerp and teaches group classes at Basic-Fit and Pulsate. Other locations can be discussed for projects or personal training.",
-  },
-  {
-    question: "Can beginners join?",
-    answer:
-      "Yes. Sessions can be adapted to different levels, with a focus on safe technique, confidence and steady progress.",
-  },
-  {
-    question: "Can Miriam be booked for larger projects?",
-    answer:
-      "Yes. She can be contacted for group classes, company sessions, events, workshops and other fitness-related collaborations.",
-  },
-  {
-    question: "How do I request personal training?",
-    answer:
-      "Use the contact form or message Miriam on Instagram with your goals, preferred location and availability.",
-  },
+const faqItems = [
+  [
+    "Where does Miriam teach?",
+    "She teaches at Basic-Fit Bruul in Mechelen and Pulsate in Antwerp. Personal training or projects can be discussed separately.",
+  ],
+  [
+    "Can beginners join?",
+    "Yes. Miriam adapts coaching and intensity so different levels can train in the same room with confidence.",
+  ],
+  [
+    "Can she be booked for projects?",
+    "Yes. The site is set up for requests around group classes, company sessions, events, workshops and collaborations.",
+  ],
+  [
+    "How does the form work?",
+    "The form opens an email to Miriam at miriam.s.presas@gmail.com with your request details ready to send.",
+  ],
 ];
+
+const revealWords =
+  "Precision from clinical regulatory affairs. Energy from the studio floor. Miriam brings both into the way she coaches: composed, clear and genuinely motivating."
+    .split(" ");
 
 export default function Home() {
+  const root = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.from(".hero-title span, .hero-text, .hero-actions", {
+        y: 34,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.08,
+        ease: "power3.out",
+      });
+
+      gsap.utils.toArray<HTMLElement>(".motion-image").forEach((image) => {
+        gsap.fromTo(
+          image,
+          { scale: 0.82, opacity: 0.42, filter: "grayscale(1) contrast(1.2)" },
+          {
+            scale: 1,
+            opacity: 1,
+            filter: "grayscale(0.15) contrast(1.12)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: image,
+              start: "top 90%",
+              end: "bottom 20%",
+              scrub: true,
+            },
+          },
+        );
+      });
+
+      gsap.to(".reveal-word", {
+        opacity: 1,
+        y: 0,
+        stagger: 0.045,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".reveal-copy",
+          start: "top 78%",
+          end: "bottom 45%",
+          scrub: true,
+        },
+      });
+    },
+    { scope: root },
+  );
+
   return (
-    <main>
+    <main ref={root} className="site-shell">
       <header className="site-header" aria-label="Main navigation">
         <a className="brand" href="#home" aria-label="Miriam Van Dijcke home">
           <span className="brand-mark">MVD</span>
           <span>Miriam Van Dijcke</span>
         </a>
         <nav>
-          <a href="#about">About</a>
           <a href="#classes">Classes</a>
           <a href="#work">Work</a>
           <a href="#contact">Contact</a>
@@ -85,66 +141,59 @@ export default function Home() {
       </header>
 
       <section className="hero" id="home">
-        <div className="hero-copy">
-          <p className="kicker">Group fitness instructor in Antwerp</p>
-          <h1>Train stronger. Move with energy.</h1>
+        <div className="hero-wash" />
+        <div className="hero-inner">
+          <p className="hero-kicker">Group fitness instructor in Mechelen and Antwerp</p>
+          <h1 className="hero-title">
+            <span>Train stronger</span>
+            <span>
+              with{" "}
+              <i
+                className="inline-photo"
+                aria-label="Fitness atmosphere placeholder"
+              />{" "}
+              Miriam.
+            </span>
+          </h1>
           <p className="hero-text">
-            Miriam Van Dijcke teaches Bodypump, Strength Development,
-            Bodyattack and Spinning at Basic-Fit Bruul in Mechelen and Pulsate
-            in Antwerp. Available for personal training, group classes and
-            larger fitness projects.
+            Bodypump, Strength Development, Bodyattack and Spinning with a
+            coaching style that feels precise, powerful and welcoming.
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#contact">
               Request training
             </a>
             <a className="button secondary" href="#classes">
-              View classes
+              Explore classes
             </a>
           </div>
         </div>
-        <div className="hero-visual" aria-label="Placeholder portrait area">
-          <div className="portrait-card">
-            <span>Portrait placeholder</span>
-            <strong>Miriam Van Dijcke</strong>
-          </div>
+      </section>
+
+      <section className="chapter intro-chapter">
+        <div className="reveal-copy" aria-label="Miriam coaching positioning">
+          {revealWords.map((word, index) => (
+            <span className="reveal-word" key={`${word}-${index}`}>
+              {word}
+            </span>
+          ))}
         </div>
       </section>
 
-      <section className="about section" id="about">
-        <div className="section-heading">
-          <p className="kicker">About Miriam</p>
-          <h2>Clear coaching, strong rhythm and a room full of momentum.</h2>
+      <section className="chapter bento-chapter" id="classes">
+        <div className="chapter-heading">
+          <p className="eyebrow">Classes</p>
+          <h2>Four formats built for strength, rhythm and room energy.</h2>
         </div>
-        <div className="about-grid">
-          <p>
-            Miriam is a group fitness instructor active in Mechelen and
-            Antwerp, with classes at Basic-Fit Bruul and Pulsate. Alongside her
-            work in fitness, she has a permanent role as a Clinical Regulatory
-            Affairs Specialist at GC Europe, bringing structure, precision and
-            professionalism into everything she does.
-          </p>
-          <p>
-            Her coaching style combines clear technique, positive energy and
-            the ability to make different levels feel welcome in the same
-            session. This website is a first home for her fitness work: a place
-            where gyms, companies, event organisers and individuals can discover
-            what she teaches and send a request.
-          </p>
-        </div>
-      </section>
-
-      <section className="section tinted" id="classes">
-        <div className="section-heading">
-          <p className="kicker">Classes</p>
-          <h2>Four formats, one energetic coaching style.</h2>
-        </div>
-        <div className="class-grid">
-          {classTypes.map((classType, index) => (
-            <article className="class-card" key={classType.name}>
-              <span className="class-number">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+        <div className="class-bento">
+          <article className="bento-card bento-lead motion-image">
+            <div>
+              <p>Currently teaching at Basic-Fit Bruul Mechelen and Pulsate Antwerp.</p>
+              <h3>Clear cueing. Strong tempo. No one left guessing.</h3>
+            </div>
+          </article>
+          {classTypes.map((classType) => (
+            <article className="bento-card compact-card" key={classType.name}>
               <h3>{classType.name}</h3>
               <p>{classType.detail}</p>
             </article>
@@ -152,120 +201,126 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" id="work">
-        <div className="section-heading split">
+      <section className="marquee-band" aria-label="Class formats">
+        <div className="marquee-track">
+          {[...classTypes, ...classTypes].map((classType, index) => (
+            <span key={`${classType.name}-${index}`}>{classType.name}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="chapter accordion-chapter" id="work">
+        <div className="chapter-heading wide">
+          <p className="eyebrow">Work with Miriam</p>
+          <h2>
+            Individual coaching, group rooms and larger fitness moments can all
+            start from one request.
+          </h2>
+        </div>
+        <div className="offer-accordion">
+          {offers.map((offer, index) => (
+            <article className="offer-panel" key={offer.title}>
+              <div
+                className="panel-media motion-image"
+                style={{
+                  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.68)), url(https://picsum.photos/seed/miriam-${index}/1200/1500)`,
+                }}
+              />
+              <div className="panel-copy">
+                <h3>{offer.title}</h3>
+                <p>{offer.copy}</p>
+                <ul>
+                  {offer.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="chapter proof-chapter">
+        <div className="proof-media motion-image" />
+        <div className="proof-copy">
+          <p className="eyebrow">Professional rhythm</p>
+          <h2>Structured enough for progress. Human enough to keep people coming back.</h2>
+          <p>
+            Miriam also works as a Clinical Regulatory Affairs Specialist at GC
+            Europe. That professional precision shows up in her fitness work:
+            thoughtful preparation, safe progression and calm control in a busy
+            room.
+          </p>
+        </div>
+      </section>
+
+      <section className="chapter faq-chapter">
+        <div className="chapter-heading">
+          <p className="eyebrow">Practical questions</p>
+          <h2>Before you send a request.</h2>
+        </div>
+        <div className="faq-grid">
+          {faqItems.map(([question, answer]) => (
+            <article key={question}>
+              <h3>{question}</h3>
+              <p>{answer}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="contact-chapter" id="contact">
+        <div className="contact-inner">
           <div>
-            <p className="kicker">Work with Miriam</p>
-            <h2>From one-to-one coaching to larger movement projects.</h2>
+            <p className="eyebrow">Contact</p>
+            <h2>Request a session, class or project.</h2>
+            <p>
+              Share the type of request, timing, location and what you want the
+              session to achieve. Miriam can follow up by email.
+            </p>
+            <a
+              className="instagram-link"
+              href="https://www.instagram.com/mir.i.am_vd/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Instagram @mir.i.am_vd
+            </a>
           </div>
-          <p>
-            Use these placeholders as the starting offer. We can later refine
-            pricing, availability and booking flow when Miriam is ready.
-          </p>
-        </div>
-        <div className="offer-grid">
-          {offers.map((offer) => (
-            <article className="offer-card" key={offer.title}>
-              <p className="offer-eyebrow">{offer.eyebrow}</p>
-              <h3>{offer.title}</h3>
-              <p>{offer.copy}</p>
-              <ul>
-                {offer.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="gallery section" aria-label="Photo placeholders">
-        <div className="gallery-intro">
-          <p className="kicker">Atmosphere</p>
-          <h2>Photo space for classes, training and projects.</h2>
-        </div>
-        <div className="photo-grid">
-          <div className="photo-tile large">Class action placeholder</div>
-          <div className="photo-tile">Spinning placeholder</div>
-          <div className="photo-tile">Strength placeholder</div>
-          <div className="photo-tile wide">Project or workshop placeholder</div>
-        </div>
-      </section>
-
-      <section className="quote-band">
-        <blockquote>
-          "A motivating class starts with trust, clear guidance and the feeling
-          that everyone can take the next step."
-        </blockquote>
-        <p>Placeholder quote for Miriam's coaching philosophy</p>
-      </section>
-
-      <section className="section faq">
-        <div className="section-heading">
-          <p className="kicker">FAQ</p>
-          <h2>Practical questions before getting in touch.</h2>
-        </div>
-        <div className="faq-list">
-          {faqs.map((faq) => (
-            <article key={faq.question}>
-              <h3>{faq.question}</h3>
-              <p>{faq.answer}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="contact section" id="contact">
-        <div className="contact-copy">
-          <p className="kicker">Get in touch</p>
-          <h2>Request personal training, a group class or a larger project.</h2>
-          <p>
-            Send a short message with the type of request, preferred timing and
-            location. The form prepares an email to Miriam so she can follow up
-            with availability and next steps.
-          </p>
-          <a
-            className="instagram-link"
-            href="https://www.instagram.com/mir.i.am_vd/"
-            target="_blank"
-            rel="noreferrer"
+          <form
+            className="contact-form"
+            action="mailto:miriam.s.presas@gmail.com"
+            method="post"
+            encType="text/plain"
           >
-            Instagram: @mir.i.am_vd
-          </a>
+            <label>
+              Name
+              <input type="text" name="name" placeholder="Your name" />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" placeholder="you@example.com" />
+            </label>
+            <label>
+              Request type
+              <select name="request">
+                <option>Personal training</option>
+                <option>Group class</option>
+                <option>Larger project</option>
+                <option>Other collaboration</option>
+              </select>
+            </label>
+            <label>
+              Message
+              <textarea
+                name="message"
+                placeholder="Tell Miriam what you are looking for"
+                rows={5}
+              />
+            </label>
+            <button type="submit">Send request</button>
+          </form>
         </div>
-        <form
-          className="contact-form"
-          action="mailto:miriam.s.presas@gmail.com"
-          method="post"
-          encType="text/plain"
-        >
-          <label>
-            Name
-            <input type="text" name="name" placeholder="Your name" />
-          </label>
-          <label>
-            Email
-            <input type="email" name="email" placeholder="you@example.com" />
-          </label>
-          <label>
-            Request type
-            <select name="request">
-              <option>Personal training</option>
-              <option>Group class</option>
-              <option>Larger project</option>
-              <option>Other collaboration</option>
-            </select>
-          </label>
-          <label>
-            Message
-            <textarea
-              name="message"
-              placeholder="Tell Miriam what you are looking for"
-              rows={5}
-            />
-          </label>
-          <button type="submit">Send request</button>
-        </form>
       </section>
 
       <footer>

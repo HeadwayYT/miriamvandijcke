@@ -1,21 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f4ef;
-  --foreground: #171717;
-  --ink: #171717;
-  --muted: #68615a;
-  --line: #ddd4ca;
-  --paper: #fffdf8;
-  --sport: #e6502e;
-  --deep: #123c37;
-  --mint: #dcefe6;
-  --gold: #c99b3c;
+  --bone: #f2eee6;
+  --ink: #11110f;
+  --ash: #7b746a;
+  --paper: #fffaf0;
+  --line: rgba(17, 17, 15, 0.14);
+  --oxide: #d94f2b;
+  --sage: #bcd8c7;
+  --chrome: #d7cec0;
+  --night: #121615;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bone);
+  --color-foreground: var(--ink);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -29,15 +28,21 @@ html {
 }
 
 body {
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
-main {
-  max-width: 100%;
-  overflow-x: hidden;
+body::before {
+  background-image: radial-gradient(rgba(17, 17, 15, 0.11) 0.65px, transparent 0.65px);
+  background-size: 5px 5px;
+  content: "";
+  inset: 0;
+  opacity: 0.22;
+  pointer-events: none;
+  position: fixed;
+  z-index: 50;
 }
 
 a {
@@ -52,18 +57,28 @@ textarea {
   font: inherit;
 }
 
+.site-shell {
+  max-width: 100%;
+  overflow-x: hidden;
+  width: 100%;
+}
+
 .site-header {
   align-items: center;
-  background: rgba(247, 244, 239, 0.92);
-  border-bottom: 1px solid rgba(23, 23, 23, 0.08);
+  background: rgba(242, 238, 230, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 22px 70px rgba(17, 17, 15, 0.13);
   display: flex;
-  gap: 24px;
+  gap: 26px;
   justify-content: space-between;
-  left: 0;
-  padding: 18px clamp(18px, 4vw, 56px);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  left: 50%;
+  max-width: min(1120px, calc(100vw - 32px));
+  padding: 10px 12px;
+  position: fixed;
+  top: 18px;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 20;
 }
 
 .brand,
@@ -73,51 +88,89 @@ textarea {
 }
 
 .brand {
-  font-weight: 800;
-  gap: 10px;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 860;
+  gap: 12px;
+  white-space: nowrap;
 }
 
 .brand-mark {
   align-items: center;
-  background: var(--deep);
+  background: var(--ink);
   color: #fff;
   display: inline-flex;
   font-size: 0.72rem;
+  font-weight: 900;
   height: 38px;
   justify-content: center;
   letter-spacing: 0;
-  width: 38px;
+  width: 48px;
 }
 
 .site-header nav {
-  color: var(--muted);
-  flex-wrap: wrap;
-  font-size: 0.93rem;
-  gap: 18px;
-  justify-content: flex-end;
+  background: rgba(255, 250, 240, 0.78);
+  gap: 3px;
+  padding: 4px;
+}
+
+.site-header nav a {
+  color: rgba(17, 17, 15, 0.72);
+  font-size: 0.88rem;
+  font-weight: 760;
+  padding: 10px 14px;
+  transition: background 240ms ease, color 240ms ease;
+}
+
+.site-header nav a:hover {
+  background: var(--ink);
+  color: #fff;
 }
 
 .hero {
-  align-items: stretch;
-  display: grid;
-  gap: clamp(28px, 5vw, 72px);
-  grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.78fr);
-  min-height: calc(100vh - 76px);
-  padding: clamp(44px, 7vw, 94px) clamp(18px, 5vw, 72px) 48px;
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(18, 22, 21, 0.08), rgba(18, 22, 21, 0.9)),
+    url("https://picsum.photos/seed/miriam-cinematic-fitness/2200/1400");
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  display: flex;
+  min-height: 100vh;
+  padding: 150px clamp(18px, 5vw, 76px) 84px;
+  position: relative;
 }
 
-.hero-copy {
-  align-self: center;
-  max-width: 760px;
+.hero-wash {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(217, 79, 43, 0.44), transparent 32%),
+    radial-gradient(circle at 82% 76%, rgba(188, 216, 199, 0.28), transparent 30%);
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.74;
+  position: absolute;
 }
 
-.kicker {
-  color: var(--sport);
+.hero-inner {
+  margin: 0 auto;
+  max-width: 1160px;
+  position: relative;
+  text-align: center;
+  width: 100%;
+}
+
+.hero-kicker,
+.eyebrow {
+  color: var(--oxide);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0;
-  margin: 0 0 14px;
+  margin: 0 0 18px;
   text-transform: uppercase;
+}
+
+.hero-kicker {
+  color: rgba(255, 255, 255, 0.76);
 }
 
 h1,
@@ -127,44 +180,45 @@ p {
   margin-top: 0;
 }
 
-h1 {
-  color: var(--ink);
-  font-size: clamp(3rem, 8vw, 7.7rem);
-  font-weight: 900;
+.hero-title {
+  color: #fff;
+  display: grid;
+  font-size: clamp(3.35rem, 7.2vw, 6.8rem);
+  font-weight: 920;
   letter-spacing: 0;
-  line-height: 0.9;
-  margin-bottom: 28px;
-  max-width: 930px;
+  line-height: 0.92;
+  margin: 0 auto 28px;
+  max-width: 1120px;
 }
 
-h2 {
-  color: var(--ink);
-  font-size: clamp(2.15rem, 4.8vw, 4.6rem);
-  font-weight: 880;
-  letter-spacing: 0;
-  line-height: 0.96;
-  margin-bottom: 0;
-}
-
-h3 {
-  color: var(--ink);
-  font-size: 1.18rem;
-  letter-spacing: 0;
-  margin-bottom: 12px;
+.inline-photo {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.38)),
+    url("https://picsum.photos/seed/miriam-inline-motion/600/320");
+  background-position: center;
+  background-size: cover;
+  border: 2px solid rgba(255, 255, 255, 0.56);
+  display: inline-block;
+  height: clamp(40px, 6vw, 72px);
+  margin: 0 10px;
+  transform: translateY(9px);
+  vertical-align: baseline;
+  width: clamp(86px, 13vw, 176px);
 }
 
 .hero-text {
-  color: var(--muted);
-  font-size: clamp(1.03rem, 1.55vw, 1.28rem);
-  line-height: 1.65;
-  max-width: 690px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(1.02rem, 1.35vw, 1.28rem);
+  line-height: 1.72;
+  margin: 0 auto;
+  max-width: 720px;
 }
 
 .hero-actions {
   display: flex;
-  flex-wrap: wrap;
   gap: 12px;
-  margin-top: 32px;
+  justify-content: center;
+  margin-top: 34px;
 }
 
 .button,
@@ -173,391 +227,418 @@ h3 {
   border: 1px solid transparent;
   cursor: pointer;
   display: inline-flex;
-  font-weight: 800;
+  font-weight: 880;
   justify-content: center;
-  min-height: 50px;
-  padding: 14px 20px;
+  min-height: 54px;
+  padding: 15px 22px;
+  transition: transform 240ms ease, background 240ms ease, color 240ms ease;
+}
+
+.button:hover,
+.contact-form button:hover {
+  transform: translateY(-2px);
 }
 
 .button.primary,
 .contact-form button {
-  background: var(--sport);
-  color: #fff;
+  background: #fff;
+  color: var(--ink);
 }
 
 .button.secondary {
   background: transparent;
-  border-color: rgba(23, 23, 23, 0.24);
-  color: var(--ink);
-}
-
-.hero-visual {
-  align-items: stretch;
-  display: flex;
-  min-height: 520px;
-}
-
-.portrait-card {
-  align-items: flex-end;
-  background:
-    linear-gradient(180deg, rgba(17, 17, 17, 0.08), rgba(17, 17, 17, 0.62)),
-    url("https://picsum.photos/seed/miriam-fitness-portrait/1100/1500");
-  background-position: center;
-  background-size: cover;
-  border: 1px solid rgba(18, 60, 55, 0.16);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 100%;
-  padding: 28px;
-  position: relative;
-  width: 100%;
-}
-
-.portrait-card::before {
-  background: linear-gradient(90deg, var(--sport), var(--gold));
-  bottom: 0;
-  content: "";
-  height: 8px;
-  left: 0;
-  position: absolute;
-  right: 0;
-}
-
-.portrait-card span,
-.portrait-card strong {
-  position: relative;
-}
-
-.portrait-card span {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-}
-
-.portrait-card strong {
-  color: #fff;
-  font-size: clamp(2rem, 5vw, 4.8rem);
-  letter-spacing: 0;
-  line-height: 0.95;
-  max-width: 360px;
-}
-
-.section {
-  padding: clamp(64px, 9vw, 116px) clamp(18px, 5vw, 72px);
-}
-
-.section-heading {
-  margin-bottom: clamp(30px, 5vw, 52px);
-  max-width: 900px;
-}
-
-.section-heading.split {
-  align-items: end;
-  display: grid;
-  gap: 28px;
-  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.58fr);
-  max-width: none;
-}
-
-.section-heading.split > p,
-.about-grid p,
-.offer-card p,
-.class-card p,
-.faq-list p,
-.contact-copy p {
-  color: var(--muted);
-  line-height: 1.68;
-}
-
-.about-grid {
-  border-top: 1px solid var(--line);
-  display: grid;
-  gap: clamp(24px, 5vw, 72px);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding-top: 30px;
-}
-
-.about-grid p {
-  font-size: clamp(1.02rem, 1.5vw, 1.24rem);
-}
-
-.tinted {
-  background: var(--deep);
+  border-color: rgba(255, 255, 255, 0.52);
   color: #fff;
 }
 
-.tinted h2,
-.tinted h3 {
-  color: #fff;
+.chapter {
+  padding: clamp(96px, 13vw, 176px) clamp(18px, 5vw, 76px);
 }
 
-.tinted .kicker,
-.tinted .class-number {
-  color: #f2b65f;
-}
-
-.class-grid,
-.offer-grid {
-  display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.class-card,
-.offer-card,
-.faq-list article,
-.contact-form {
-  border: 1px solid rgba(23, 23, 23, 0.12);
-  padding: clamp(20px, 3vw, 28px);
-}
-
-.class-card {
-  border-color: rgba(255, 255, 255, 0.22);
-  min-height: 260px;
-}
-
-.class-number {
-  display: block;
-  font-weight: 900;
-  margin-bottom: 72px;
-}
-
-.class-card p {
-  color: rgba(255, 255, 255, 0.76);
-}
-
-.offer-card {
+.intro-chapter {
   background: var(--paper);
 }
 
-.offer-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.offer-eyebrow {
-  color: var(--sport) !important;
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.offer-card ul {
-  border-top: 1px solid var(--line);
-  list-style: none;
-  margin: 22px 0 0;
-  padding: 18px 0 0;
-}
-
-.offer-card li {
+.reveal-copy {
   color: var(--ink);
-  line-height: 1.7;
-  padding-left: 20px;
-  position: relative;
-}
-
-.offer-card li::before {
-  background: var(--gold);
-  content: "";
-  height: 7px;
-  left: 0;
-  position: absolute;
-  top: 10px;
-  width: 7px;
-}
-
-.gallery {
-  background: #111;
-  color: #fff;
-}
-
-.gallery h2 {
-  color: #fff;
-}
-
-.gallery-intro {
-  max-width: 820px;
-}
-
-.photo-grid {
-  display: grid;
-  gap: 14px;
-  grid-auto-flow: dense;
-  grid-template-columns: 1.2fr 0.8fr 0.8fr;
-  grid-template-rows: 230px 230px;
-  margin-top: 34px;
-}
-
-.photo-tile {
-  align-items: end;
-  background:
-    linear-gradient(135deg, rgba(230, 80, 46, 0.58), rgba(18, 60, 55, 0.78)),
-    url("https://picsum.photos/seed/group-fitness-antwerp/900/700");
-  background-position: center;
-  background-size: cover;
-  color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  font-weight: 800;
-  min-height: 0;
-  padding: 22px;
-}
-
-.photo-tile.large {
-  grid-row: span 2;
-}
-
-.photo-tile:nth-child(2) {
-  background-image:
-    linear-gradient(135deg, rgba(18, 60, 55, 0.48), rgba(17, 17, 17, 0.7)),
-    url("https://picsum.photos/seed/spinning-energy/900/700");
-}
-
-.photo-tile:nth-child(3) {
-  background-image:
-    linear-gradient(135deg, rgba(201, 155, 60, 0.44), rgba(17, 17, 17, 0.68)),
-    url("https://picsum.photos/seed/strength-training/900/700");
-}
-
-.photo-tile:nth-child(4) {
-  background-image:
-    linear-gradient(135deg, rgba(230, 80, 46, 0.42), rgba(17, 17, 17, 0.7)),
-    url("https://picsum.photos/seed/wellness-workshop/1200/700");
-}
-
-.photo-tile.wide {
-  grid-column: span 2;
-}
-
-.quote-band {
-  background: var(--mint);
-  padding: clamp(52px, 8vw, 92px) clamp(18px, 8vw, 120px);
+  font-size: clamp(2rem, 5.5vw, 5.8rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.02;
+  margin: 0 auto;
+  max-width: 1180px;
   text-align: center;
 }
 
-.quote-band blockquote {
-  color: var(--deep);
-  font-size: clamp(1.8rem, 4.2vw, 4.3rem);
+.reveal-word {
+  display: inline-block;
+  margin-right: 0.22em;
+  opacity: 0.16;
+  transform: translateY(16px);
+}
+
+.chapter-heading {
+  margin-bottom: clamp(34px, 5vw, 64px);
+  max-width: 920px;
+}
+
+.chapter-heading.wide {
+  max-width: 1160px;
+}
+
+.chapter-heading h2,
+.proof-copy h2,
+.contact-inner h2 {
+  color: var(--ink);
+  font-size: clamp(2.25rem, 5vw, 5.2rem);
+  font-weight: 910;
+  letter-spacing: 0;
+  line-height: 0.96;
+  margin: 0;
+}
+
+.class-bento {
+  display: grid;
+  gap: 14px;
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(230px, auto));
+}
+
+.bento-card {
+  background: var(--night);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  min-height: 230px;
+  overflow: hidden;
+  padding: clamp(22px, 3vw, 34px);
+  position: relative;
+}
+
+.bento-card::before {
+  background: radial-gradient(circle at 20% 8%, rgba(217, 79, 43, 0.45), transparent 32%);
+  content: "";
+  inset: 0;
+  opacity: 0.72;
+  position: absolute;
+}
+
+.bento-card > * {
+  position: relative;
+}
+
+.bento-lead {
+  align-items: end;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 15, 0.06), rgba(17, 17, 15, 0.78)),
+    url("https://picsum.photos/seed/miriam-group-class-room/1400/1000");
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.bento-lead p,
+.compact-card p,
+.proof-copy p,
+.contact-inner p,
+.faq-grid p {
+  line-height: 1.68;
+}
+
+.bento-lead p,
+.compact-card p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.bento-lead h3 {
+  color: #fff;
+  font-size: clamp(1.9rem, 4vw, 4rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.98;
+  max-width: 640px;
+}
+
+.compact-card {
+  transition: transform 420ms ease, background 420ms ease;
+}
+
+.compact-card:hover {
+  background: #1e2523;
+  transform: translateY(-6px);
+}
+
+.compact-card h3,
+.offer-panel h3,
+.faq-grid h3 {
+  font-size: clamp(1.25rem, 2vw, 1.85rem);
   font-weight: 880;
   letter-spacing: 0;
-  line-height: 1.04;
-  margin: 0 auto 18px;
-  max-width: 1040px;
+  margin-bottom: 14px;
 }
 
-.quote-band p {
-  color: var(--muted);
-  margin-bottom: 0;
+.marquee-band {
+  background: var(--oxide);
+  color: #fff;
+  overflow: hidden;
+  padding: 20px 0;
+  white-space: nowrap;
 }
 
-.faq-list {
+.marquee-track {
+  animation: marquee 24s linear infinite;
+  display: inline-flex;
+  gap: 42px;
+  padding-left: 100%;
+}
+
+.marquee-track span {
+  font-size: clamp(1.15rem, 2.6vw, 2.4rem);
+  font-weight: 910;
+  letter-spacing: 0;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.accordion-chapter {
+  background: var(--night);
+  color: #fff;
+}
+
+.accordion-chapter .chapter-heading h2 {
+  color: #fff;
+}
+
+.offer-accordion {
+  display: flex;
+  gap: 14px;
+  min-height: 680px;
+}
+
+.offer-panel {
+  background: #1b201f;
+  display: grid;
+  flex: 1;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+  overflow: hidden;
+  transition: flex 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.offer-panel:hover {
+  flex: 1.85;
+}
+
+.panel-media {
+  background-position: center;
+  background-size: cover;
+  min-height: 390px;
+}
+
+.panel-copy {
+  padding: 28px;
+}
+
+.panel-copy p {
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.64;
+}
+
+.panel-copy ul {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 18px 0 0;
+}
+
+.panel-copy li {
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.7;
+}
+
+.proof-chapter {
+  align-items: center;
+  background: var(--paper);
+  display: grid;
+  gap: clamp(30px, 6vw, 92px);
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1fr);
+}
+
+.proof-media {
+  aspect-ratio: 4 / 5;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 15, 0.03), rgba(17, 17, 15, 0.54)),
+    url("https://picsum.photos/seed/miriam-clinical-precision-fitness/1100/1400");
+  background-position: center;
+  background-size: cover;
+  min-height: 520px;
+}
+
+.proof-copy p,
+.contact-inner p,
+.faq-grid p {
+  color: var(--ash);
+  font-size: 1.02rem;
+}
+
+.proof-copy p:last-child {
+  margin-top: 26px;
+  max-width: 680px;
+}
+
+.faq-chapter {
+  background: var(--bone);
+}
+
+.faq-grid {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.faq-list article {
-  background: rgba(255, 253, 248, 0.7);
+.faq-grid article {
+  background: rgba(255, 250, 240, 0.78);
+  border: 1px solid var(--line);
+  min-height: 210px;
+  padding: clamp(22px, 3vw, 34px);
 }
 
-.contact {
-  align-items: start;
-  background: var(--paper);
+.contact-chapter {
+  background: var(--ink);
+  color: #fff;
+  padding: clamp(86px, 12vw, 156px) clamp(18px, 5vw, 76px) 42px;
+}
+
+.contact-inner {
   display: grid;
-  gap: clamp(28px, 6vw, 84px);
-  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 0.72fr);
+  gap: clamp(36px, 6vw, 92px);
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.7fr);
+  margin: 0 auto;
+  max-width: 1180px;
 }
 
-.contact-copy {
-  position: sticky;
-  top: 112px;
+.contact-inner h2 {
+  color: #fff;
+}
+
+.contact-inner > div > p:last-of-type {
+  color: rgba(255, 255, 255, 0.72);
+  margin-top: 24px;
+  max-width: 620px;
 }
 
 .instagram-link {
-  border-bottom: 2px solid var(--sport);
-  color: var(--ink);
+  border-bottom: 2px solid var(--oxide);
+  color: #fff;
   display: inline-flex;
   font-weight: 900;
-  margin-top: 12px;
-  padding-bottom: 5px;
+  margin-top: 18px;
+  padding-bottom: 6px;
 }
 
 .contact-form {
   background: #fff;
+  color: var(--ink);
   display: grid;
   gap: 16px;
+  padding: clamp(22px, 3vw, 34px);
 }
 
 .contact-form label {
-  color: var(--ink);
   display: grid;
   font-size: 0.9rem;
-  font-weight: 800;
+  font-weight: 820;
   gap: 8px;
 }
 
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
-  background: #f8f5ef;
-  border: 1px solid var(--line);
+  background: #f3efe7;
+  border: 1px solid rgba(17, 17, 15, 0.18);
   color: var(--ink);
   outline: none;
-  padding: 13px 14px;
+  padding: 14px 15px;
   width: 100%;
 }
 
 .contact-form input:focus,
 .contact-form select:focus,
 .contact-form textarea:focus {
-  border-color: var(--sport);
+  border-color: var(--oxide);
 }
 
 .contact-form textarea {
   resize: vertical;
 }
 
+.contact-form button {
+  background: var(--oxide);
+  color: #fff;
+}
+
 footer {
   align-items: center;
   background: var(--ink);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   color: #fff;
   display: flex;
   justify-content: space-between;
-  padding: 24px clamp(18px, 5vw, 72px);
+  padding: 24px clamp(18px, 5vw, 76px);
 }
 
 footer p {
   font-weight: 900;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 footer a {
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(255, 255, 255, 0.7);
 }
 
-@media (max-width: 960px) {
-  .hero,
-  .about-grid,
-  .section-heading.split,
-  .contact {
+@media (max-width: 980px) {
+  .site-header {
+    left: 16px;
+    max-width: calc(100vw - 32px);
+    transform: none;
+  }
+
+  .class-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+
+  .bento-lead {
+    grid-column: span 2;
+    min-height: 470px;
+  }
+
+  .offer-accordion,
+  .proof-chapter,
+  .contact-inner {
     grid-template-columns: 1fr;
   }
 
-  .hero {
-    min-height: auto;
+  .offer-accordion {
+    display: grid;
+    min-height: 0;
   }
 
-  .hero-visual {
-    min-height: 430px;
+  .offer-panel:hover {
+    flex: 1;
   }
 
-  .class-grid,
-  .offer-grid,
-  .faq-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .contact-copy {
-    position: static;
+  .proof-chapter {
+    display: grid;
   }
 }
 
@@ -568,28 +649,42 @@ footer a {
   }
 
   .site-header nav {
-    justify-content: flex-start;
+    justify-content: space-between;
+    width: 100%;
   }
 
-  h1 {
-    font-size: 3.15rem;
+  .site-header nav a {
+    flex: 1;
+    text-align: center;
   }
 
-  .class-grid,
-  .offer-grid,
-  .faq-list,
-  .photo-grid {
+  .hero {
+    min-height: 92vh;
+    padding-top: 168px;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 15vw, 4.7rem);
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .class-bento,
+  .faq-grid {
     grid-template-columns: 1fr;
   }
 
-  .photo-grid {
-    grid-template-rows: repeat(4, 210px);
-  }
-
-  .photo-tile.large,
-  .photo-tile.wide {
+  .bento-lead {
     grid-column: auto;
     grid-row: auto;
+  }
+
+  .panel-media,
+  .proof-media {
+    min-height: 340px;
   }
 
   footer {

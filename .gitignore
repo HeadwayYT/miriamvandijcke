@@ -43,3 +43,4 @@ yarn-error.log*
 /.agents/
 /.codex-devserver*.log
 /skills-lock.json
+/*.tar.gz
