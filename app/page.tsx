@@ -34,7 +34,7 @@ const classTypes = [
     image: "/images/miriam-bodyattack-card.jpg",
   },
   {
-    name: "Spinning / Ride",
+    name: "Indoor Cycling",
     detail:
       "Music-led indoor cycling with climbs, intervals and endurance work.",
     image: "/images/miriam-spinning.jpg",
@@ -45,16 +45,16 @@ const pathways = [
   {
     title: "Private Indoor Cycling Experience",
     copy:
-      "A custom indoor cycling experience for your private group. A suitable studio and bikes must be available or arranged.",
-    items: ["Friends and celebrations", "Themed rides", "Special occasions"],
+      "A custom indoor cycling experience for your group, with a suitable studio and bikes available or arranged.",
+    items: ["Private groups", "Themed sessions", "Celebrations"],
     href: "#contact",
     cta: "Enquire about an experience",
     request: "Private Indoor Cycling Experience",
   },
   {
     title: "Private Group Workout",
-    copy: "A music-driven strength and cardio workout shaped around the occasion and group.",
-    items: ["Strength and cardio", "Adapted to the occasion", "Group-focused coaching"],
+    copy: "A music-driven strength and cardio workout shaped around your group and occasion.",
+    items: ["Strength + cardio", "All levels", "Custom format"],
     href: "#contact",
     cta: "Enquire about an experience",
     request: "Private Group Workout",
@@ -62,7 +62,7 @@ const pathways = [
   {
     title: "Corporate & Events",
     copy: "Bring movement, music and shared energy to your team, community or event.",
-    items: ["Corporate wellness", "Team building", "Brand and community events"],
+    items: ["Wellness", "Team building", "Brand events"],
     href: "#contact",
     cta: "Enquire about an experience",
     request: "Corporate / Team Event",
@@ -124,20 +124,12 @@ const venues: Venue[] = [
 
 const faqItems = [
   [
-    "Which certifications does Miriam have?",
-    "Miriam is Les Mills certified in Strength Development, Bodypump and Bodyattack. She earned her Spinning certificate at Fitness NRG.",
-  ],
-  [
-    "Where does Miriam teach?",
-    "She teaches regular classes at Basic-Fit Mechelen Bruul and Pulsate Antwerp. Access and booking are handled directly by each venue.",
-  ],
-  [
     "Can beginners join?",
-    "Yes. Miriam coaches different levels in the same room and consistently offers lighter or lower-impact options, as is typical in Les Mills classes, so beginners can move with confidence.",
+    "Yes. Miriam offers clear options for different levels so mixed-ability groups can move together with confidence.",
   ],
   [
     "Can I book Miriam directly?",
-    "Yes, for private group workouts, indoor cycling experiences, corporate sessions and fitness events. Her regular weekly studio classes are accessed through the respective venue.",
+    "Yes, for private group workouts, indoor cycling experiences, corporate sessions and fitness events.",
   ],
   [
     "Does Miriam offer personal training?",
@@ -361,23 +353,21 @@ export default function Home() {
       </section>
 
       <section className="chapter bento-chapter">
-        <div className="chapter-heading classes-heading">
-          <p className="eyebrow">{t("Classes")}</p>
+        <div className="chapter-heading classes-heading" id="classes">
           <div>
-            <p className="chapter-intro">
-              {t(
-                "Want to work out with me? You'll find me teaching regular classes at selected gyms and studios. Access and booking are handled directly by each venue.",
-              )}
-            </p>
+            <p className="eyebrow">{t("What I teach")}</p>
+            <h2>{t("Move with purpose.")}</h2>
           </div>
+          <p className="chapter-intro">
+            {t(
+              "These are the formats I'm qualified and experienced to teach. Current weekly classes are listed in the schedule below.",
+            )}
+          </p>
         </div>
-        <div className="class-bento" id="classes">
-          <article className="bento-lead motion-image">
-            <h3>{t("Move with purpose.")}</h3>
-          </article>
+        <div className="class-bento">
           {classTypes.map((classType) => (
             <article
-              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}${classType.name === "Bodypump" ? " bodypump-card" : ""}${classType.name === "Bodyattack" ? " bodyattack-card" : ""}${classType.name === "Spinning / Ride" ? " spinning-card" : ""}`}
+              className={`bento-card compact-card${classType.name === "Strength Development" ? " cutout-card" : ""}${classType.name === "Bodypump" ? " bodypump-card" : ""}${classType.name === "Bodyattack" ? " bodyattack-card" : ""}${classType.name === "Indoor Cycling" ? " cycling-card" : ""}`}
               key={classType.name}
             >
               <div
@@ -484,11 +474,11 @@ export default function Home() {
                 <h3>{t(pathway.title)}</h3>
                 <p>{t(pathway.copy)}</p>
               </div>
-              <ul>
+              <p className="work-option-features">
                 {pathway.items.map((item) => (
-                  <li key={item}>{t(item)}</li>
+                  <span key={item}>{t(item)}</span>
                 ))}
-              </ul>
+              </p>
               <span className="work-option-cta">
                 <span>{t(pathway.cta)}</span>
                 <Plus aria-hidden="true" size={20} weight="bold" />
@@ -505,17 +495,18 @@ export default function Home() {
             <h2>{t("My energy is contagious.")}</h2>
             <p className="about-lead">
               {t(
-                "I'm Miriam, a group fitness and indoor cycling instructor who brings a lot of energy into every class. For me, that energy isn't just about pushing harder — it's about motivating people, creating connection and making the whole room want to move.",
+                "I'm Miriam, a group fitness and indoor cycling instructor who brings energy into every class. For me, it's not just about pushing harder — it's about motivating people, creating connection and making the whole room want to move.",
               )}
             </p>
             <p>
               {t(
-                "I combine clear coaching with music, intensity and plenty of encouragement, while always offering options for different levels. Whether it's BODYATTACK, BODYPUMP or a ride, I want people to leave feeling stronger, energised and already looking forward to the next class.",
+                "With clear coaching, music and plenty of encouragement, I challenge people at their own level and make sure everyone feels part of the workout.",
               )}
             </p>
-            <p className="about-note">
-              {t("You'll find me coaching weekly in Mechelen and Antwerp.")}
-            </p>
+            <div className="about-credentials">
+              <p>{t("Certified in")}</p>
+              <p>{t("BODYATTACK · BODYPUMP · STRENGTH DEVELOPMENT · INDOOR CYCLING")}</p>
+            </div>
           </div>
 
           <figure className="about-media">
@@ -556,7 +547,7 @@ export default function Home() {
             <h2>{t("Book a private fitness experience.")}</h2>
             <p>
               {t(
-                "Tell Miriam about your group, preferred format, timing and venue. Regular studio classes are booked directly through the venue.",
+                "Tell Miriam about your group, preferred format, timing and venue. This form is for private experiences and events.",
               )}
             </p>
             <a
