@@ -491,12 +491,12 @@ export default function Home() {
             <h2>{t("My energy is contagious.")}</h2>
             <p className="about-lead">
               {t(
-                "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.",
+                "I'm Miriam, a group fitness and indoor cycling instructor who brings a lot of energy into every class. For me, that energy isn't just about pushing harder — it's about motivating people, creating connection and making the whole room want to move.",
               )}
             </p>
             <p>
               {t(
-                "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in. I'm Les Mills certified in BODYATTACK, BODYPUMP and Strength Development, and earned my indoor cycling certificate at Fitness NRG.",
+                "I combine clear coaching with music, intensity and plenty of encouragement, while always offering options for different levels. Whether it's BODYATTACK, BODYPUMP or a ride, I want people to leave feeling stronger, energised and already looking forward to the next class.",
               )}
             </p>
             <p className="about-note">

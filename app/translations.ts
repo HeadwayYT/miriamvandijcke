@@ -71,10 +71,10 @@ export const nlTranslations: Record<string, string> = {
   "Brand and community events": "Merk- en community-evenementen",
   "About Miriam": "Over Miriam",
   "My energy is contagious.": "Mijn energie werkt aanstekelijk.",
-  "I'm Miriam, a group fitness and indoor cycling instructor. What I enjoy most is bringing music, movement and people together.":
-    "Ik ben Miriam, groepsfitness- en indoorcyclinginstructeur. Wat ik het liefste doe, is muziek, beweging en mensen samenbrengen.",
-  "In every class, I try to coach clearly, offer options for different levels and create an atmosphere where everyone can feel welcome and involved. Whether it's BODYATTACK, BODYPUMP, Strength Development or a ride, I hope people leave feeling energised and glad they joined in. I'm Les Mills certified in BODYATTACK, BODYPUMP and Strength Development, and earned my indoor cycling certificate at Fitness NRG.":
-    "In elke les probeer ik duidelijk te coachen, opties voor verschillende niveaus te geven en een sfeer te creëren waarin iedereen zich welkom en betrokken voelt. Of het nu BODYATTACK, BODYPUMP, Strength Development of een ride is: ik hoop dat mensen met nieuwe energie en een goed gevoel naar huis gaan. Ik ben Les Mills-gecertificeerd in BODYATTACK, BODYPUMP en Strength Development en behaalde mijn indoorcyclingcertificaat bij Fitness NRG.",
+  "I'm Miriam, a group fitness and indoor cycling instructor who brings a lot of energy into every class. For me, that energy isn't just about pushing harder — it's about motivating people, creating connection and making the whole room want to move.":
+    "Ik ben Miriam, groepsfitness- en indoorcyclinginstructeur, en ik breng veel energie in elke les. Voor mij draait die energie niet alleen om harder gaan, maar ook om mensen motiveren, verbinding creëren en de hele zaal zin geven om te bewegen.",
+  "I combine clear coaching with music, intensity and plenty of encouragement, while always offering options for different levels. Whether it's BODYATTACK, BODYPUMP or a ride, I want people to leave feeling stronger, energised and already looking forward to the next class.":
+    "Ik combineer duidelijke coaching met muziek, intensiteit en veel aanmoediging, en bied altijd opties voor verschillende niveaus. Of het nu BODYATTACK, BODYPUMP of een ride is: ik wil dat mensen sterker en vol energie naar huis gaan en al uitkijken naar de volgende les.",
   "You'll find me coaching weekly in Mechelen and Antwerp.":
     "Je vindt me wekelijks als lesgever in Mechelen en Antwerpen.",
   "Miriam smiling in a fitness studio while wearing her instructor headset":
