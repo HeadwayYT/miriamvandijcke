@@ -1334,8 +1334,12 @@ footer a {
   }
 
   .site-header nav a {
+    align-items: center;
+    display: flex;
     flex: 0 1 auto;
     font-size: 0.69rem;
+    justify-content: center;
+    min-height: 36px;
     padding-inline: 4px;
     text-align: center;
     white-space: nowrap;
@@ -1410,6 +1414,10 @@ footer a {
     grid-template-columns: 1fr;
   }
 
+  .faq-grid article {
+    min-height: 0;
+  }
+
   #about,
   #classes,
   #schedule,
@@ -1445,6 +1453,11 @@ footer a {
     grid-template-columns: 42px minmax(0, 1fr);
   }
 
+  .schedule-heading h3 {
+    font-size: 1.55rem;
+    line-height: 1.1;
+  }
+
   .class-session {
     gap: 4px;
     grid-template-columns: 1fr;
@@ -1458,6 +1471,12 @@ footer a {
 
   .work-option {
     min-height: 320px;
+  }
+
+  .contact-form button {
+    height: 54px;
+    min-height: 54px;
+    padding-block: 12px;
   }
 
   footer {
@@ -1490,4 +1509,23 @@ footer a {
   .hero-kicker::before {
     flex-basis: 12px;
   }
+
+  .hero-title {
+    font-size: 2.45rem;
+    line-height: 0.92;
+  }
+
+  .hero-actions {
+    gap: 10px;
+  }
+
+  .hero-actions .button {
+    padding-inline: 16px;
+  }
+
+  .hero-experience-link {
+    font-size: 0.69rem;
+    gap: 5px;
+  }
+
 }
