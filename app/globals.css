@@ -1486,6 +1486,18 @@ footer a {
   }
 }
 
+@media (max-width: 380px) {
+  .hero-kicker {
+    font-size: 0.56rem;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .hero-kicker::before {
+    flex-basis: 16px;
+  }
+}
+
 @media (max-width: 350px) {
   .site-header nav {
     gap: 2px;
