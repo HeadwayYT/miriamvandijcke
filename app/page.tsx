@@ -3,7 +3,14 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ArrowRight, InstagramLogo, Plus } from "@phosphor-icons/react";
+import {
+  ArrowRight,
+  ArrowSquareOut,
+  CalendarDots,
+  InstagramLogo,
+  PaperPlaneTilt,
+  Plus,
+} from "@phosphor-icons/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { type Language, nlTranslations } from "./translations";
 
@@ -342,6 +349,7 @@ export default function Home() {
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#schedule">
+              <CalendarDots aria-hidden="true" size={20} weight="bold" />
               {t("Find a class")}
             </a>
             <a className="hero-experience-link" href="#experiences">
@@ -429,6 +437,7 @@ export default function Home() {
                   <address>{venue.location}</address>
                   <a href={venue.href} target="_blank" rel="noreferrer">
                     {t(venue.cta)}
+                    <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
                   </a>
                 </div>
               </article>
@@ -644,6 +653,7 @@ export default function Home() {
               </p>
             ) : null}
             <button type="submit" disabled={formStatus === "submitting"}>
+              <PaperPlaneTilt aria-hidden="true" size={19} weight="bold" />
               {formStatus === "submitting" ? t("Sending...") : t("Send enquiry")}
             </button>
           </form>

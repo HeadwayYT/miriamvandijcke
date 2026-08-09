@@ -9,7 +9,7 @@ async function render() {
 test("server-renders the two distinct visitor journeys", async () => {
   const html = await render();
   assert.match(html, /<title>Miriam Van Dijcke \| Group Fitness &amp; Fitness Experiences<\/title>/i);
-  assert.match(html, /href="#schedule">Find a class<\/a>/i);
+  assert.match(html, /href="#schedule"[^>]*>[\s\S]*?Find a class<\/a>/i);
   assert.match(html, /href="#experiences">Private experiences/i);
   assert.match(html, /href="#contact">Book Miriam<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);

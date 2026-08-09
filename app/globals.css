@@ -319,6 +319,7 @@ p {
 }
 
 .hero-experience-link svg {
+  color: var(--oxide);
   flex: 0 0 auto;
 }
 
@@ -329,6 +330,7 @@ p {
   cursor: pointer;
   display: inline-flex;
   font-weight: 880;
+  gap: 9px;
   justify-content: center;
   min-height: 54px;
   padding: 15px 22px;
@@ -891,10 +893,13 @@ p {
 }
 
 .venue-action a {
+  align-items: center;
   border-bottom: 2px solid var(--oxide);
   color: var(--ink);
+  display: inline-flex;
   font-size: 0.76rem;
   font-weight: 800;
+  gap: 7px;
   padding-bottom: 5px;
   text-transform: uppercase;
 }
@@ -1052,6 +1057,7 @@ p {
 }
 
 .work-option-cta svg {
+  color: var(--oxide);
   flex: 0 0 auto;
   transition: transform 420ms ease;
 }
@@ -1121,6 +1127,11 @@ p {
   gap: 8px;
   margin-top: 18px;
   padding-bottom: 6px;
+}
+
+.instagram-link svg {
+  color: var(--oxide);
+  flex: 0 0 auto;
 }
 
 .contact-form {
