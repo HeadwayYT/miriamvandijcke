@@ -3,6 +3,7 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ArrowRight, InstagramLogo, Plus } from "@phosphor-icons/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { type Language, nlTranslations } from "./translations";
 
@@ -344,7 +345,8 @@ export default function Home() {
               {t("Find a class")}
             </a>
             <a className="hero-experience-link" href="#experiences">
-              {t("Private experiences")} <span aria-hidden="true">&rarr;</span>
+              {t("Private experiences")}
+              <ArrowRight aria-hidden="true" size={17} weight="bold" />
             </a>
           </div>
         </div>
@@ -478,7 +480,10 @@ export default function Home() {
                   <li key={item}>{t(item)}</li>
                 ))}
               </ul>
-              <span className="work-option-cta">{t(pathway.cta)}</span>
+              <span className="work-option-cta">
+                <span>{t(pathway.cta)}</span>
+                <Plus aria-hidden="true" size={20} weight="bold" />
+              </span>
             </a>
           ))}
         </div>
@@ -551,6 +556,7 @@ export default function Home() {
               target="_blank"
               rel="noreferrer"
             >
+              <InstagramLogo aria-hidden="true" size={20} weight="bold" />
               Instagram @mir.i.am_vd
             </a>
           </div>

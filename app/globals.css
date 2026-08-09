@@ -318,6 +318,10 @@ p {
   transform: translateX(3px);
 }
 
+.hero-experience-link svg {
+  flex: 0 0 auto;
+}
+
 .button,
 .contact-form button {
   align-items: center;
@@ -1047,15 +1051,13 @@ p {
   text-transform: uppercase;
 }
 
-.work-option-cta::after {
-  content: "+";
-  font-size: 1.25rem;
-  font-weight: 400;
+.work-option-cta svg {
+  flex: 0 0 auto;
   transition: transform 420ms ease;
 }
 
-.work-option:hover .work-option-cta::after,
-.work-option:focus-visible .work-option-cta::after {
+.work-option:hover .work-option-cta svg,
+.work-option:focus-visible .work-option-cta svg {
   transform: rotate(90deg);
 }
 
@@ -1111,10 +1113,12 @@ p {
 }
 
 .instagram-link {
+  align-items: center;
   border-bottom: 2px solid var(--oxide);
   color: #fff;
   display: inline-flex;
   font-weight: 900;
+  gap: 8px;
   margin-top: 18px;
   padding-bottom: 6px;
 }
