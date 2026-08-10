@@ -28,6 +28,9 @@ create table if not exists public.site_content (
 
 alter table public.site_content enable row level security;
 
+create index if not exists site_content_updated_by_idx
+on public.site_content (updated_by);
+
 revoke all on table public.site_content from anon, authenticated;
 grant select on table public.site_content to anon;
 grant select, insert, update, delete on table public.site_content to authenticated;
@@ -39,7 +42,7 @@ for select
 to anon, authenticated
 using (
   published = true
-  or coalesce((auth.jwt() -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  or coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
 );
 
 drop policy if exists "studio admin can insert content" on public.site_content;
@@ -48,8 +51,8 @@ on public.site_content
 for insert
 to authenticated
 with check (
-  coalesce((auth.jwt() -> 'app_metadata' ->> 'studio_admin')::boolean, false)
-  and updated_by = auth.uid()
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
 );
 
 drop policy if exists "studio admin can update content" on public.site_content;
@@ -57,10 +60,10 @@ create policy "studio admin can update content"
 on public.site_content
 for update
 to authenticated
-using (coalesce((auth.jwt() -> 'app_metadata' ->> 'studio_admin')::boolean, false))
+using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false))
 with check (
-  coalesce((auth.jwt() -> 'app_metadata' ->> 'studio_admin')::boolean, false)
-  and updated_by = auth.uid()
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
 );
 
 drop policy if exists "studio admin can delete content" on public.site_content;
@@ -68,4 +71,4 @@ create policy "studio admin can delete content"
 on public.site_content
 for delete
 to authenticated
-using (coalesce((auth.jwt() -> 'app_metadata' ->> 'studio_admin')::boolean, false));
+using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false));
