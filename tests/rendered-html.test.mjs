@@ -104,3 +104,25 @@ test("produces a static root route with resolvable Vercel assets", async () => {
     await access(new URL(`../public/${asset}`, import.meta.url));
   }
 });
+
+test("keeps Miriam Studio private and fail-closed", async () => {
+  const html = await render();
+  const pageSource = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const dataSource = await readFile(new URL("../lib/studio/data.ts", import.meta.url), "utf8");
+  const actionSource = await readFile(
+    new URL("../app/studio/actions.ts", import.meta.url),
+    "utf8",
+  );
+  const policies = await readFile(
+    new URL("../supabase/studio-setup.sql", import.meta.url),
+    "utf8",
+  );
+
+  assert.doesNotMatch(html, /href="\/studio"/i);
+  assert.match(pageSource, /Follow[\s\S]*?siteConfig\.instagramHandle/);
+  assert.match(dataSource, /\.eq\("published", true\)/);
+  assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
+  assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);
+  assert.match(policies, /enable row level security/i);
+  assert.match(policies, /app_metadata[\s\S]*?studio_admin/i);
+});

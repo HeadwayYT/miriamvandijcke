@@ -442,6 +442,32 @@ p {
   margin-top: 7px;
 }
 
+.about-social-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  margin-top: 24px;
+}
+
+.about-social-links a {
+  align-items: center;
+  color: #d8d8d8;
+  display: inline-flex;
+  font-size: 0.73rem;
+  font-weight: 800;
+  gap: 7px;
+  text-transform: uppercase;
+}
+
+.about-social-links a:first-child {
+  color: var(--ink);
+}
+
+.about-social-links a:hover {
+  color: var(--oxide);
+}
+
 .about-media {
   aspect-ratio: 4 / 5;
   border-radius: 8px;
@@ -881,6 +907,64 @@ p {
   font-size: 0.82rem;
   line-height: 1.55;
   margin: 18px 0 0;
+}
+
+.latest-ride {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(150px, 0.36fr) minmax(0, 1fr) auto;
+  margin-top: 32px;
+  padding: 24px 0;
+}
+
+.latest-ride-label,
+.latest-ride > a {
+  align-items: center;
+  display: inline-flex;
+}
+
+.latest-ride-label {
+  color: var(--oxide);
+  font-size: 0.72rem;
+  font-weight: 800;
+  gap: 9px;
+  text-transform: uppercase;
+}
+
+.latest-ride-copy h3 {
+  color: var(--ink);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 550;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.latest-ride-copy p {
+  align-items: baseline;
+  color: var(--ash);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  gap: 6px 16px;
+  margin: 8px 0 0;
+}
+
+.latest-ride-copy strong {
+  color: var(--body);
+}
+
+.latest-ride > a {
+  border-bottom: 2px solid var(--oxide);
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 800;
+  gap: 7px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .compact-card:hover h3,
@@ -1421,6 +1505,16 @@ footer a {
   .venue-action {
     align-items: start;
     grid-template-columns: 1fr;
+  }
+
+  .latest-ride {
+    align-items: start;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .latest-ride > a {
+    justify-self: start;
   }
 
   .venue-card {

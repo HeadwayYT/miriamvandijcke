@@ -10,8 +10,14 @@ import {
   InstagramLogo,
   PaperPlaneTilt,
   Plus,
+  SpotifyLogo,
 } from "@phosphor-icons/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { siteConfig } from "@/lib/site-config";
+import {
+  emptyPublicSiteContent,
+  type PublicSiteContent,
+} from "@/lib/studio/content";
 import { type Language, nlTranslations } from "./translations";
 
 const classTypes = [
@@ -143,6 +149,7 @@ export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [language, setLanguage] = useState<Language>("en");
   const [requestType, setRequestType] = useState("Private Indoor Cycling Experience");
+  const [siteContent, setSiteContent] = useState<PublicSiteContent>(emptyPublicSiteContent);
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
   );
@@ -154,6 +161,20 @@ export default function Home() {
     if (savedLanguage === "en" || savedLanguage === "nl") {
       window.queueMicrotask(() => setLanguage(savedLanguage));
     }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch("/api/site-content", { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : emptyPublicSiteContent))
+      .then((content: PublicSiteContent) => setSiteContent(content))
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setSiteContent(emptyPublicSiteContent);
+      });
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -438,6 +459,39 @@ export default function Home() {
               "Schedules may change. Check the studio for the latest availability. Studio access or membership may be required.",
             )}
           </p>
+          {siteContent.spotify?.published ? (
+            <article className="latest-ride" aria-label={t("Latest ride")}>
+              <div className="latest-ride-label">
+                <SpotifyLogo aria-hidden="true" size={22} weight="fill" />
+                <span>{t("Latest ride")}</span>
+              </div>
+              <div className="latest-ride-copy">
+                <h3>{siteContent.spotify.title}</h3>
+                <p>
+                  <strong>{siteContent.spotify.className}</strong>
+                  <span>{siteContent.spotify.focus}</span>
+                  {siteContent.spotify.date ? (
+                    <time dateTime={siteContent.spotify.date}>
+                      {new Intl.DateTimeFormat(language === "nl" ? "nl-BE" : "en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        timeZone: "UTC",
+                      }).format(new Date(`${siteContent.spotify.date}T00:00:00Z`))}
+                    </time>
+                  ) : null}
+                </p>
+              </div>
+              <a
+                href={siteContent.spotify.playlistUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("Listen on Spotify")}
+                <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
+              </a>
+            </article>
+          ) : null}
         </div>
       </section>
 
@@ -507,6 +561,28 @@ export default function Home() {
               <p>{t("Certified in")}</p>
               <p>{t("BODYATTACK · BODYPUMP · STRENGTH DEVELOPMENT · INDOOR CYCLING")}</p>
             </div>
+            <div className="about-social-links">
+              <a
+                href={siteConfig.instagramProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${t("Follow")} @${siteConfig.instagramHandle} ${t("on Instagram")}`}
+              >
+                <InstagramLogo aria-hidden="true" size={17} weight="bold" />
+                {t("Follow")} @{siteConfig.instagramHandle}
+                <ArrowSquareOut aria-hidden="true" size={14} weight="bold" />
+              </a>
+              {siteContent.instagram?.published ? (
+                <a
+                  href={siteContent.instagram.postUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("View featured post")}
+                  <ArrowSquareOut aria-hidden="true" size={14} weight="bold" />
+                </a>
+              ) : null}
+            </div>
           </div>
 
           <figure className="about-media">
@@ -552,12 +628,12 @@ export default function Home() {
             </p>
             <a
               className="instagram-link"
-              href="https://www.instagram.com/mir.i.am_vd/"
+              href={siteConfig.instagramProfileUrl}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               <InstagramLogo aria-hidden="true" size={20} weight="bold" />
-              Instagram @mir.i.am_vd
+              Instagram @{siteConfig.instagramHandle}
             </a>
           </div>
           <form
@@ -654,11 +730,11 @@ export default function Home() {
       <footer>
         <p>Miriam Van Dijcke</p>
         <a
-          href="https://www.instagram.com/mir.i.am_vd/"
+          href={siteConfig.instagramProfileUrl}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
-          @mir.i.am_vd
+          @{siteConfig.instagramHandle}
         </a>
       </footer>
     </main>

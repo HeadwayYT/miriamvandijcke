@@ -50,6 +50,8 @@ export const nlTranslations: Record<string, string> = {
   "View Pulsate schedule": "Bekijk het Pulsate-rooster",
   "Schedules may change. Check the studio for the latest availability. Studio access or membership may be required.":
     "Lesroosters kunnen wijzigen. Controleer de locatie voor de meest recente beschikbaarheid. Toegang tot de studio of een lidmaatschap kan vereist zijn.",
+  "Latest ride": "Nieuwste ride",
+  "Listen on Spotify": "Luister op Spotify",
   "Class formats": "Lesformaten",
   "Your group. Your music. Your workout.": "Jouw groep. Jouw muziek. Jouw workout.",
   "Planning something different? Miriam can create and lead a high-energy fitness experience for your group, team or event.":
@@ -102,6 +104,9 @@ export const nlTranslations: Record<string, string> = {
     "Ik combineer duidelijke coaching met muziek, intensiteit en veel aanmoediging, en bied altijd opties voor verschillende niveaus. Of het nu BODYATTACK, BODYPUMP of een ride is: ik wil dat mensen sterker en vol energie naar huis gaan en al uitkijken naar de volgende les.",
   "You'll find me coaching weekly in Mechelen and Antwerp.":
     "Je vindt me wekelijks als lesgever in Mechelen en Antwerpen.",
+  Follow: "Volg",
+  "on Instagram": "op Instagram",
+  "View featured post": "Bekijk uitgelichte post",
   "Miriam smiling in a fitness studio while wearing her instructor headset":
     "Miriam glimlacht in een fitnessstudio met haar instructeursheadset",
   "Practical questions": "Praktische vragen",
