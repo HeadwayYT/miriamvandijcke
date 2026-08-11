@@ -120,6 +120,8 @@ test("keeps Miriam Studio private and fail-closed", async () => {
 
   assert.doesNotMatch(html, /href="\/studio"/i);
   assert.match(pageSource, /Follow[\s\S]*?siteConfig\.instagramHandle/);
+  assert.match(pageSource, /https:\/\/www\.instagram\.com\/embed\.js/);
+  assert.match(pageSource, /data-instgrm-captioned/);
   assert.match(dataSource, /\.eq\("published", true\)/);
   assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);

@@ -3,6 +3,7 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import Script from "next/script";
 import {
   ArrowRight,
   ArrowSquareOut,
@@ -19,6 +20,16 @@ import {
   type PublicSiteContent,
 } from "@/lib/studio/content";
 import { type Language, nlTranslations } from "./translations";
+
+declare global {
+  interface Window {
+    instgrm?: {
+      Embeds: {
+        process: () => void;
+      };
+    };
+  }
+}
 
 const classTypes = [
   {
@@ -585,18 +596,30 @@ export default function Home() {
             </div>
           </div>
 
-          <figure className="about-media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="about-photo"
-              src="/images/miriam-headset.jpg"
-              alt={t("Miriam smiling in a fitness studio while wearing her instructor headset")}
-              width={1600}
-              height={1200}
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="about-media-shade" aria-hidden="true" />
+          <figure
+            className={`about-media${siteContent.instagram?.published ? " instagram-post-media" : ""}`}
+          >
+            {siteContent.instagram?.published ? (
+              <InstagramPostEmbed
+                postUrl={siteContent.instagram.postUrl}
+                label={siteContent.instagram.label}
+                viewLabel={t("View post on Instagram")}
+              />
+            ) : (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className="about-photo"
+                  src="/images/miriam-headset.jpg"
+                  alt={t("Miriam smiling in a fitness studio while wearing her instructor headset")}
+                  width={1600}
+                  height={1200}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="about-media-shade" aria-hidden="true" />
+              </>
+            )}
           </figure>
         </div>
       </section>
@@ -738,5 +761,41 @@ export default function Home() {
         </a>
       </footer>
     </main>
+  );
+}
+
+function InstagramPostEmbed({
+  postUrl,
+  label,
+  viewLabel,
+}: {
+  postUrl: string;
+  label: string | null;
+  viewLabel: string;
+}) {
+  useEffect(() => {
+    window.instgrm?.Embeds.process();
+  }, [postUrl]);
+
+  return (
+    <div className="instagram-embed-shell">
+      <blockquote
+        className="instagram-media"
+        data-instgrm-captioned=""
+        data-instgrm-permalink={postUrl}
+        data-instgrm-version="14"
+      >
+        <a href={postUrl} target="_blank" rel="noopener noreferrer">
+          <InstagramLogo aria-hidden="true" size={20} weight="bold" />
+          {label || viewLabel}
+        </a>
+      </blockquote>
+      <Script
+        id="instagram-embed-script"
+        src="https://www.instagram.com/embed.js"
+        strategy="lazyOnload"
+        onLoad={() => window.instgrm?.Embeds.process()}
+      />
+    </div>
   );
 }

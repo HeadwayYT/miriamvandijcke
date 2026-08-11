@@ -107,6 +107,7 @@ export const nlTranslations: Record<string, string> = {
   Follow: "Volg",
   "on Instagram": "op Instagram",
   "View featured post": "Bekijk uitgelichte post",
+  "View post on Instagram": "Bekijk post op Instagram",
   "Miriam smiling in a fitness studio while wearing her instructor headset":
     "Miriam glimlacht in een fitnessstudio met haar instructeursheadset",
   "Practical questions": "Praktische vragen",
