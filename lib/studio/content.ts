@@ -48,6 +48,16 @@ export function normalizeSpotifyPlaylistUrl(value: string): string | null {
   return `https://open.spotify.com/playlist/${playlistId}`;
 }
 
+export function toSpotifyEmbedUrl(value: string): string | null {
+  const normalized = normalizeSpotifyPlaylistUrl(value);
+  if (!normalized) return null;
+
+  return normalized.replace(
+    "https://open.spotify.com/playlist/",
+    "https://open.spotify.com/embed/playlist/",
+  );
+}
+
 export function normalizeInstagramPostUrl(value: string): string | null {
   const url = parseHttpsUrl(value);
   if (!url || !["instagram.com", "www.instagram.com"].includes(url.hostname)) {

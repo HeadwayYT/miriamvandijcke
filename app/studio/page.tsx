@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media";
 import {
   ArrowLeft,
   Database,
@@ -11,6 +12,10 @@ import {
 import { getMissingStudioEnvironment, getSupabaseRuntimeConfig } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getAdminSiteContent, isStudioAdmin } from "@/lib/studio/data";
+import {
+  toSpotifyEmbedUrl,
+  type SpotifyContent,
+} from "@/lib/studio/content";
 import {
   saveInstagramContent,
   saveSpotifyContent,
@@ -82,11 +87,13 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
           <div className={styles.editorHeading}>
             <SpotifyLogo aria-hidden="true" size={28} weight="fill" />
             <div>
-              <p>Spotify / Latest Ride</p>
+              <p>Latest Ride</p>
               <h2>{spotify?.title ?? "No playlist yet"}</h2>
             </div>
             <Status published={spotify?.published ?? false} />
           </div>
+
+          {spotify ? <StudioSpotifyPreview content={spotify} /> : null}
 
           <form action={saveSpotifyContent} className={styles.form}>
             <label>
@@ -111,12 +118,15 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
               Spotify playlist URL
               <input name="playlistUrl" type="url" inputMode="url" defaultValue={spotify?.playlistUrl ?? ""} placeholder="https://open.spotify.com/playlist/..." required />
             </label>
-            <label>
-              Status
-              <select name="status" defaultValue={spotify?.published ? "published" : "draft"}>
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
+            <label className={styles.publishToggle}>
+              <input
+                name="status"
+                type="checkbox"
+                value="published"
+                defaultChecked={spotify?.published ?? false}
+              />
+              <span aria-hidden="true" />
+              Published
             </label>
             <button className={styles.saveButton} type="submit">
               <FloppyDisk aria-hidden="true" size={19} weight="bold" />
@@ -129,27 +139,48 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
           <div className={styles.editorHeading}>
             <InstagramLogo aria-hidden="true" size={28} weight="bold" />
             <div>
-              <p>Instagram</p>
+              <p>About / Featured Instagram Post</p>
               <h2>{instagram?.label ?? "No featured post yet"}</h2>
             </div>
             <Status published={instagram?.published ?? false} />
           </div>
 
+          {instagram ? (
+            <div className={styles.previewPanel}>
+              <div className={styles.previewHeading}>
+                <div>
+                  <p>Current featured post</p>
+                  <strong>{instagram.label || "Instagram post"}</strong>
+                </div>
+                <a href="#instagram-url">Change post</a>
+              </div>
+              <InstagramFeatureMedia
+                postUrl={instagram.postUrl}
+                label={instagram.label}
+                viewLabel="Open post on Instagram"
+                compact
+              />
+            </div>
+          ) : null}
+
           <form action={saveInstagramContent} className={styles.form}>
             <label>
               Instagram post / Reel URL
-              <input name="postUrl" type="url" inputMode="url" defaultValue={instagram?.postUrl ?? ""} placeholder="https://www.instagram.com/reel/..." required />
+              <input id="instagram-url" name="postUrl" type="url" inputMode="url" defaultValue={instagram?.postUrl ?? ""} placeholder="https://www.instagram.com/reel/..." required />
             </label>
             <label>
               Internal label <span>optional</span>
               <input name="label" type="text" maxLength={80} defaultValue={instagram?.label ?? ""} placeholder="Saturday RIDE energy" />
             </label>
-            <label>
-              Status
-              <select name="status" defaultValue={instagram?.published ? "published" : "draft"}>
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
+            <label className={styles.publishToggle}>
+              <input
+                name="status"
+                type="checkbox"
+                value="published"
+                defaultChecked={instagram?.published ?? false}
+              />
+              <span aria-hidden="true" />
+              Published
             </label>
             <button className={styles.saveButton} type="submit">
               <FloppyDisk aria-hidden="true" size={19} weight="bold" />
@@ -159,6 +190,38 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         </section>
       </div>
     </main>
+  );
+}
+
+function StudioSpotifyPreview({ content }: { content: SpotifyContent }) {
+  const embedUrl = toSpotifyEmbedUrl(content.playlistUrl);
+  if (!embedUrl) return null;
+
+  return (
+    <div className={styles.previewPanel}>
+      <div className={styles.previewHeading}>
+        <div>
+          <p>Public preview</p>
+          <strong>{content.title}</strong>
+        </div>
+        <a href={content.playlistUrl} target="_blank" rel="noopener noreferrer">
+          Open in Spotify
+        </a>
+      </div>
+      <div className={styles.ridePreviewMeta}>
+        <strong>{content.className}</strong>
+        <span>{content.focus}</span>
+      </div>
+      <iframe
+        className={styles.spotifyPreview}
+        src={embedUrl}
+        title={`${content.title} Spotify playlist preview`}
+        width="100%"
+        height="152"
+        loading="lazy"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      />
+    </div>
   );
 }
 

@@ -6,14 +6,16 @@ async function render() {
   return readFile(new URL("../.next/server/app/index.html", import.meta.url), "utf8");
 }
 
-test("server-renders the two distinct visitor journeys", async () => {
+test("server-renders Miriam's fitness hub priorities", async () => {
   const html = await render();
-  assert.match(html, /<title>Miriam Van Dijcke \| Group Fitness &amp; Fitness Experiences<\/title>/i);
+  assert.match(html, /<title>Miriam Van Dijcke \| Group Fitness &amp; Indoor Cycling<\/title>/i);
   assert.match(html, /href="#schedule"[^>]*>[\s\S]*?Find a class<\/a>/i);
-  assert.match(html, /href="#experiences">Private experiences/i);
-  assert.match(html, /href="#contact">Book Miriam<\/a>/i);
+  assert.match(html, /href="#about"[^>]*>[\s\S]*?Follow Miriam/i);
+  assert.match(html, /href="#contact">Contact<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
-  assert.match(html, /No\. Miriam is a group fitness and indoor cycling instructor/i);
+  assert.match(html, /Bring Miriam to your event/i);
+  assert.match(html, /Want to collaborate, plan a fitness event or simply get in touch/i);
+  assert.doesNotMatch(html, /Private experiences/i);
   assert.doesNotMatch(html, />Book now</i);
 });
 
@@ -31,13 +33,15 @@ test("renders an accessible English and Dutch language switch", async () => {
   assert.match(source, /localStorage\.setItem\("miriam-language"/);
   assert.match(source, /document\.documentElement\.lang = language/);
   assert.match(translations, /"Move together\.": "Samen in beweging\."/);
-  assert.match(translations, /"Book Miriam": "Boek Miriam"/);
+  assert.match(translations, /"Rides & music": "Rides & muziek"/);
+  assert.match(translations, /"Follow Miriam": "Volg Miriam"/);
+  assert.match(translations, /"Get in touch\.": "Neem contact op\."/);
   assert.match(translations, /"Send enquiry": "Verstuur aanvraag"/);
   assert.match(translations, /"My energy is contagious\.": "Mijn energie werkt aanstekelijk\."/);
   assert.doesNotMatch(source, /about-certified/);
 });
 
-test("renders the compact venue schedules and private enquiry options", async () => {
+test("renders compact venue schedules and a secondary event path", async () => {
   const html = await render();
 
   assert.match(html, /19:00 - 20:00/);
@@ -46,9 +50,11 @@ test("renders the compact venue schedules and private enquiry options", async ()
   assert.match(html, /BODYATTACK/);
   assert.match(html, /BODYPUMP/);
   assert.match(html, /RIDE: PERFORMANCE/);
-  assert.match(html, />Private Indoor Cycling Experience<\/h3>/);
-  assert.match(html, />Private Group Workout<\/h3>/);
-  assert.match(html, />Corporate &amp; Events<\/h3>/);
+  assert.match(html, /Special rides/);
+  assert.match(html, /Group workouts/);
+  assert.match(html, /Studio collaborations/);
+  assert.match(html, /What&#x27;s this about\?/);
+  assert.doesNotMatch(html, />Private Indoor Cycling Experience<\/h3>/);
 
   const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const ids = new Set([...source.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
@@ -108,6 +114,10 @@ test("produces a static root route with resolvable Vercel assets", async () => {
 test("keeps Miriam Studio private and fail-closed", async () => {
   const html = await render();
   const pageSource = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const instagramSource = await readFile(
+    new URL("../app/components/instagram-feature-media.tsx", import.meta.url),
+    "utf8",
+  );
   const dataSource = await readFile(new URL("../lib/studio/data.ts", import.meta.url), "utf8");
   const actionSource = await readFile(
     new URL("../app/studio/actions.ts", import.meta.url),
@@ -120,8 +130,11 @@ test("keeps Miriam Studio private and fail-closed", async () => {
 
   assert.doesNotMatch(html, /href="\/studio"/i);
   assert.match(pageSource, /Follow[\s\S]*?siteConfig\.instagramHandle/);
-  assert.match(pageSource, /https:\/\/www\.instagram\.com\/embed\.js/);
-  assert.match(pageSource, /data-instgrm-captioned/);
+  assert.match(pageSource, /toSpotifyEmbedUrl/);
+  assert.match(pageSource, /height="152"/);
+  assert.match(instagramSource, /https:\/\/www\.instagram\.com\/embed\.js/);
+  assert.match(instagramSource, /data-instgrm-captioned/);
+  assert.match(instagramSource, /miriam-headset\.jpg/);
   assert.match(dataSource, /\.eq\("published", true\)/);
   assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);

@@ -1,6 +1,10 @@
 export type Language = "en" | "nl";
 
 export const nlTranslations: Record<string, string> = {
+  "Miriam Van Dijcke | Group Fitness & Indoor Cycling":
+    "Miriam Van Dijcke | Groepsfitness & Indoor Cycling",
+  "Miriam's fitness hub for group fitness, indoor cycling, weekly classes, music and current activity in Mechelen and Antwerp.":
+    "Miriams fitnesshub voor groepsfitness, indoor cycling, wekelijkse lessen, muziek en actuele activiteiten in Mechelen en Antwerpen.",
   "Miriam Van Dijcke | Group Fitness & Fitness Experiences":
     "Miriam Van Dijcke | Groepsfitness & Fitnessbelevingen",
   "Group fitness and indoor cycling instructor in Mechelen and Antwerp. Join Miriam's regular classes or book a private fitness experience for your group, team or event.":
@@ -10,6 +14,7 @@ export const nlTranslations: Record<string, string> = {
   "Choose language": "Kies taal",
   About: "Over Miriam",
   Classes: "Lessen",
+  "Rides & music": "Rides & muziek",
   "What I teach": "Wat ik geef",
   "Private Experiences": "Privé-events",
   "Book Miriam": "Boek Miriam",
@@ -23,6 +28,7 @@ export const nlTranslations: Record<string, string> = {
   "Join Miriam weekly in Mechelen and Antwerp — or bring the energy to your own group or event.":
     "Volg Miriam wekelijks in Mechelen en Antwerpen, of haal die energie naar je eigen groep of evenement.",
   "Find a class": "Vind een les",
+  "Follow Miriam": "Volg Miriam",
   "Private experiences": "Privébelevingen",
   "Want to work out with me? You'll find me teaching regular classes at selected gyms and studios. Access and booking are handled directly by each venue.":
     "Wil je met mij sporten? Je vindt me in vaste lessen bij geselecteerde fitnessclubs en studio's. Toegang en reservatie verlopen rechtstreeks via de locatie.",
@@ -52,6 +58,8 @@ export const nlTranslations: Record<string, string> = {
     "Lesroosters kunnen wijzigen. Controleer de locatie voor de meest recente beschikbaarheid. Toegang tot de studio of een lidmaatschap kan vereist zijn.",
   "Latest ride": "Nieuwste ride",
   "Listen on Spotify": "Luister op Spotify",
+  "Open in Spotify": "Open in Spotify",
+  "Spotify playlist": "Spotify-playlist",
   "Class formats": "Lesformaten",
   "Your group. Your music. Your workout.": "Jouw groep. Jouw muziek. Jouw workout.",
   "Planning something different? Miriam can create and lead a high-energy fitness experience for your group, team or event.":
@@ -132,6 +140,20 @@ export const nlTranslations: Record<string, string> = {
   "No. Miriam is a group fitness and indoor cycling instructor, and a fitness experience coach and host. Her focus is shared energy, music, movement and community.":
     "Nee. Miriam is groepsfitness- en indoorcyclinginstructeur en begeleidt fitnessbelevingen. Haar focus ligt op gedeelde energie, muziek, beweging en community.",
   Contact: "Contact",
+  "Bring Miriam to your event": "Haal Miriam naar je evenement",
+  "Bring the room together.": "Breng de zaal samen.",
+  "Planning a special ride, group workout, team event or studio collaboration? Miriam is available for selected fitness events and group experiences.":
+    "Plan je een speciale ride, groepsworkout, teamevenement of studiocollab? Miriam is beschikbaar voor geselecteerde fitnessevenementen en groepsbelevingen.",
+  "Special rides": "Speciale rides",
+  "Group workouts": "Groepsworkouts",
+  "Corporate events": "Bedrijfsevenementen",
+  "Studio collaborations": "Studiocollabs",
+  "Indoor cycling requires access to a suitable studio and bikes; these need to be available or arranged.":
+    "Voor indoor cycling zijn een geschikte studio en fietsen nodig; die moeten beschikbaar zijn of geregeld worden.",
+  "Get in touch": "Neem contact op",
+  "Get in touch.": "Neem contact op.",
+  "Want to collaborate, plan a fitness event or simply get in touch? Send Miriam a message.":
+    "Wil je samenwerken, een fitnessevenement plannen of gewoon contact opnemen? Stuur Miriam een bericht.",
   "Book a private fitness experience.": "Boek een fitnessbeleving voor je groep.",
   "Tell Miriam about your group, preferred format, timing and venue. This form is for private experiences and events.":
     "Vertel Miriam over je groep, het gewenste format, de timing en de locatie. Dit formulier is voor privébelevingen en evenementen.",
@@ -141,6 +163,11 @@ export const nlTranslations: Record<string, string> = {
   "Your name": "Je naam",
   Email: "E-mail",
   "Experience type": "Type beleving",
+  "What's this about?": "Waarover gaat je bericht?",
+  "Fitness event": "Fitnessevenement",
+  "Private group experience": "Privé-groepsbeleving",
+  "Studio collaboration": "Studiocollab",
+  "Corporate / team event": "Bedrijfs- of teamevenement",
   "Corporate / Team Event": "Bedrijfs- of teamevenement",
   "Brand / Community Event": "Merk- of community-evenement",
   Other: "Andere",

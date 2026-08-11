@@ -4,6 +4,7 @@ import {
   normalizeInstagramPostUrl,
   normalizeSpotifyPlaylistUrl,
   rowsToSiteContent,
+  toSpotifyEmbedUrl,
   type SiteContentRow,
 } from "../lib/studio/content.ts";
 
@@ -17,6 +18,11 @@ test("accepts and normalizes Spotify playlist URLs only", () => {
   assert.equal(normalizeSpotifyPlaylistUrl("https://open.spotify.com/track/abc"), null);
   assert.equal(normalizeSpotifyPlaylistUrl("http://open.spotify.com/playlist/abc"), null);
   assert.equal(normalizeSpotifyPlaylistUrl("https://open.spotify.com.evil.test/playlist/abc"), null);
+  assert.equal(
+    toSpotifyEmbedUrl("https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP"),
+    "https://open.spotify.com/embed/playlist/37i9dQZF1DX76Wlfdnj7AP",
+  );
+  assert.equal(toSpotifyEmbedUrl("https://open.spotify.com/track/abc"), null);
 });
 
 test("accepts and normalizes public Instagram post and Reel URLs only", () => {

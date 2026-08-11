@@ -3,33 +3,24 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import Script from "next/script";
 import {
   ArrowRight,
   ArrowSquareOut,
   CalendarDots,
   InstagramLogo,
   PaperPlaneTilt,
-  Plus,
   SpotifyLogo,
 } from "@phosphor-icons/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { siteConfig } from "@/lib/site-config";
+import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media";
 import {
   emptyPublicSiteContent,
+  toSpotifyEmbedUrl,
   type PublicSiteContent,
+  type SpotifyContent,
 } from "@/lib/studio/content";
 import { type Language, nlTranslations } from "./translations";
-
-declare global {
-  interface Window {
-    instgrm?: {
-      Embeds: {
-        process: () => void;
-      };
-    };
-  }
-}
 
 const classTypes = [
   {
@@ -55,34 +46,6 @@ const classTypes = [
     detail:
       "Music-led indoor cycling with climbs, intervals and endurance work.",
     image: "/images/miriam-spinning.jpg",
-  },
-];
-
-const pathways = [
-  {
-    title: "Private Indoor Cycling Experience",
-    copy:
-      "A custom indoor cycling experience for your group, with a suitable studio and bikes available or arranged.",
-    items: ["Private groups", "Themed sessions", "Celebrations"],
-    href: "#contact",
-    cta: "Enquire about an experience",
-    request: "Private Indoor Cycling Experience",
-  },
-  {
-    title: "Private Group Workout",
-    copy: "A music-driven strength and cardio workout shaped around your group and occasion.",
-    items: ["Strength + cardio", "All levels", "Custom format"],
-    href: "#contact",
-    cta: "Enquire about an experience",
-    request: "Private Group Workout",
-  },
-  {
-    title: "Corporate & Events",
-    copy: "Bring movement, music and shared energy to your team, community or event.",
-    items: ["Wellness", "Team building", "Brand events"],
-    href: "#contact",
-    cta: "Enquire about an experience",
-    request: "Corporate / Team Event",
   },
 ];
 
@@ -139,27 +102,12 @@ const venues: Venue[] = [
   },
 ];
 
-const faqItems = [
-  [
-    "Can beginners join?",
-    "Yes. Miriam offers clear options for different levels so mixed-ability groups can move together with confidence.",
-  ],
-  [
-    "Can I book Miriam directly?",
-    "Yes, for private group workouts, indoor cycling experiences, corporate sessions and fitness events.",
-  ],
-  [
-    "Does Miriam offer personal training?",
-    "No. Miriam is a group fitness and indoor cycling instructor, and a fitness experience coach and host. Her focus is shared energy, music, movement and community.",
-  ],
-];
-
 const formspreeEndpoint = "https://formspree.io/f/mzepdael";
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [language, setLanguage] = useState<Language>("en");
-  const [requestType, setRequestType] = useState("Private Indoor Cycling Experience");
+  const [requestType, setRequestType] = useState("Fitness event");
   const [siteContent, setSiteContent] = useState<PublicSiteContent>(emptyPublicSiteContent);
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
@@ -194,7 +142,7 @@ export default function Home() {
 
     document.documentElement.lang = language;
     document.title = localizeMetadata(
-      "Miriam Van Dijcke | Group Fitness & Fitness Experiences",
+      "Miriam Van Dijcke | Group Fitness & Indoor Cycling",
     );
 
     const description = document.querySelector<HTMLMetaElement>(
@@ -202,7 +150,7 @@ export default function Home() {
     );
     if (description) {
       description.content = localizeMetadata(
-        "Group fitness and indoor cycling instructor in Mechelen and Antwerp. Join Miriam's regular classes or book a private fitness experience for your group, team or event.",
+        "Miriam's fitness hub for group fitness, indoor cycling, weekly classes, music and current activity in Mechelen and Antwerp.",
       );
     }
   }, [language]);
@@ -227,7 +175,7 @@ export default function Home() {
       if (!response.ok) throw new Error("Formspree rejected the submission");
 
       form.reset();
-      setRequestType("Private Indoor Cycling Experience");
+      setRequestType("Fitness event");
       setFormStatus("success");
     } catch {
       setFormStatus("error");
@@ -325,10 +273,12 @@ export default function Home() {
           <span>Miriam Van Dijcke</span>
         </a>
         <nav>
-          <a href="#about">{t("About")}</a>
           <a href="#classes">{t("Classes")}</a>
-          <a href="#experiences">{t("Private Experiences")}</a>
-          <a className="nav-cta" href="#contact">{t("Book Miriam")}</a>
+          {siteContent.spotify?.published ? (
+            <a href="#rides">{t("Rides & music")}</a>
+          ) : null}
+          <a href="#about">{t("About")}</a>
+          <a className="nav-cta" href="#contact">{t("Contact")}</a>
         </nav>
         <div className="language-toggle" role="group" aria-label={t("Choose language")}>
           {(["en", "nl"] as const).map((option) => (
@@ -376,8 +326,9 @@ export default function Home() {
               <CalendarDots aria-hidden="true" size={20} weight="bold" />
               {t("Find a class")}
             </a>
-            <a className="hero-experience-link" href="#experiences">
-              {t("Private experiences")}
+            <a className="hero-experience-link" href="#about">
+              <InstagramLogo aria-hidden="true" size={17} weight="bold" />
+              {t("Follow Miriam")}
               <ArrowRight aria-hidden="true" size={17} weight="bold" />
             </a>
           </div>
@@ -470,39 +421,6 @@ export default function Home() {
               "Schedules may change. Check the studio for the latest availability. Studio access or membership may be required.",
             )}
           </p>
-          {siteContent.spotify?.published ? (
-            <article className="latest-ride" aria-label={t("Latest ride")}>
-              <div className="latest-ride-label">
-                <SpotifyLogo aria-hidden="true" size={22} weight="fill" />
-                <span>{t("Latest ride")}</span>
-              </div>
-              <div className="latest-ride-copy">
-                <h3>{siteContent.spotify.title}</h3>
-                <p>
-                  <strong>{siteContent.spotify.className}</strong>
-                  <span>{siteContent.spotify.focus}</span>
-                  {siteContent.spotify.date ? (
-                    <time dateTime={siteContent.spotify.date}>
-                      {new Intl.DateTimeFormat(language === "nl" ? "nl-BE" : "en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                        timeZone: "UTC",
-                      }).format(new Date(`${siteContent.spotify.date}T00:00:00Z`))}
-                    </time>
-                  ) : null}
-                </p>
-              </div>
-              <a
-                href={siteContent.spotify.playlistUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t("Listen on Spotify")}
-                <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
-              </a>
-            </article>
-          ) : null}
         </div>
       </section>
 
@@ -514,44 +432,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter accordion-chapter">
-        <div className="chapter-heading wide">
-          <p className="eyebrow">{t("Private experiences")}</p>
-          <h2>{t("Your group. Your music. Your workout.")}</h2>
-          <p className="chapter-intro">
-            {t(
-              "Planning something different? Miriam can create and lead a high-energy fitness experience for your group, team or event.",
-            )}
-          </p>
-        </div>
-        <div className="work-options" id="experiences">
-          {pathways.map((pathway) => (
-            <a
-              className="work-option"
-              href={pathway.href}
-              key={pathway.title}
-              aria-label={`${t(pathway.cta)}: ${t(pathway.title)}`}
-              onClick={() => {
-                if (pathway.request) setRequestType(pathway.request);
-              }}
-            >
-              <div>
-                <h3>{t(pathway.title)}</h3>
-                <p>{t(pathway.copy)}</p>
-              </div>
-              <p className="work-option-features">
-                {pathway.items.map((item) => (
-                  <span key={item}>{t(item)}</span>
-                ))}
-              </p>
-              <span className="work-option-cta">
-                <span>{t(pathway.cta)}</span>
-                <Plus aria-hidden="true" size={20} weight="bold" />
-              </span>
-            </a>
-          ))}
-        </div>
-      </section>
+      {siteContent.spotify?.published ? (
+        <LatestRide
+          content={siteContent.spotify}
+          language={language}
+          t={t}
+        />
+      ) : null}
 
       <section className="chapter about-chapter">
         <div className="about-grid" id="about">
@@ -600,7 +487,7 @@ export default function Home() {
             className={`about-media${siteContent.instagram?.published ? " instagram-post-media" : ""}`}
           >
             {siteContent.instagram?.published ? (
-              <InstagramPostEmbed
+              <InstagramFeatureMedia
                 postUrl={siteContent.instagram.postUrl}
                 label={siteContent.instagram.label}
                 viewLabel={t("View post on Instagram")}
@@ -624,18 +511,36 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter faq-chapter">
-        <div className="chapter-heading">
-          <p className="eyebrow">{t("Practical questions")}</p>
-          <h2>{t("Before you send a request.")}</h2>
-        </div>
-        <div className="faq-grid">
-          {faqItems.map(([question, answer]) => (
-            <article key={question}>
-              <h3>{t(question)}</h3>
-              <p>{t(answer)}</p>
-            </article>
-          ))}
+      <section className="chapter event-chapter" id="events">
+        <div className="event-inner">
+          <div className="event-copy">
+            <p className="eyebrow">{t("Bring Miriam to your event")}</p>
+            <h2>{t("Bring the room together.")}</h2>
+            <p>
+              {t(
+                "Planning a special ride, group workout, team event or studio collaboration? Miriam is available for selected fitness events and group experiences.",
+              )}
+            </p>
+            <p className="event-categories">
+              {t("Special rides")} <span aria-hidden="true">&middot;</span>{" "}
+              {t("Group workouts")} <span aria-hidden="true">&middot;</span>{" "}
+              {t("Corporate events")} <span aria-hidden="true">&middot;</span>{" "}
+              {t("Studio collaborations")}
+            </p>
+            <p className="event-note">
+              {t(
+                "Indoor cycling requires access to a suitable studio and bikes; these need to be available or arranged.",
+              )}
+            </p>
+          </div>
+          <a
+            className="event-cta"
+            href="#contact"
+            onClick={() => setRequestType("Fitness event")}
+          >
+            {t("Get in touch")}
+            <ArrowRight aria-hidden="true" size={18} weight="bold" />
+          </a>
         </div>
       </section>
 
@@ -643,10 +548,10 @@ export default function Home() {
         <div className="contact-inner" id="contact">
           <div>
             <p className="eyebrow">{t("Contact")}</p>
-            <h2>{t("Book a private fitness experience.")}</h2>
+            <h2>{t("Get in touch.")}</h2>
             <p>
               {t(
-                "Tell Miriam about your group, preferred format, timing and venue. This form is for private experiences and events.",
+                "Want to collaborate, plan a fitness event or simply get in touch? Send Miriam a message.",
               )}
             </p>
             <a
@@ -675,21 +580,17 @@ export default function Home() {
               <input type="email" name="email" placeholder="you@example.com" required />
             </label>
             <label>
-              {t("Experience type")}
+              {t("What's this about?")}
               <select
                 name="request"
                 value={requestType}
                 onChange={(event) => setRequestType(event.target.value)}
                 required
               >
-                <option value="Private Indoor Cycling Experience">
-                  {t("Private Indoor Cycling Experience")}
-                </option>
-                <option value="Private Group Workout">{t("Private Group Workout")}</option>
-                <option value="Corporate / Team Event">{t("Corporate / Team Event")}</option>
-                <option value="Brand / Community Event">
-                  {t("Brand / Community Event")}
-                </option>
+                <option value="Fitness event">{t("Fitness event")}</option>
+                <option value="Private group experience">{t("Private group experience")}</option>
+                <option value="Studio collaboration">{t("Studio collaboration")}</option>
+                <option value="Corporate / team event">{t("Corporate / team event")}</option>
                 <option value="Other">{t("Other")}</option>
               </select>
             </label>
@@ -727,11 +628,6 @@ export default function Home() {
                 rows={5}
               />
             </label>
-            <p className="form-note">
-              {t(
-                "Indoor cycling experiences require access to a suitable studio and bikes; these need to be available or arranged.",
-              )}
-            </p>
             {formStatus === "success" ? (
               <p className="form-status success" role="status">
                 {t("Thank you. Your enquiry has been sent to Miriam.")}
@@ -764,38 +660,62 @@ export default function Home() {
   );
 }
 
-function InstagramPostEmbed({
-  postUrl,
-  label,
-  viewLabel,
+function LatestRide({
+  content,
+  language,
+  t,
 }: {
-  postUrl: string;
-  label: string | null;
-  viewLabel: string;
+  content: SpotifyContent;
+  language: Language;
+  t: (value: string) => string;
 }) {
-  useEffect(() => {
-    window.instgrm?.Embeds.process();
-  }, [postUrl]);
+  const embedUrl = toSpotifyEmbedUrl(content.playlistUrl);
+  if (!embedUrl) return null;
 
   return (
-    <div className="instagram-embed-shell">
-      <blockquote
-        className="instagram-media"
-        data-instgrm-captioned=""
-        data-instgrm-permalink={postUrl}
-        data-instgrm-version="14"
-      >
-        <a href={postUrl} target="_blank" rel="noopener noreferrer">
-          <InstagramLogo aria-hidden="true" size={20} weight="bold" />
-          {label || viewLabel}
-        </a>
-      </blockquote>
-      <Script
-        id="instagram-embed-script"
-        src="https://www.instagram.com/embed.js"
-        strategy="lazyOnload"
-        onLoad={() => window.instgrm?.Embeds.process()}
-      />
-    </div>
+    <section className="chapter latest-ride-chapter">
+      <div className="latest-ride-grid" id="rides">
+        <div className="latest-ride-copy">
+          <div className="latest-ride-label">
+            <SpotifyLogo aria-hidden="true" size={22} weight="fill" />
+            <span>{t("Latest ride")}</span>
+          </div>
+          <h2>{content.title}</h2>
+          <div className="latest-ride-meta">
+            <strong>{content.className}</strong>
+            <span>{content.focus}</span>
+            {content.date ? (
+              <time dateTime={content.date}>
+                {new Intl.DateTimeFormat(language === "nl" ? "nl-BE" : "en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  timeZone: "UTC",
+                }).format(new Date(`${content.date}T00:00:00Z`))}
+              </time>
+            ) : null}
+          </div>
+          <a
+            className="latest-ride-link"
+            href={content.playlistUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("Open in Spotify")}
+            <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
+          </a>
+        </div>
+        <div className="spotify-embed-shell">
+          <iframe
+            src={embedUrl}
+            title={`${content.title} ${t("Spotify playlist")}`}
+            width="100%"
+            height="152"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          />
+        </div>
+      </div>
+    </section>
   );
 }

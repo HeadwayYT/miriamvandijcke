@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Miriam Van Dijcke | Group Fitness & Fitness Experiences",
+  title: "Miriam Van Dijcke | Group Fitness & Indoor Cycling",
   description:
-    "Group fitness and indoor cycling instructor in Mechelen and Antwerp. Join Miriam's regular classes or book a private fitness experience for your group, team or event.",
+    "Miriam's fitness hub for group fitness, indoor cycling, weekly classes, music and current activity in Mechelen and Antwerp.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
