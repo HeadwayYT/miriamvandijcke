@@ -67,3 +67,33 @@ test("maps normalized database rows without turning drafts into published conten
   assert.equal(content.instagram?.published, true);
   assert.equal(content.instagram?.label, "Saturday RIDE energy");
 });
+
+test("drops malformed stored URLs instead of exposing broken public content", () => {
+  const rows: SiteContentRow[] = [
+    {
+      content_key: "spotify",
+      title: "Power & Speed",
+      class_name: "RIDE: PERFORMANCE",
+      event_date: null,
+      focus: "Power / Speed / Endurance",
+      url: "https://open.spotify.com/track/not-a-playlist",
+      label: null,
+      published: true,
+    },
+    {
+      content_key: "instagram",
+      title: null,
+      class_name: null,
+      event_date: null,
+      focus: null,
+      url: "https://www.instagram.com/mir.i.am_vd/",
+      label: "Not a post",
+      published: true,
+    },
+  ];
+
+  assert.deepEqual(rowsToSiteContent(rows), {
+    spotify: null,
+    instagram: null,
+  });
+});

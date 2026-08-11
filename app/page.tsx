@@ -114,6 +114,10 @@ export default function Home() {
   );
   const t = (value: string) =>
     language === "nl" ? (nlTranslations[value] ?? value) : value;
+  const publishedRide =
+    siteContent.spotify?.published && toSpotifyEmbedUrl(siteContent.spotify.playlistUrl)
+      ? siteContent.spotify
+      : null;
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem("miriam-language");
@@ -274,7 +278,7 @@ export default function Home() {
         </a>
         <nav>
           <a href="#classes">{t("Classes")}</a>
-          {siteContent.spotify?.published ? (
+          {publishedRide ? (
             <a href="#rides">{t("Rides & music")}</a>
           ) : null}
           <a href="#about">{t("About")}</a>
@@ -326,11 +330,24 @@ export default function Home() {
               <CalendarDots aria-hidden="true" size={20} weight="bold" />
               {t("Find a class")}
             </a>
-            <a className="hero-experience-link" href="#about">
-              <InstagramLogo aria-hidden="true" size={17} weight="bold" />
-              {t("Follow Miriam")}
-              <ArrowRight aria-hidden="true" size={17} weight="bold" />
-            </a>
+            {publishedRide ? (
+              <a className="hero-experience-link" href="#rides">
+                <SpotifyLogo aria-hidden="true" size={17} weight="fill" />
+                {t("Latest ride")}
+                <ArrowRight aria-hidden="true" size={17} weight="bold" />
+              </a>
+            ) : (
+              <a
+                className="hero-experience-link"
+                href={siteConfig.instagramProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <InstagramLogo aria-hidden="true" size={17} weight="bold" />
+                {t("Follow Miriam")}
+                <ArrowSquareOut aria-hidden="true" size={15} weight="bold" />
+              </a>
+            )}
           </div>
         </div>
       </section>
@@ -432,9 +449,9 @@ export default function Home() {
         </div>
       </section>
 
-      {siteContent.spotify?.published ? (
+      {publishedRide ? (
         <LatestRide
-          content={siteContent.spotify}
+          content={publishedRide}
           language={language}
           t={t}
         />
@@ -483,17 +500,19 @@ export default function Home() {
             </div>
           </div>
 
-          <figure
-            className={`about-media${siteContent.instagram?.published ? " instagram-post-media" : ""}`}
-          >
+          <figure className="about-media">
             {siteContent.instagram?.published ? (
               <InstagramFeatureMedia
+                key={siteContent.instagram.postUrl}
                 postUrl={siteContent.instagram.postUrl}
                 label={siteContent.instagram.label}
                 viewLabel={t("View post on Instagram")}
+                fallbackAlt={t(
+                  "Miriam smiling in a fitness studio while wearing her instructor headset",
+                )}
               />
             ) : (
-              <>
+              <div className="about-static-visual">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   className="about-photo"
@@ -505,7 +524,7 @@ export default function Home() {
                   decoding="async"
                 />
                 <div className="about-media-shade" aria-hidden="true" />
-              </>
+              </div>
             )}
           </figure>
         </div>
@@ -554,15 +573,6 @@ export default function Home() {
                 "Want to collaborate, plan a fitness event or simply get in touch? Send Miriam a message.",
               )}
             </p>
-            <a
-              className="instagram-link"
-              href={siteConfig.instagramProfileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <InstagramLogo aria-hidden="true" size={20} weight="bold" />
-              Instagram @{siteConfig.instagramHandle}
-            </a>
           </div>
           <form
             className="contact-form"

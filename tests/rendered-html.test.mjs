@@ -10,7 +10,10 @@ test("server-renders Miriam's fitness hub priorities", async () => {
   const html = await render();
   assert.match(html, /<title>Miriam Van Dijcke \| Group Fitness &amp; Indoor Cycling<\/title>/i);
   assert.match(html, /href="#schedule"[^>]*>[\s\S]*?Find a class<\/a>/i);
-  assert.match(html, /href="#about"[^>]*>[\s\S]*?Follow Miriam/i);
+  assert.match(
+    html,
+    /href="https:\/\/www\.instagram\.com\/mir\.i\.am_vd\/"[^>]*>[\s\S]*?Follow Miriam/i,
+  );
   assert.match(html, /href="#contact">Contact<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
   assert.match(html, /Bring Miriam to your event/i);
@@ -118,6 +121,8 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     new URL("../app/components/instagram-feature-media.tsx", import.meta.url),
     "utf8",
   );
+  const studioSource = await readFile(new URL("../app/studio/page.tsx", import.meta.url), "utf8");
+  const cssSource = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   const dataSource = await readFile(new URL("../lib/studio/data.ts", import.meta.url), "utf8");
   const actionSource = await readFile(
     new URL("../app/studio/actions.ts", import.meta.url),
@@ -130,11 +135,22 @@ test("keeps Miriam Studio private and fail-closed", async () => {
 
   assert.doesNotMatch(html, /href="\/studio"/i);
   assert.match(pageSource, /Follow[\s\S]*?siteConfig\.instagramHandle/);
+  assert.match(pageSource, /publishedRide[\s\S]*?href="#rides"[\s\S]*?Latest ride/);
   assert.match(pageSource, /toSpotifyEmbedUrl/);
   assert.match(pageSource, /height="152"/);
   assert.match(instagramSource, /https:\/\/www\.instagram\.com\/embed\.js/);
   assert.match(instagramSource, /data-instgrm-captioned/);
   assert.match(instagramSource, /miriam-headset\.jpg/);
+  assert.match(instagramSource, /status === "failed"/);
+  assert.match(instagramSource, /MutationObserver/);
+  assert.match(instagramSource, /observer\.disconnect\(\)/);
+  assert.match(instagramSource, /window\.clearTimeout\(failureTimer\)/);
+  assert.doesNotMatch(instagramSource, /instagram-fallback/);
+  assert.doesNotMatch(cssSource, /\.instagram-fallback/);
+  assert.doesNotMatch(cssSource, /\.instagram-native-embed\s*\{[^}]*position:\s*absolute/s);
+  assert.equal((pageSource.match(/<InstagramFeatureMedia/g) ?? []).length, 1);
+  assert.match(pageSource, /key=\{siteContent\.instagram\.postUrl\}/);
+  assert.match(studioSource, /key=\{instagram\.postUrl\}/);
   assert.match(dataSource, /\.eq\("published", true\)/);
   assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);

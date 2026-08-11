@@ -77,20 +77,31 @@ export function rowsToSiteContent(rows: SiteContentRow[]): PublicSiteContent {
   const result: PublicSiteContent = { ...emptyPublicSiteContent };
 
   for (const row of rows) {
-    if (row.content_key === "spotify" && row.title && row.class_name && row.focus) {
+    const normalizedUrl =
+      row.content_key === "spotify"
+        ? normalizeSpotifyPlaylistUrl(row.url)
+        : normalizeInstagramPostUrl(row.url);
+
+    if (
+      row.content_key === "spotify" &&
+      row.title &&
+      row.class_name &&
+      row.focus &&
+      normalizedUrl
+    ) {
       result.spotify = {
         title: row.title,
         className: row.class_name,
         date: row.event_date,
         focus: row.focus,
-        playlistUrl: row.url,
+        playlistUrl: normalizedUrl,
         published: row.published,
       };
     }
 
-    if (row.content_key === "instagram") {
+    if (row.content_key === "instagram" && normalizedUrl) {
       result.instagram = {
-        postUrl: row.url,
+        postUrl: normalizedUrl,
         label: row.label,
         published: row.published,
       };

@@ -155,9 +155,11 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
                 <a href="#instagram-url">Change post</a>
               </div>
               <InstagramFeatureMedia
+                key={instagram.postUrl}
                 postUrl={instagram.postUrl}
                 label={instagram.label}
                 viewLabel="Open post on Instagram"
+                fallbackAlt="Miriam smiling in a fitness studio while wearing her instructor headset"
                 compact
               />
             </div>
