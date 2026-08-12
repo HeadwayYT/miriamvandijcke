@@ -114,7 +114,6 @@ export const nlTranslations: Record<string, string> = {
     "Je vindt me wekelijks als lesgever in Mechelen en Antwerpen.",
   Follow: "Volg",
   "on Instagram": "op Instagram",
-  "View featured post": "Bekijk uitgelichte post",
   "View post on Instagram": "Bekijk post op Instagram",
   "Miriam smiling in a fitness studio while wearing her instructor headset":
     "Miriam glimlacht in een fitnessstudio met haar instructeursheadset",
@@ -140,7 +139,7 @@ export const nlTranslations: Record<string, string> = {
   "No. Miriam is a group fitness and indoor cycling instructor, and a fitness experience coach and host. Her focus is shared energy, music, movement and community.":
     "Nee. Miriam is groepsfitness- en indoorcyclinginstructeur en begeleidt fitnessbelevingen. Haar focus ligt op gedeelde energie, muziek, beweging en community.",
   Contact: "Contact",
-  "Bring Miriam to your event": "Haal Miriam naar je evenement",
+  "Bring Miriam to your event.": "Haal Miriam naar je evenement.",
   "Bring the room together.": "Breng de zaal samen.",
   "Planning a special ride, group workout, team event or studio collaboration? Miriam is available for selected fitness events and group experiences.":
     "Plan je een speciale ride, groepsworkout, teamevenement of studiocollab? Miriam is beschikbaar voor geselecteerde fitnessevenementen en groepsbelevingen.",
@@ -164,10 +163,12 @@ export const nlTranslations: Record<string, string> = {
   Email: "E-mail",
   "Experience type": "Type beleving",
   "What's this about?": "Waarover gaat je bericht?",
+  "Select an option": "Selecteer een optie",
   "Fitness event": "Fitnessevenement",
   "Private group experience": "Privé-groepsbeleving",
   "Studio collaboration": "Studiocollab",
   "Corporate / team event": "Bedrijfs- of teamevenement",
+  "General question": "Algemene vraag",
   "Corporate / Team Event": "Bedrijfs- of teamevenement",
   "Brand / Community Event": "Merk- of community-evenement",
   Other: "Andere",
@@ -176,6 +177,7 @@ export const nlTranslations: Record<string, string> = {
   "I need help arranging a suitable venue": "Ik heb hulp nodig om een geschikte locatie te vinden",
   "Not sure yet": "Nog niet zeker",
   "Group size": "Groepsgrootte",
+  "Approximate group size": "Geschatte groepsgrootte",
   "Estimated number": "Geschat aantal",
   "Preferred date": "Voorkeursdatum",
   Message: "Bericht",

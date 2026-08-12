@@ -57,7 +57,10 @@ test("renders compact venue schedules and a secondary event path", async () => {
   assert.match(html, /Group workouts/);
   assert.match(html, /Studio collaborations/);
   assert.match(html, /What&#x27;s this about\?/);
+  assert.match(html, /Select an option/);
+  assert.match(html, /General question/);
   assert.doesNotMatch(html, />Private Indoor Cycling Experience<\/h3>/);
+  assert.doesNotMatch(html, /Bring the room together/i);
 
   const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const ids = new Set([...source.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
@@ -74,6 +77,9 @@ test("renders compact venue schedules and a secondary event path", async () => {
   assert.match(source, /https:\/\/formspree\.io\/f\/mzepdael/);
   assert.doesNotMatch(source, /mailto:/);
   assert.match(source, /type="date" name="timing"/);
+  assert.match(source, /eventRequestTypes\.has\(requestType\)/);
+  assert.match(source, /\{isEventRequest \? \(/);
+  assert.doesNotMatch(source, /View featured post/);
   assert.match(source, /target="_blank" rel="noreferrer"/);
 });
 

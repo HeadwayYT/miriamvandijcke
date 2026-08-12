@@ -103,11 +103,17 @@ const venues: Venue[] = [
 ];
 
 const formspreeEndpoint = "https://formspree.io/f/mzepdael";
+const eventRequestTypes = new Set([
+  "Fitness event",
+  "Private group experience",
+  "Studio collaboration",
+  "Corporate / team event",
+]);
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [language, setLanguage] = useState<Language>("en");
-  const [requestType, setRequestType] = useState("Fitness event");
+  const [requestType, setRequestType] = useState("");
   const [siteContent, setSiteContent] = useState<PublicSiteContent>(emptyPublicSiteContent);
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
@@ -118,6 +124,7 @@ export default function Home() {
     siteContent.spotify?.published && toSpotifyEmbedUrl(siteContent.spotify.playlistUrl)
       ? siteContent.spotify
       : null;
+  const isEventRequest = eventRequestTypes.has(requestType);
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem("miriam-language");
@@ -179,7 +186,7 @@ export default function Home() {
       if (!response.ok) throw new Error("Formspree rejected the submission");
 
       form.reset();
-      setRequestType("Fitness event");
+      setRequestType("");
       setFormStatus("success");
     } catch {
       setFormStatus("error");
@@ -487,16 +494,6 @@ export default function Home() {
                 {t("Follow")} @{siteConfig.instagramHandle}
                 <ArrowSquareOut aria-hidden="true" size={14} weight="bold" />
               </a>
-              {siteContent.instagram?.published ? (
-                <a
-                  href={siteContent.instagram.postUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t("View featured post")}
-                  <ArrowSquareOut aria-hidden="true" size={14} weight="bold" />
-                </a>
-              ) : null}
             </div>
           </div>
 
@@ -533,8 +530,7 @@ export default function Home() {
       <section className="chapter event-chapter" id="events">
         <div className="event-inner">
           <div className="event-copy">
-            <p className="eyebrow">{t("Bring Miriam to your event")}</p>
-            <h2>{t("Bring the room together.")}</h2>
+            <h2>{t("Bring Miriam to your event.")}</h2>
             <p>
               {t(
                 "Planning a special ride, group workout, team event or studio collaboration? Miriam is available for selected fitness events and group experiences.",
@@ -545,11 +541,6 @@ export default function Home() {
               {t("Group workouts")} <span aria-hidden="true">&middot;</span>{" "}
               {t("Corporate events")} <span aria-hidden="true">&middot;</span>{" "}
               {t("Studio collaborations")}
-            </p>
-            <p className="event-note">
-              {t(
-                "Indoor cycling requires access to a suitable studio and bikes; these need to be available or arranged.",
-              )}
             </p>
           </div>
           <a
@@ -594,41 +585,53 @@ export default function Home() {
               <select
                 name="request"
                 value={requestType}
-                onChange={(event) => setRequestType(event.target.value)}
+                className={requestType ? undefined : "is-placeholder"}
+                onChange={(event) => {
+                  setRequestType(event.target.value);
+                  setFormStatus("idle");
+                }}
                 required
               >
+                <option value="" disabled>
+                  {t("Select an option")}
+                </option>
                 <option value="Fitness event">{t("Fitness event")}</option>
                 <option value="Private group experience">{t("Private group experience")}</option>
                 <option value="Studio collaboration">{t("Studio collaboration")}</option>
                 <option value="Corporate / team event">{t("Corporate / team event")}</option>
+                <option value="General question">{t("General question")}</option>
                 <option value="Other">{t("Other")}</option>
               </select>
             </label>
-            <label>
-              {t("Location / Venue")}
-              <select name="venue" required defaultValue="Not sure yet">
-                <option value="I already have a venue">{t("I already have a venue")}</option>
-                <option value="I need help arranging a suitable venue">
-                  {t("I need help arranging a suitable venue")}
-                </option>
-                <option value="Not sure yet">{t("Not sure yet")}</option>
-              </select>
-            </label>
-            <div className="form-row">
-              <label>
-                {t("Group size")}
-                <input
-                  type="number"
-                  name="groupSize"
-                  min="2"
-                  placeholder={t("Estimated number")}
-                />
-              </label>
-              <label>
-                {t("Preferred date")}
-                <input type="date" name="timing" />
-              </label>
-            </div>
+            {isEventRequest ? (
+              <div className="conditional-fields">
+                <label>
+                  {t("Location / Venue")}
+                  <select name="venue" required defaultValue="Not sure yet">
+                    <option value="I already have a venue">{t("I already have a venue")}</option>
+                    <option value="I need help arranging a suitable venue">
+                      {t("I need help arranging a suitable venue")}
+                    </option>
+                    <option value="Not sure yet">{t("Not sure yet")}</option>
+                  </select>
+                </label>
+                <div className="form-row">
+                  <label>
+                    {t("Approximate group size")}
+                    <input
+                      type="number"
+                      name="groupSize"
+                      min="2"
+                      placeholder={t("Estimated number")}
+                    />
+                  </label>
+                  <label>
+                    {t("Preferred date")}
+                    <input type="date" name="timing" />
+                  </label>
+                </div>
+              </div>
+            ) : null}
             <label>
               {t("Message")}
               <textarea
@@ -705,15 +708,6 @@ function LatestRide({
               </time>
             ) : null}
           </div>
-          <a
-            className="latest-ride-link"
-            href={content.playlistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t("Open in Spotify")}
-            <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
-          </a>
         </div>
         <div className="spotify-embed-shell">
           <iframe
@@ -725,6 +719,15 @@ function LatestRide({
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           />
         </div>
+        <a
+          className="latest-ride-link"
+          href={content.playlistUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t("Open in Spotify")}
+          <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
+        </a>
       </div>
     </section>
   );
