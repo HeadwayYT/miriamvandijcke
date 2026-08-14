@@ -17,6 +17,8 @@ test("server-renders Miriam's fitness hub priorities", async () => {
   assert.match(html, /href="#contact">Contact<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
   assert.match(html, /Bring Miriam to your event/i);
+  assert.match(html, /Potential partnership/i);
+  assert.doesNotMatch(html, /Private group experience/i);
   assert.match(html, /Want to collaborate, plan a fitness event or simply get in touch/i);
   assert.doesNotMatch(html, /Private experiences/i);
   assert.doesNotMatch(html, />Book now</i);
@@ -54,11 +56,13 @@ test("renders compact venue schedules and a secondary event path", async () => {
   assert.match(html, /BODYPUMP/);
   assert.match(html, /RIDE: PERFORMANCE/);
   assert.match(html, /Special rides/);
-  assert.match(html, /Group workouts/);
+  assert.match(html, /Fitness events/);
+  assert.match(html, /Guest classes/);
   assert.match(html, /Studio collaborations/);
   assert.match(html, /What&#x27;s this about\?/);
   assert.match(html, /Select an option/);
   assert.match(html, /General question/);
+  assert.match(html, /Private group request/);
   assert.doesNotMatch(html, />Private Indoor Cycling Experience<\/h3>/);
   assert.doesNotMatch(html, /Bring the room together/i);
 
@@ -142,6 +146,8 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.doesNotMatch(html, /href="\/studio"/i);
   assert.match(pageSource, /Follow[\s\S]*?siteConfig\.instagramHandle/);
   assert.match(pageSource, /publishedRide[\s\S]*?href="#rides"[\s\S]*?Latest ride/);
+  assert.match(pageSource, /\{siteContent\.moments\.length \? \(/);
+  assert.match(pageSource, /Miriam in action/);
   assert.match(pageSource, /toSpotifyEmbedUrl/);
   assert.match(pageSource, /height="152"/);
   assert.match(instagramSource, /https:\/\/www\.instagram\.com\/embed\.js/);
@@ -158,8 +164,14 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(pageSource, /key=\{siteContent\.instagram\.postUrl\}/);
   assert.match(studioSource, /key=\{instagram\.postUrl\}/);
   assert.match(dataSource, /\.eq\("published", true\)/);
+  assert.match(dataSource, /from\("site_moments"\)/);
+  assert.match(
+    dataSource,
+    /from\("site_moments"\)[\s\S]*?\.eq\("published", true\)/,
+  );
   assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);
   assert.match(policies, /enable row level security/i);
+  assert.match(policies, /site_moments[\s\S]*?enable row level security/i);
   assert.match(policies, /app_metadata[\s\S]*?studio_admin/i);
 });

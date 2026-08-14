@@ -2,10 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   normalizeInstagramPostUrl,
+  normalizeExternalUrl,
+  normalizeMomentMediaUrl,
   normalizeSpotifyPlaylistUrl,
+  rowsToMoments,
   rowsToSiteContent,
   toSpotifyEmbedUrl,
   type SiteContentRow,
+  type MomentRow,
 } from "../lib/studio/content.ts";
 
 test("accepts and normalizes Spotify playlist URLs only", () => {
@@ -23,6 +27,55 @@ test("accepts and normalizes Spotify playlist URLs only", () => {
     "https://open.spotify.com/embed/playlist/37i9dQZF1DX76Wlfdnj7AP",
   );
   assert.equal(toSpotifyEmbedUrl("https://open.spotify.com/track/abc"), null);
+});
+
+test("accepts only direct HTTPS media URLs for Moments", () => {
+  assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/pride-ride.JPG?width=1200"), "https://cdn.example.com/pride-ride.JPG?width=1200");
+  assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/ride.webm"), null);
+  assert.equal(normalizeMomentMediaUrl("http://cdn.example.com/photo.jpg"), null);
+  assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/photo.svg"), null);
+  assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/media"), null);
+  assert.equal(normalizeExternalUrl("javascript:alert(1)"), null);
+  assert.equal(normalizeExternalUrl("https://www.instagram.com/p/ABC/"), "https://www.instagram.com/p/ABC/");
+});
+
+test("maps valid Moments and drops malformed portfolio records", () => {
+  const rows: MomentRow[] = [
+    {
+      id: "11111111-1111-4111-8111-111111111111",
+      title: "Pride Ride",
+      moment_type: "Special ride",
+      event_date: "2026-08-05",
+      location: "Pulsate Antwerp",
+      caption: "A real ride from Antwerp Pride week.",
+      media_url: "https://cdn.example.com/pride.jpg",
+      external_url: "https://www.instagram.com/p/ABC/",
+      published: true,
+    },
+    {
+      id: "22222222-2222-4222-8222-222222222222",
+      title: "Broken",
+      moment_type: "Influencer campaign",
+      event_date: null,
+      location: "Antwerp",
+      caption: "Invalid type.",
+      media_url: "https://cdn.example.com/image.jpg",
+      external_url: null,
+      published: true,
+    },
+  ];
+
+  assert.deepEqual(rowsToMoments(rows), [{
+    id: "11111111-1111-4111-8111-111111111111",
+    title: "Pride Ride",
+    type: "Special ride",
+    date: "2026-08-05",
+    location: "Pulsate Antwerp",
+    caption: "A real ride from Antwerp Pride week.",
+    mediaUrl: "https://cdn.example.com/pride.jpg",
+    externalUrl: "https://www.instagram.com/p/ABC/",
+    published: true,
+  }]);
 });
 
 test("accepts and normalizes public Instagram post and Reel URLs only", () => {
@@ -95,5 +148,6 @@ test("drops malformed stored URLs instead of exposing broken public content", ()
   assert.deepEqual(rowsToSiteContent(rows), {
     spotify: null,
     instagram: null,
+    moments: [],
   });
 });

@@ -15,9 +15,33 @@ export type InstagramContent = {
   published: boolean;
 };
 
+export const momentTypes = [
+  "Weekly class",
+  "Special ride",
+  "Fitness event",
+  "Guest class",
+  "Studio collaboration",
+  "Brand collaboration",
+  "Other",
+] as const;
+
+export type MomentType = (typeof momentTypes)[number];
+export type MomentContent = {
+  id: string;
+  title: string;
+  type: MomentType;
+  date: string | null;
+  location: string;
+  caption: string;
+  mediaUrl: string;
+  externalUrl: string | null;
+  published: boolean;
+};
+
 export type PublicSiteContent = {
   spotify: SpotifyContent | null;
   instagram: InstagramContent | null;
+  moments: MomentContent[];
 };
 
 export type SiteContentRow = {
@@ -31,9 +55,22 @@ export type SiteContentRow = {
   published: boolean;
 };
 
+export type MomentRow = {
+  id: string;
+  title: string;
+  moment_type: string;
+  event_date: string | null;
+  location: string;
+  caption: string;
+  media_url: string;
+  external_url: string | null;
+  published: boolean;
+};
+
 export const emptyPublicSiteContent: PublicSiteContent = {
   spotify: null,
   instagram: null,
+  moments: [],
 };
 
 export function normalizeSpotifyPlaylistUrl(value: string): string | null {
@@ -71,6 +108,60 @@ export function normalizeInstagramPostUrl(value: string): string | null {
   if (!/^[a-zA-Z0-9_-]+$/.test(contentId)) return null;
 
   return `https://www.instagram.com/${contentType}/${contentId}/`;
+}
+
+export function normalizeExternalUrl(value: string): string | null {
+  if (!value.trim()) return null;
+  const url = parseHttpsUrl(value);
+  if (!url || url.username || url.password) return null;
+  return url.toString();
+}
+
+export function normalizeMomentMediaUrl(
+  value: string,
+): string | null {
+  const url = parseHttpsUrl(value);
+  if (!url || url.username || url.password) return null;
+
+  const extension = url.pathname.split(".").pop()?.toLowerCase();
+  if (["jpg", "jpeg", "png", "webp", "avif"].includes(extension ?? "")) {
+    return url.toString();
+  }
+  return null;
+}
+
+export function isMomentType(value: string): value is MomentType {
+  return momentTypes.includes(value as MomentType);
+}
+
+export function rowsToMoments(rows: MomentRow[]): MomentContent[] {
+  return rows.flatMap((row) => {
+    const media = normalizeMomentMediaUrl(row.media_url);
+    const externalUrl = row.external_url ? normalizeExternalUrl(row.external_url) : null;
+    if (
+      !row.id ||
+      !row.title ||
+      !isMomentType(row.moment_type) ||
+      !row.location ||
+      !row.caption ||
+      !media ||
+      (row.external_url && !externalUrl)
+    ) {
+      return [];
+    }
+
+    return [{
+      id: row.id,
+      title: row.title,
+      type: row.moment_type,
+      date: row.event_date,
+      location: row.location,
+      caption: row.caption,
+      mediaUrl: media,
+      externalUrl,
+      published: row.published,
+    }];
+  });
 }
 
 export function rowsToSiteContent(rows: SiteContentRow[]): PublicSiteContent {

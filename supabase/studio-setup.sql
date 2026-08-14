@@ -72,3 +72,72 @@ on public.site_content
 for delete
 to authenticated
 using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false));
+
+-- Repeatable professional Moments for the public "Miriam in Action" section.
+create table if not exists public.site_moments (
+  id uuid primary key default gen_random_uuid(),
+  title text not null check (char_length(title) between 1 and 80),
+  moment_type text not null check (moment_type in (
+    'Weekly class', 'Special ride', 'Fitness event', 'Guest class',
+    'Studio collaboration', 'Brand collaboration', 'Other'
+  )),
+  event_date date,
+  location text not null check (char_length(location) between 1 and 100),
+  caption text not null check (char_length(caption) between 1 and 240),
+  media_url text not null check (media_url ~* '^https://[^[:space:]]+\.(jpg|jpeg|png|webp|avif)(\?[^[:space:]]*)?$'),
+  external_url text check (external_url is null or external_url ~ '^https://[^[:space:]]+$'),
+  published boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  updated_by uuid not null references auth.users(id)
+);
+
+alter table public.site_moments enable row level security;
+
+create index if not exists site_moments_published_date_idx
+on public.site_moments (published, event_date desc);
+
+create index if not exists site_moments_updated_by_idx
+on public.site_moments (updated_by);
+
+revoke all on table public.site_moments from anon, authenticated;
+grant select on table public.site_moments to anon;
+grant select, insert, update, delete on table public.site_moments to authenticated;
+
+drop policy if exists "published moments are public" on public.site_moments;
+create policy "published moments are public"
+on public.site_moments
+for select
+to anon, authenticated
+using (
+  published = true
+  or coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+drop policy if exists "studio admin can insert moments" on public.site_moments;
+create policy "studio admin can insert moments"
+on public.site_moments
+for insert
+to authenticated
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can update moments" on public.site_moments;
+create policy "studio admin can update moments"
+on public.site_moments
+for update
+to authenticated
+using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false))
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can delete moments" on public.site_moments;
+create policy "studio admin can delete moments"
+on public.site_moments
+for delete
+to authenticated
+using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false));

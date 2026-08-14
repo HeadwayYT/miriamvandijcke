@@ -4,21 +4,27 @@ import {
   ArrowLeft,
   Database,
   FloppyDisk,
+  ImageSquare,
   InstagramLogo,
   LockKey,
   SignOut,
   SpotifyLogo,
+  Trash,
 } from "./icons";
 import { getMissingStudioEnvironment, getSupabaseRuntimeConfig } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getAdminSiteContent, isStudioAdmin } from "@/lib/studio/data";
 import {
   toSpotifyEmbedUrl,
+  momentTypes,
+  type MomentContent,
   type SpotifyContent,
 } from "@/lib/studio/content";
 import {
   saveInstagramContent,
+  saveMoment,
   saveSpotifyContent,
+  deleteMoment,
   signInStudio,
   signOutStudio,
 } from "./actions";
@@ -53,6 +59,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
   const content = await getAdminSiteContent(supabase!);
   const spotify = content.spotify;
   const instagram = content.instagram;
+  const moments = content.moments;
 
   return (
     <main className={styles.shell}>
@@ -76,7 +83,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
 
       <section className={styles.intro}>
         <p className={styles.eyebrow}>Content</p>
-        <h2>Two things. Kept current.</h2>
+        <h2>Three things. Kept current.</h2>
         <p>Choose what visitors see without changing the rest of the website.</p>
       </section>
 
@@ -191,7 +198,105 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
           </form>
         </section>
       </div>
+
+      <section className={`${styles.editor} ${styles.momentsEditor}`} id="moments">
+        <div className={styles.editorHeading}>
+          <ImageSquare aria-hidden="true" size={28} weight="duotone" />
+          <div>
+            <p>Moments / In Action</p>
+            <h2>{moments.length ? `${moments.length} saved moment${moments.length === 1 ? "" : "s"}` : "No moments yet"}</h2>
+          </div>
+        </div>
+
+        {moments.length ? (
+          <div className={styles.momentList}>
+            {moments.map((moment) => <MomentEditor key={moment.id} moment={moment} />)}
+          </div>
+        ) : null}
+
+        <div className={styles.newMoment}>
+          <p className={styles.eyebrow}>Add a real instructor moment</p>
+          <MomentForm />
+        </div>
+      </section>
     </main>
+  );
+}
+
+function MomentEditor({ moment }: { moment: MomentContent }) {
+  return (
+    <article className={styles.momentEditorCard}>
+      <div className={styles.momentPreview}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={moment.mediaUrl} alt="" loading="lazy" />
+        <div>
+          <p>{moment.type}</p>
+          <h3>{moment.title}</h3>
+          <span>{moment.location}</span>
+        </div>
+        <Status published={moment.published} />
+      </div>
+      <MomentForm moment={moment} />
+      <form action={deleteMoment} className={styles.deleteForm}>
+        <input type="hidden" name="id" value={moment.id} />
+        <button type="submit">
+          <Trash aria-hidden="true" size={17} weight="bold" />
+          Delete moment
+        </button>
+      </form>
+    </article>
+  );
+}
+
+function MomentForm({ moment }: { moment?: MomentContent }) {
+  return (
+    <form action={saveMoment} className={styles.form}>
+      {moment ? <input type="hidden" name="id" value={moment.id} /> : null}
+      <div className={styles.formRow}>
+        <label>
+          Title
+          <input name="title" type="text" maxLength={80} defaultValue={moment?.title ?? ""} placeholder="Pride Ride" required />
+        </label>
+        <label>
+          Type
+          <select name="type" defaultValue={moment?.type ?? "Special ride"} required>
+            {momentTypes.map((type) => <option value={type} key={type}>{type}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className={styles.formRow}>
+        <label>
+          Date <span>optional</span>
+          <input name="date" type="date" defaultValue={moment?.date ?? ""} />
+        </label>
+        <label>
+          Location / venue
+          <input name="location" type="text" maxLength={100} defaultValue={moment?.location ?? ""} placeholder="Pulsate Antwerp" required />
+        </label>
+      </div>
+      <label>
+        Short caption
+        <textarea name="caption" maxLength={240} rows={3} defaultValue={moment?.caption ?? ""} placeholder="A short, factual note about this moment." required />
+      </label>
+      <label>
+        Image URL
+        <input name="mediaUrl" type="url" inputMode="url" defaultValue={moment?.mediaUrl ?? ""} placeholder="https://.../photo.jpg" required />
+        <small>Direct HTTPS link ending in JPG, PNG, WebP or AVIF.</small>
+      </label>
+      <label>
+        External link <span>optional</span>
+        <input name="externalUrl" type="url" inputMode="url" defaultValue={moment?.externalUrl ?? ""} placeholder="Instagram, event or studio page" />
+      </label>
+      <label className={styles.publishToggle}>
+        <input name="status" type="checkbox" value="published" defaultChecked={moment?.published ?? false} />
+        <span aria-hidden="true" />
+        Published
+      </label>
+      <button className={styles.saveButton} type="submit">
+        <FloppyDisk aria-hidden="true" size={19} weight="bold" />
+        {moment ? "Save moment" : "Add moment"}
+      </button>
+    </form>
   );
 }
 
@@ -312,11 +417,14 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
     unauthorized: "This account is not authorized for Miriam Studio.",
     "spotify-validation": "Use a valid Spotify playlist URL and complete the required fields.",
     "instagram-validation": "Use a valid public Instagram post or Reel URL.",
+    "moment-validation": "Complete the Moment fields with valid HTTPS links.",
     save: "The content could not be saved. Please try again.",
   };
 
   if (error && errors[error]) return { kind: "error" as const, text: errors[error] };
   if (success === "spotify") return { kind: "success" as const, text: "Playlist content saved." };
   if (success === "instagram") return { kind: "success" as const, text: "Featured Instagram post saved." };
+  if (success === "moment") return { kind: "success" as const, text: "Moment saved." };
+  if (success === "moment-deleted") return { kind: "success" as const, text: "Moment deleted." };
   return null;
 }

@@ -25,8 +25,12 @@ export const nlTranslations: Record<string, string> = {
   With: "Met",
   "High-energy group fitness and indoor cycling built around music, clear coaching and a room that moves together.":
     "Energieke groepsfitness en indoor cycling rond muziek, duidelijke coaching en een zaal die samen beweegt.",
+  "High-energy group fitness and indoor cycling powered by music, clear coaching and contagious energy.":
+    "Energieke groepsfitness en indoor cycling, gedreven door muziek, duidelijke coaching en aanstekelijke energie.",
   "Join Miriam weekly in Mechelen and Antwerp — or bring the energy to your own group or event.":
     "Volg Miriam wekelijks in Mechelen en Antwerpen, of haal die energie naar je eigen groep of evenement.",
+  "Join Miriam every week in Mechelen and Antwerp.":
+    "Volg Miriam elke week in Mechelen en Antwerpen.",
   "Find a class": "Vind een les",
   "Follow Miriam": "Volg Miriam",
   "Private experiences": "Privébelevingen",
@@ -61,6 +65,15 @@ export const nlTranslations: Record<string, string> = {
   "Open in Spotify": "Open in Spotify",
   "Spotify playlist": "Spotify-playlist",
   "Class formats": "Lesformaten",
+  "Miriam in action": "Miriam in actie",
+  "See Miriam in action": "Bekijk Miriam in actie",
+  "Classes, special rides and moments from the room.":
+    "Lessen, speciale rides en momenten uit de zaal.",
+  "View moment": "Bekijk moment",
+  "Weekly class": "Wekelijkse les",
+  "Special ride": "Speciale ride",
+  "Guest class": "Gastles",
+  "Brand collaboration": "Merkcollab",
   "Your group. Your music. Your workout.": "Jouw groep. Jouw muziek. Jouw workout.",
   "Planning something different? Miriam can create and lead a high-energy fitness experience for your group, team or event.":
     "Iets bijzonders gepland? Miriam kan een energieke fitnessbeleving uitwerken en begeleiden voor je groep, team of evenement.",
@@ -139,13 +152,19 @@ export const nlTranslations: Record<string, string> = {
   "No. Miriam is a group fitness and indoor cycling instructor, and a fitness experience coach and host. Her focus is shared energy, music, movement and community.":
     "Nee. Miriam is groepsfitness- en indoorcyclinginstructeur en begeleidt fitnessbelevingen. Haar focus ligt op gedeelde energie, muziek, beweging en community.",
   Contact: "Contact",
+  "Events & collaborations": "Evenementen & samenwerkingen",
   "Bring Miriam to your event.": "Haal Miriam naar je evenement.",
   "Bring the room together.": "Breng de zaal samen.",
   "Planning a special ride, group workout, team event or studio collaboration? Miriam is available for selected fitness events and group experiences.":
     "Plan je een speciale ride, groepsworkout, teamevenement of studiocollab? Miriam is beschikbaar voor geselecteerde fitnessevenementen en groepsbelevingen.",
+  "Planning a special ride, studio event, launch or team workout? Miriam is available for selected fitness events and collaborations.":
+    "Plan je een speciale ride, studio-evenement, lancering of teamworkout? Miriam is beschikbaar voor geselecteerde fitnessevenementen en samenwerkingen.",
   "Special rides": "Speciale rides",
   "Group workouts": "Groepsworkouts",
   "Corporate events": "Bedrijfsevenementen",
+  "Fitness events": "Fitnessevenementen",
+  "Guest classes": "Gastlessen",
+  "Corporate / team events": "Bedrijfs- en teamevenementen",
   "Studio collaborations": "Studiocollabs",
   "Indoor cycling requires access to a suitable studio and bikes; these need to be available or arranged.":
     "Voor indoor cycling zijn een geschikte studio en fietsen nodig; die moeten beschikbaar zijn of geregeld worden.",
@@ -168,6 +187,9 @@ export const nlTranslations: Record<string, string> = {
   "Private group experience": "Privé-groepsbeleving",
   "Studio collaboration": "Studiocollab",
   "Corporate / team event": "Bedrijfs- of teamevenement",
+  "Special / themed ride": "Speciale / thematische ride",
+  "Potential partnership": "Mogelijke samenwerking",
+  "Private group request": "Aanvraag voor een privégroep",
   "General question": "Algemene vraag",
   "Corporate / Team Event": "Bedrijfs- of teamevenement",
   "Brand / Community Event": "Merk- of community-evenement",

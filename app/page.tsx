@@ -7,6 +7,7 @@ import {
   ArrowRight,
   ArrowSquareOut,
   CalendarDots,
+  ImageSquare,
   InstagramLogo,
   PaperPlaneTilt,
   SpotifyLogo,
@@ -17,6 +18,7 @@ import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media"
 import {
   emptyPublicSiteContent,
   toSpotifyEmbedUrl,
+  type MomentContent,
   type PublicSiteContent,
   type SpotifyContent,
 } from "@/lib/studio/content";
@@ -105,9 +107,11 @@ const venues: Venue[] = [
 const formspreeEndpoint = "https://formspree.io/f/mzepdael";
 const eventRequestTypes = new Set([
   "Fitness event",
-  "Private group experience",
   "Studio collaboration",
   "Corporate / team event",
+  "Special / themed ride",
+  "Guest class",
+  "Private group request",
 ]);
 
 export default function Home() {
@@ -324,12 +328,12 @@ export default function Home() {
           </h1>
           <p className="hero-text">
             {t(
-              "High-energy group fitness and indoor cycling built around music, clear coaching and a room that moves together.",
+              "High-energy group fitness and indoor cycling powered by music, clear coaching and contagious energy.",
             )}
           </p>
           <p className="hero-context">
             {t(
-              "Join Miriam weekly in Mechelen and Antwerp — or bring the energy to your own group or event.",
+              "Join Miriam every week in Mechelen and Antwerp.",
             )}
           </p>
           <div className="hero-actions">
@@ -341,6 +345,12 @@ export default function Home() {
               <a className="hero-experience-link" href="#rides">
                 <SpotifyLogo aria-hidden="true" size={17} weight="fill" />
                 {t("Latest ride")}
+                <ArrowRight aria-hidden="true" size={17} weight="bold" />
+              </a>
+            ) : siteContent.moments.length ? (
+              <a className="hero-experience-link" href="#moments">
+                <ImageSquare aria-hidden="true" size={17} weight="bold" />
+                {t("See Miriam in action")}
                 <ArrowRight aria-hidden="true" size={17} weight="bold" />
               </a>
             ) : (
@@ -464,6 +474,10 @@ export default function Home() {
         />
       ) : null}
 
+      {siteContent.moments.length ? (
+        <Moments moments={siteContent.moments} language={language} t={t} />
+      ) : null}
+
       <section className="chapter about-chapter">
         <div className="about-grid" id="about">
           <div className="about-copy">
@@ -530,17 +544,19 @@ export default function Home() {
       <section className="chapter event-chapter" id="events">
         <div className="event-inner">
           <div className="event-copy">
+            <p className="eyebrow">{t("Events & collaborations")}</p>
             <h2>{t("Bring Miriam to your event.")}</h2>
             <p>
               {t(
-                "Planning a special ride, group workout, team event or studio collaboration? Miriam is available for selected fitness events and group experiences.",
+                "Planning a special ride, studio event, launch or team workout? Miriam is available for selected fitness events and collaborations.",
               )}
             </p>
             <p className="event-categories">
               {t("Special rides")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Group workouts")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Corporate events")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Studio collaborations")}
+              {t("Fitness events")} <span aria-hidden="true">&middot;</span>{" "}
+              {t("Studio collaborations")} <span aria-hidden="true">&middot;</span>{" "}
+              {t("Guest classes")} <span aria-hidden="true">&middot;</span>{" "}
+              {t("Corporate / team events")}
             </p>
           </div>
           <a
@@ -595,10 +611,13 @@ export default function Home() {
                 <option value="" disabled>
                   {t("Select an option")}
                 </option>
-                <option value="Fitness event">{t("Fitness event")}</option>
-                <option value="Private group experience">{t("Private group experience")}</option>
                 <option value="Studio collaboration">{t("Studio collaboration")}</option>
+                <option value="Fitness event">{t("Fitness event")}</option>
+                <option value="Special / themed ride">{t("Special / themed ride")}</option>
+                <option value="Guest class">{t("Guest class")}</option>
                 <option value="Corporate / team event">{t("Corporate / team event")}</option>
+                <option value="Private group request">{t("Private group request")}</option>
+                <option value="Potential partnership">{t("Potential partnership")}</option>
                 <option value="General question">{t("General question")}</option>
                 <option value="Other">{t("Other")}</option>
               </select>
@@ -670,6 +689,59 @@ export default function Home() {
         </a>
       </footer>
     </main>
+  );
+}
+
+function Moments({
+  moments,
+  language,
+  t,
+}: {
+  moments: MomentContent[];
+  language: Language;
+  t: (value: string) => string;
+}) {
+  return (
+    <section className="chapter moments-chapter" id="moments">
+      <div className="moments-heading">
+        <p className="eyebrow">{t("Miriam in action")}</p>
+        <h2>{t("Classes, special rides and moments from the room.")}</h2>
+      </div>
+      <div className={`moments-grid${moments.length === 1 ? " is-single" : ""}`}>
+        {moments.map((moment) => (
+          <article className="moment-card" key={moment.id}>
+            <div className="moment-media motion-image">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={moment.mediaUrl} alt="" loading="lazy" decoding="async" />
+            </div>
+            <div className="moment-copy">
+              <p className="moment-type">{t(moment.type)}</p>
+              <h3>{moment.title}</h3>
+              <div className="moment-meta">
+                <span>{moment.location}</span>
+                {moment.date ? (
+                  <time dateTime={moment.date}>
+                    {new Intl.DateTimeFormat(language === "nl" ? "nl-BE" : "en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      timeZone: "UTC",
+                    }).format(new Date(`${moment.date}T00:00:00Z`))}
+                  </time>
+                ) : null}
+              </div>
+              <p>{moment.caption}</p>
+              {moment.externalUrl ? (
+                <a href={moment.externalUrl} target="_blank" rel="noopener noreferrer">
+                  {t("View moment")}
+                  <ArrowSquareOut aria-hidden="true" size={15} weight="bold" />
+                </a>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 

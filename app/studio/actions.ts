@@ -6,7 +6,10 @@ import { getSupabaseRuntimeConfig } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   cleanText,
+  isMomentType,
+  normalizeExternalUrl,
   normalizeInstagramPostUrl,
+  normalizeMomentMediaUrl,
   normalizeSpotifyPlaylistUrl,
 } from "@/lib/studio/content";
 import { isStudioAdmin } from "@/lib/studio/data";
@@ -103,6 +106,61 @@ export async function saveInstagramContent(formData: FormData) {
   if (error) redirect("/studio?error=save#instagram");
   refreshContent();
   redirect("/studio?success=instagram#instagram");
+}
+
+export async function saveMoment(formData: FormData) {
+  const { supabase, userId } = await requireStudioAdmin();
+  const id = cleanText(formData.get("id"), 36);
+  const title = cleanText(formData.get("title"), 80);
+  const type = cleanText(formData.get("type"), 40);
+  const dateValue = cleanText(formData.get("date"), 10);
+  const location = cleanText(formData.get("location"), 100);
+  const caption = cleanText(formData.get("caption"), 240);
+  const media = normalizeMomentMediaUrl(cleanText(formData.get("mediaUrl"), 1000));
+  const rawExternalUrl = cleanText(formData.get("externalUrl"), 1000);
+  const externalUrl = normalizeExternalUrl(rawExternalUrl);
+  const published = formData.get("status") === "published";
+
+  if (
+    !title ||
+    !isMomentType(type) ||
+    !isValidOptionalDate(dateValue) ||
+    !location ||
+    !caption ||
+    !media ||
+    (rawExternalUrl && !externalUrl)
+  ) {
+    redirect("/studio?error=moment-validation#moments");
+  }
+
+  const { error } = await supabase.from("site_moments").upsert({
+    id: id || crypto.randomUUID(),
+    title,
+    moment_type: type,
+    event_date: dateValue || null,
+    location,
+    caption,
+    media_url: media,
+    external_url: externalUrl,
+    published,
+    updated_at: new Date().toISOString(),
+    updated_by: userId,
+  });
+
+  if (error) redirect("/studio?error=save#moments");
+  refreshContent();
+  redirect("/studio?success=moment#moments");
+}
+
+export async function deleteMoment(formData: FormData) {
+  const { supabase } = await requireStudioAdmin();
+  const id = cleanText(formData.get("id"), 36);
+  if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/studio?error=moment-validation#moments");
+
+  const { error } = await supabase.from("site_moments").delete().eq("id", id);
+  if (error) redirect("/studio?error=save#moments");
+  refreshContent();
+  redirect("/studio?success=moment-deleted#moments");
 }
 
 async function requireStudioAdmin() {

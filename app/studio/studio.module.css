@@ -183,7 +183,8 @@
 }
 
 .form input,
-.form select {
+.form select,
+.form textarea {
   background: #101010;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 4px;
@@ -199,12 +200,25 @@
 }
 
 .form input:focus,
-.form select:focus {
+.form select:focus,
+.form textarea:focus {
   border-color: #ef4444;
 }
 
 .form input::placeholder {
   color: #5e5e5e;
+}
+
+.form textarea {
+  resize: vertical;
+}
+
+.form small {
+  color: #737373;
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-transform: none;
 }
 
 .form input[type="date"],
@@ -345,6 +359,99 @@
   color: #fff;
 }
 
+.momentsEditor {
+  margin: 16px auto 0;
+  max-width: 1280px;
+}
+
+.momentList {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 34px;
+}
+
+.momentEditorCard,
+.newMoment {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  min-width: 0;
+  padding: clamp(18px, 2.4vw, 28px);
+}
+
+.newMoment {
+  max-width: 820px;
+}
+
+.momentPreview {
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 82px minmax(0, 1fr) auto;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+}
+
+.momentPreview img {
+  aspect-ratio: 4 / 3;
+  border-radius: 4px;
+  display: block;
+  height: auto;
+  object-fit: cover;
+  width: 82px;
+}
+
+.momentPreview p,
+.momentPreview h3,
+.momentPreview span {
+  margin: 0;
+}
+
+.momentPreview p {
+  color: #ef4444;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.momentPreview h3 {
+  font-size: 1rem;
+  line-height: 1.2;
+  margin-top: 4px;
+}
+
+.momentPreview span {
+  color: #8e8e8e;
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+.deleteForm {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+  padding-top: 16px;
+}
+
+.deleteForm button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #a3a3a3;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 800;
+  gap: 7px;
+  padding: 7px 0;
+  text-transform: uppercase;
+}
+
+.deleteForm button:hover {
+  color: #fca5a5;
+}
+
 .message {
   border-left: 2px solid currentColor;
   font-size: 0.84rem;
@@ -417,7 +524,8 @@
 }
 
 @media (max-width: 860px) {
-  .editorGrid {
+  .editorGrid,
+  .momentList {
     grid-template-columns: 1fr;
   }
 }
@@ -466,5 +574,19 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .momentPreview {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+
+  .momentPreview img {
+    width: 68px;
+  }
+
+  .momentPreview .status {
+    grid-column: 2;
+    justify-self: start;
+    margin-left: 0;
   }
 }
