@@ -137,6 +137,10 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     new URL("../app/studio/studio-dashboard.tsx", import.meta.url),
     "utf8",
   );
+  const shareDetailSource = await readFile(
+    new URL("../app/studio/share-detail-action.tsx", import.meta.url),
+    "utf8",
+  );
   const momentFormSource = await readFile(
     new URL("../app/studio/moment-form.tsx", import.meta.url),
     "utf8",
@@ -184,9 +188,27 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   );
   assert.equal((pageSource.match(/<InstagramFeatureMedia/g) ?? []).length, 1);
   assert.match(pageSource, /key=\{siteContent\.instagram\.postUrl\}/);
-  assert.match(studioSource, /key=\{instagram\.postUrl\}/);
+  assert.doesNotMatch(studioSource, /InstagramFeatureMedia/);
   assert.match(studioSource, /getStudioMomentum/);
   assert.match(studioSource, /<StudioDashboard/);
+  assert.match(studioSource, /<ShareDetailAction momentum=\{momentum\}/);
+  assert.match(shareDetailSource, /markShareCompleted/);
+  assert.ok(
+    studioSource.indexOf("Update Latest Ride") < studioSource.indexOf("Current Ride"),
+    "Connect must show its editor before the current ride",
+  );
+  assert.ok(
+    studioSource.indexOf("<ShareDetailAction") < studioSource.indexOf("<InstagramForm"),
+    "Share must show the weekly action before featured website content",
+  );
+  assert.ok(
+    studioSource.indexOf('selectedMoment ? "Edit Moment" : "Add a Moment"')
+      < studioSource.indexOf("Saved Moments"),
+    "Capture must show the Moment work area before saved moments",
+  );
+  assert.match(studioSource, /function MomentSummary/);
+  assert.match(studioSource, /editor=moments&moment=\$\{moment\.id\}/);
+  assert.doesNotMatch(studioSource, /<MomentForm moment=\{moment\}/);
   assert.match(dashboardSource, /Keep the momentum/);
   assert.match(dashboardSource, /Current focus/);
   assert.match(dashboardSource, /Build the following/);

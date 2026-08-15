@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media";
 import {
   ArrowLeft,
+  ArrowRight,
   Database,
   FloppyDisk,
   ImageSquare,
@@ -22,6 +22,7 @@ import {
 import { MomentForm } from "./moment-form";
 import { InstagramForm } from "./instagram-form";
 import { StudioDashboard } from "./studio-dashboard";
+import { ShareDetailAction } from "./share-detail-action";
 import {
   saveSpotifyContent,
   deleteMoment,
@@ -64,6 +65,10 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
   const spotify = content.spotify;
   const instagram = content.instagram;
   const moments = content.moments;
+  const selectedMomentId = typeof params.moment === "string" ? params.moment : null;
+  const selectedMoment = selectedMomentId
+    ? moments.find((moment) => moment.id === selectedMomentId) ?? null
+    : null;
   const storageConfig = { url: config.url, publishableKey: config.publishableKey };
 
   return (
@@ -105,19 +110,16 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         </div>
       )}
 
-      {editor === "spotify" || editor === "instagram" ? (
-        <div className={`${styles.editorGrid} ${styles.singleEditor}`}>
-        {editor === "spotify" ? <section className={styles.editor} id="spotify">
+      {editor === "spotify" ? (
+        <div className={`${styles.detailStack} ${styles.singleEditor}`}>
+          <section className={styles.editor} id="spotify">
           <div className={styles.editorHeading}>
             <SpotifyLogo aria-hidden="true" size={28} weight="fill" />
             <div>
-              <p>Latest Ride</p>
-              <h2>{spotify?.title ?? "No playlist yet"}</h2>
+              <p>Connect</p>
+              <h2>Update Latest Ride</h2>
             </div>
-            <Status published={spotify?.published ?? false} />
           </div>
-
-          {spotify ? <StudioSpotifyPreview content={spotify} /> : null}
 
           <form action={saveSpotifyContent} className={styles.form}>
             <label>
@@ -157,141 +159,193 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
               Save playlist
             </button>
           </form>
-        </section> : null}
+          </section>
 
-        {editor === "instagram" ? <section className={styles.editor} id="instagram">
+          <section className={styles.editor} aria-labelledby="current-ride-title">
+            <div className={styles.compactSectionHeading}>
+              <div>
+                <p className={styles.eyebrow}>Current content</p>
+                <h2 id="current-ride-title">Current Ride</h2>
+              </div>
+              {spotify ? <Status published={spotify.published} /> : null}
+            </div>
+            {spotify ? (
+              <CurrentRideSummary content={spotify} />
+            ) : (
+              <p className={styles.emptyState}>No ride saved yet.</p>
+            )}
+          </section>
+        </div>
+      ) : null}
+
+      {editor === "instagram" ? (
+        <div className={`${styles.detailStack} ${styles.singleEditor}`}>
+          <ShareDetailAction momentum={momentum} />
+          <section className={styles.editor} id="instagram">
           <div className={styles.editorHeading}>
             <InstagramLogo aria-hidden="true" size={28} weight="bold" />
             <div>
-              <p>About / Featured Instagram Post</p>
-              <h2>{instagram?.label ?? "No featured post yet"}</h2>
+              <p>Website curation</p>
+              <h2>Featured on Website</h2>
             </div>
-            <Status published={instagram?.published ?? false} />
           </div>
-
-          {instagram ? (
-            <div className={styles.previewPanel}>
-              <div className={styles.previewHeading}>
-                <div>
-                  <p>Current featured post</p>
-                  <strong>{instagram.label || "Instagram post"}</strong>
-                </div>
-                <a href="#instagram-url">Change post</a>
-              </div>
-              <InstagramFeatureMedia
-                key={instagram.postUrl}
-                postUrl={instagram.postUrl}
-                label={instagram.label}
-                coverUrl={instagram.coverUrl}
-                viewLabel="Open post on Instagram"
-                fallbackAlt="Miriam smiling in a fitness studio while wearing her instructor headset"
-                compact
-              />
-            </div>
-          ) : null}
 
           <InstagramForm content={instagram} storageConfig={storageConfig} />
-        </section> : null}
-      </div>
+
+          <div className={styles.currentContentBlock}>
+            <div className={styles.compactSectionHeading}>
+              <div>
+                <p className={styles.eyebrow}>Current content</p>
+                <h3>Featured Post</h3>
+              </div>
+              {instagram ? <Status published={instagram.published} /> : null}
+            </div>
+            {instagram ? (
+              <div className={styles.compactContentSummary}>
+                <div>
+                  <strong>{instagram.label || "Instagram post"}</strong>
+                  <span>instagram.com</span>
+                </div>
+                <a href={instagram.postUrl} target="_blank" rel="noopener noreferrer">
+                  View post
+                  <ArrowRight aria-hidden="true" size={16} weight="bold" />
+                </a>
+              </div>
+            ) : (
+              <p className={styles.emptyState}>No featured post saved yet.</p>
+            )}
+            <p className={styles.detailNote}>
+              Featuring a post on the website is separate from marking Share complete.
+            </p>
+          </div>
+          </section>
+        </div>
       ) : null}
 
-      {editor === "moments" ? <section className={`${styles.editor} ${styles.momentsEditor}`} id="moments">
-        <div className={styles.editorHeading}>
-          <ImageSquare aria-hidden="true" size={28} weight="duotone" />
-          <div>
-            <p>Moments / In Action</p>
-            <h2>{moments.length ? `${moments.length} saved moment${moments.length === 1 ? "" : "s"}` : "No moments yet"}</h2>
-          </div>
-        </div>
+      {editor === "moments" ? (
+        <div className={`${styles.detailStack} ${styles.momentsEditor}`}>
+          <section className={styles.editor} id="moment-work">
+            <div className={styles.editorHeading}>
+              <ImageSquare aria-hidden="true" size={28} weight="duotone" />
+              <div>
+                <p>Capture / Miriam in Action</p>
+                <h2>{selectedMoment ? "Edit Moment" : "Add a Moment"}</h2>
+              </div>
+              {selectedMoment ? <Status published={selectedMoment.published} /> : null}
+            </div>
 
-        <div className={styles.momentGuidance}>
-          <p>
-            Miriam in Action is your professional instructor portfolio. Add moments that show
-            you teaching, leading a room, creating an experience or connecting with a fitness
-            community.
-          </p>
-          <span>
-            Classes / Special rides / Fitness events / Guest teaching / Studio collaborations /
-            Brand collaborations
-          </span>
-        </div>
+            <div className={styles.momentGuidance}>
+              <p>
+                Miriam in Action is your professional instructor portfolio. Add moments that show
+                you teaching, leading a room, creating an experience or connecting with a fitness
+                community.
+              </p>
+              <span>
+                Classes / Special rides / Fitness events / Guest teaching / Studio collaborations /
+                Brand collaborations
+              </span>
+            </div>
 
-        {moments.length ? (
-          <div className={styles.momentList}>
-            {moments.map((moment) => (
-              <MomentEditor key={moment.id} moment={moment} storageConfig={storageConfig} />
-            ))}
-          </div>
-        ) : null}
+            <div className={styles.momentWorkArea}>
+              <MomentForm moment={selectedMoment ?? undefined} storageConfig={storageConfig} />
+              {selectedMoment ? (
+                <form action={deleteMoment} className={styles.deleteForm}>
+                  <input type="hidden" name="id" value={selectedMoment.id} />
+                  <button type="submit">
+                    <Trash aria-hidden="true" size={17} weight="bold" />
+                    Delete moment
+                  </button>
+                </form>
+              ) : null}
+            </div>
+          </section>
 
-        <div className={styles.newMoment}>
-          <p className={styles.eyebrow}>Add a real instructor moment</p>
-          <MomentForm storageConfig={storageConfig} />
+          <section className={styles.editor} id="moments" aria-labelledby="saved-moments-title">
+            <div className={styles.compactSectionHeading}>
+              <div>
+                <p className={styles.eyebrow}>Portfolio</p>
+                <h2 id="saved-moments-title">Saved Moments</h2>
+              </div>
+              <span className={styles.savedCount}>
+                {moments.length} {moments.length === 1 ? "moment" : "moments"}
+              </span>
+            </div>
+
+            {moments.length ? (
+              <div className={styles.savedMomentList}>
+                {moments.map((moment) => (
+                  <MomentSummary key={moment.id} moment={moment} selected={moment.id === selectedMoment?.id} />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.emptyState}>No saved moments yet.</p>
+            )}
+          </section>
         </div>
-      </section> : null}
+      ) : null}
     </main>
   );
 }
 
-function MomentEditor({
+function MomentSummary({
   moment,
-  storageConfig,
+  selected,
 }: {
   moment: MomentContent;
-  storageConfig: { publishableKey: string; url: string };
+  selected: boolean;
 }) {
   return (
-    <article className={styles.momentEditorCard}>
-      <div className={styles.momentPreview}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={moment.mediaUrl} alt="" loading="lazy" />
-        <div>
-          <p>{moment.type}</p>
-          <h3>{moment.title}</h3>
-          <span>{moment.location}</span>
-        </div>
-        <Status published={moment.published} />
+    <article className={`${styles.savedMomentRow} ${selected ? styles.selectedMoment : ""}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={moment.mediaUrl} alt="" loading="lazy" />
+      <div className={styles.savedMomentContent}>
+        <p>{moment.type}</p>
+        <h3>{moment.title}</h3>
+        <span>{[moment.date, moment.location].filter(Boolean).join(" · ")}</span>
+        <small>{moment.caption}</small>
       </div>
-      <MomentForm moment={moment} storageConfig={storageConfig} />
-      <form action={deleteMoment} className={styles.deleteForm}>
-        <input type="hidden" name="id" value={moment.id} />
-        <button type="submit">
-          <Trash aria-hidden="true" size={17} weight="bold" />
-          Delete moment
-        </button>
-      </form>
+      <Status published={moment.published} />
+      <Link href={`/studio?editor=moments&moment=${moment.id}#moment-work`}>
+        Edit
+        <ArrowRight aria-hidden="true" size={16} weight="bold" />
+      </Link>
     </article>
   );
 }
 
-function StudioSpotifyPreview({ content }: { content: SpotifyContent }) {
+function CurrentRideSummary({ content }: { content: SpotifyContent }) {
   const embedUrl = toSpotifyEmbedUrl(content.playlistUrl);
-  if (!embedUrl) return null;
 
   return (
-    <div className={styles.previewPanel}>
-      <div className={styles.previewHeading}>
+    <div className={styles.currentContentBlock}>
+      <div className={styles.compactContentSummary}>
         <div>
-          <p>Public preview</p>
           <strong>{content.title}</strong>
+          <span>{content.className} · {content.focus}</span>
         </div>
-        <a href={content.playlistUrl} target="_blank" rel="noopener noreferrer">
-          Open in Spotify
+        <a href="#spotify">
+          Edit
+          <ArrowRight aria-hidden="true" size={16} weight="bold" />
         </a>
       </div>
-      <div className={styles.ridePreviewMeta}>
-        <strong>{content.className}</strong>
-        <span>{content.focus}</span>
-      </div>
-      <iframe
-        className={styles.spotifyPreview}
-        src={embedUrl}
-        title={`${content.title} Spotify playlist preview`}
-        width="100%"
-        height="152"
-        loading="lazy"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      />
+      {embedUrl ? (
+        <details className={styles.inlinePreview}>
+          <summary>Preview playlist</summary>
+          <iframe
+            className={styles.spotifyPreview}
+            src={embedUrl}
+            title={`${content.title} Spotify playlist preview`}
+            width="100%"
+            height="152"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          />
+        </details>
+      ) : null}
+      <a className={styles.externalTextLink} href={content.playlistUrl} target="_blank" rel="noopener noreferrer">
+          Open in Spotify
+          <ArrowRight aria-hidden="true" size={16} weight="bold" />
+        </a>
     </div>
   );
 }
