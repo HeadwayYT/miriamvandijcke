@@ -4,6 +4,7 @@ import {
   normalizeInstagramPostUrl,
   normalizeExternalUrl,
   normalizeMomentMediaUrl,
+  momentImageStoragePath,
   normalizeSpotifyPlaylistUrl,
   rowsToMoments,
   rowsToSiteContent,
@@ -37,6 +38,28 @@ test("accepts only direct HTTPS media URLs for Moments", () => {
   assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/media"), null);
   assert.equal(normalizeExternalUrl("javascript:alert(1)"), null);
   assert.equal(normalizeExternalUrl("https://www.instagram.com/p/ABC/"), "https://www.instagram.com/p/ABC/");
+});
+
+test("recognizes only Moment images stored in the configured Supabase bucket", () => {
+  const projectUrl = "https://project-ref.supabase.co";
+  assert.equal(
+    momentImageStoragePath(
+      "https://project-ref.supabase.co/storage/v1/object/public/moment-images/user-id/photo.webp",
+      projectUrl,
+    ),
+    "user-id/photo.webp",
+  );
+  assert.equal(
+    momentImageStoragePath("https://cdn.example.com/photo.webp", projectUrl),
+    null,
+  );
+  assert.equal(
+    momentImageStoragePath(
+      "https://project-ref.supabase.co/storage/v1/object/public/other-bucket/photo.webp",
+      projectUrl,
+    ),
+    null,
+  );
 });
 
 test("maps valid Moments and drops malformed portfolio records", () => {

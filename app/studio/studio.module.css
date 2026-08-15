@@ -221,6 +221,104 @@
   text-transform: none;
 }
 
+.imageUploadField {
+  display: grid;
+  gap: 8px;
+}
+
+.imageUploadField > p {
+  color: #d4d4d4;
+  font-size: 0.78rem;
+  font-weight: 750;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.imageUploadPanel {
+  align-items: center;
+  background: #101010;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 4px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 112px minmax(0, 1fr);
+  padding: 12px;
+}
+
+.imageUploadPanel > img,
+.imageUploadPlaceholder {
+  aspect-ratio: 4 / 3;
+  border-radius: 4px;
+  height: auto;
+  object-fit: cover;
+  width: 112px;
+}
+
+.imageUploadPlaceholder {
+  align-items: center;
+  background: #1a1a1a;
+  color: #737373;
+  display: flex;
+  justify-content: center;
+}
+
+.imageUploadPanel > div:last-child {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.uploadButton {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  color: #f5f5f5 !important;
+  cursor: pointer;
+  display: inline-flex !important;
+  font-size: 0.73rem !important;
+  gap: 8px !important;
+  justify-self: start;
+  min-height: 42px;
+  padding: 9px 12px;
+}
+
+.uploadButton:hover {
+  border-color: #ef4444;
+}
+
+.fileInput {
+  height: 1px !important;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 !important;
+  position: absolute;
+  width: 1px !important;
+}
+
+.uploadStatus {
+  align-items: center;
+  color: #86efac;
+  display: flex;
+  font-size: 0.72rem;
+  gap: 7px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.uploadError {
+  color: #fca5a5;
+}
+
+.spinner {
+  animation: studio-spin 900ms linear infinite;
+}
+
+@keyframes studio-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .form input[type="date"],
 .form select {
   color-scheme: dark;
@@ -357,6 +455,11 @@
 .saveButton:hover {
   background: #ef4444;
   color: #fff;
+}
+
+.saveButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
 }
 
 .momentsEditor {
@@ -588,5 +691,15 @@
     grid-column: 2;
     justify-self: start;
     margin-left: 0;
+  }
+
+  .imageUploadPanel {
+    align-items: start;
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+
+  .imageUploadPanel > img,
+  .imageUploadPlaceholder {
+    width: 82px;
   }
 }

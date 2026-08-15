@@ -25,6 +25,8 @@ export const momentTypes = [
   "Other",
 ] as const;
 
+export const momentImagesBucket = "moment-images";
+
 export type MomentType = (typeof momentTypes)[number];
 export type MomentContent = {
   id: string;
@@ -128,6 +130,25 @@ export function normalizeMomentMediaUrl(
     return url.toString();
   }
   return null;
+}
+
+export function momentImageStoragePath(value: string, supabaseUrl: string): string | null {
+  const mediaUrl = normalizeMomentMediaUrl(value);
+  const projectUrl = parseHttpsUrl(supabaseUrl);
+  if (!mediaUrl || !projectUrl) return null;
+
+  const url = new URL(mediaUrl);
+  const prefix = `/storage/v1/object/public/${momentImagesBucket}/`;
+  if (url.origin !== projectUrl.origin || !url.pathname.startsWith(prefix)) return null;
+
+  let path: string;
+  try {
+    path = decodeURIComponent(url.pathname.slice(prefix.length));
+  } catch {
+    return null;
+  }
+  if (!path || path.split("/").some((segment) => !segment || segment === "..")) return null;
+  return path;
 }
 
 export function isMomentType(value: string): value is MomentType {

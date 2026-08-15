@@ -16,13 +16,12 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getAdminSiteContent, isStudioAdmin } from "@/lib/studio/data";
 import {
   toSpotifyEmbedUrl,
-  momentTypes,
   type MomentContent,
   type SpotifyContent,
 } from "@/lib/studio/content";
+import { MomentForm } from "./moment-form";
 import {
   saveInstagramContent,
-  saveMoment,
   saveSpotifyContent,
   deleteMoment,
   signInStudio,
@@ -60,6 +59,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
   const spotify = content.spotify;
   const instagram = content.instagram;
   const moments = content.moments;
+  const storageConfig = { url: config.url, publishableKey: config.publishableKey };
 
   return (
     <main className={styles.shell}>
@@ -210,20 +210,28 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
 
         {moments.length ? (
           <div className={styles.momentList}>
-            {moments.map((moment) => <MomentEditor key={moment.id} moment={moment} />)}
+            {moments.map((moment) => (
+              <MomentEditor key={moment.id} moment={moment} storageConfig={storageConfig} />
+            ))}
           </div>
         ) : null}
 
         <div className={styles.newMoment}>
           <p className={styles.eyebrow}>Add a real instructor moment</p>
-          <MomentForm />
+          <MomentForm storageConfig={storageConfig} />
         </div>
       </section>
     </main>
   );
 }
 
-function MomentEditor({ moment }: { moment: MomentContent }) {
+function MomentEditor({
+  moment,
+  storageConfig,
+}: {
+  moment: MomentContent;
+  storageConfig: { publishableKey: string; url: string };
+}) {
   return (
     <article className={styles.momentEditorCard}>
       <div className={styles.momentPreview}>
@@ -236,7 +244,7 @@ function MomentEditor({ moment }: { moment: MomentContent }) {
         </div>
         <Status published={moment.published} />
       </div>
-      <MomentForm moment={moment} />
+      <MomentForm moment={moment} storageConfig={storageConfig} />
       <form action={deleteMoment} className={styles.deleteForm}>
         <input type="hidden" name="id" value={moment.id} />
         <button type="submit">
@@ -245,58 +253,6 @@ function MomentEditor({ moment }: { moment: MomentContent }) {
         </button>
       </form>
     </article>
-  );
-}
-
-function MomentForm({ moment }: { moment?: MomentContent }) {
-  return (
-    <form action={saveMoment} className={styles.form}>
-      {moment ? <input type="hidden" name="id" value={moment.id} /> : null}
-      <div className={styles.formRow}>
-        <label>
-          Title
-          <input name="title" type="text" maxLength={80} defaultValue={moment?.title ?? ""} placeholder="Pride Ride" required />
-        </label>
-        <label>
-          Type
-          <select name="type" defaultValue={moment?.type ?? "Special ride"} required>
-            {momentTypes.map((type) => <option value={type} key={type}>{type}</option>)}
-          </select>
-        </label>
-      </div>
-      <div className={styles.formRow}>
-        <label>
-          Date <span>optional</span>
-          <input name="date" type="date" defaultValue={moment?.date ?? ""} />
-        </label>
-        <label>
-          Location / venue
-          <input name="location" type="text" maxLength={100} defaultValue={moment?.location ?? ""} placeholder="Pulsate Antwerp" required />
-        </label>
-      </div>
-      <label>
-        Short caption
-        <textarea name="caption" maxLength={240} rows={3} defaultValue={moment?.caption ?? ""} placeholder="A short, factual note about this moment." required />
-      </label>
-      <label>
-        Image URL
-        <input name="mediaUrl" type="url" inputMode="url" defaultValue={moment?.mediaUrl ?? ""} placeholder="https://.../photo.jpg" required />
-        <small>Direct HTTPS link ending in JPG, PNG, WebP or AVIF.</small>
-      </label>
-      <label>
-        External link <span>optional</span>
-        <input name="externalUrl" type="url" inputMode="url" defaultValue={moment?.externalUrl ?? ""} placeholder="Instagram, event or studio page" />
-      </label>
-      <label className={styles.publishToggle}>
-        <input name="status" type="checkbox" value="published" defaultChecked={moment?.published ?? false} />
-        <span aria-hidden="true" />
-        Published
-      </label>
-      <button className={styles.saveButton} type="submit">
-        <FloppyDisk aria-hidden="true" size={19} weight="bold" />
-        {moment ? "Save moment" : "Add moment"}
-      </button>
-    </form>
   );
 }
 

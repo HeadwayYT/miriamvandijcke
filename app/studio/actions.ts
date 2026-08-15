@@ -7,6 +7,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   cleanText,
   isMomentType,
+  momentImagesBucket,
+  momentImageStoragePath,
   normalizeExternalUrl,
   normalizeInstagramPostUrl,
   normalizeMomentMediaUrl,
@@ -109,7 +111,7 @@ export async function saveInstagramContent(formData: FormData) {
 }
 
 export async function saveMoment(formData: FormData) {
-  const { supabase, userId } = await requireStudioAdmin();
+  const { config, supabase, userId } = await requireStudioAdmin();
   const id = cleanText(formData.get("id"), 36);
   const title = cleanText(formData.get("title"), 80);
   const type = cleanText(formData.get("type"), 40);
@@ -117,6 +119,9 @@ export async function saveMoment(formData: FormData) {
   const location = cleanText(formData.get("location"), 100);
   const caption = cleanText(formData.get("caption"), 240);
   const media = normalizeMomentMediaUrl(cleanText(formData.get("mediaUrl"), 1000));
+  const previousMedia = normalizeMomentMediaUrl(
+    cleanText(formData.get("previousMediaUrl"), 1000),
+  );
   const rawExternalUrl = cleanText(formData.get("externalUrl"), 1000);
   const externalUrl = normalizeExternalUrl(rawExternalUrl);
   const published = formData.get("status") === "published";
@@ -148,31 +153,52 @@ export async function saveMoment(formData: FormData) {
   });
 
   if (error) redirect("/studio?error=save#moments");
+  if (previousMedia && previousMedia !== media) {
+    await removeStoredMomentImage(supabase, previousMedia, config.url);
+  }
   refreshContent();
   redirect("/studio?success=moment#moments");
 }
 
 export async function deleteMoment(formData: FormData) {
-  const { supabase } = await requireStudioAdmin();
+  const { config, supabase } = await requireStudioAdmin();
   const id = cleanText(formData.get("id"), 36);
   if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/studio?error=moment-validation#moments");
 
+  const { data: moment } = await supabase
+    .from("site_moments")
+    .select("media_url")
+    .eq("id", id)
+    .maybeSingle();
   const { error } = await supabase.from("site_moments").delete().eq("id", id);
   if (error) redirect("/studio?error=save#moments");
+  if (moment?.media_url) {
+    await removeStoredMomentImage(supabase, moment.media_url, config.url);
+  }
   refreshContent();
   redirect("/studio?success=moment-deleted#moments");
 }
 
 async function requireStudioAdmin() {
+  const config = getSupabaseRuntimeConfig();
   const supabase = await createServerSupabaseClient();
-  if (!supabase) redirect("/studio?error=setup");
+  if (!config || !supabase) redirect("/studio?error=setup");
 
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user || !isStudioAdmin(data.user)) {
     redirect("/studio?error=unauthorized");
   }
 
-  return { supabase, userId: data.user.id };
+  return { config, supabase, userId: data.user.id };
+}
+
+async function removeStoredMomentImage(
+  supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>,
+  mediaUrl: string,
+  supabaseUrl: string,
+) {
+  const path = momentImageStoragePath(mediaUrl, supabaseUrl);
+  if (path) await supabase.storage.from(momentImagesBucket).remove([path]);
 }
 
 function refreshContent() {

@@ -2,6 +2,7 @@
 
 export {
   ArrowLeft,
+  CheckCircle,
   Database,
   FloppyDisk,
   ImageSquare,
@@ -9,5 +10,8 @@ export {
   LockKey,
   SignOut,
   SpotifyLogo,
+  SpinnerGap,
   Trash,
+  UploadSimple,
+  WarningCircle,
 } from "@phosphor-icons/react";

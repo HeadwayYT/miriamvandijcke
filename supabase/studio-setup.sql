@@ -94,6 +94,20 @@ create table if not exists public.site_moments (
 
 alter table public.site_moments enable row level security;
 
+-- Public delivery with authenticated, admin-only uploads from Miriam Studio.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'moment-images',
+  'moment-images',
+  true,
+  6291456,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
 create index if not exists site_moments_published_date_idx
 on public.site_moments (published, event_date desc);
 
@@ -141,3 +155,36 @@ on public.site_moments
 for delete
 to authenticated
 using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false));
+
+drop policy if exists "studio admin can upload moment images" on storage.objects;
+create policy "studio admin can upload moment images"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'moment-images'
+  and (storage.foldername(name))[1] = (select auth.uid()::text)
+  and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+drop policy if exists "studio admin can inspect moment images" on storage.objects;
+create policy "studio admin can inspect moment images"
+on storage.objects
+for select
+to authenticated
+using (
+  bucket_id = 'moment-images'
+  and owner_id = (select auth.uid()::text)
+  and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+drop policy if exists "studio admin can delete moment images" on storage.objects;
+create policy "studio admin can delete moment images"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'moment-images'
+  and owner_id = (select auth.uid()::text)
+  and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
