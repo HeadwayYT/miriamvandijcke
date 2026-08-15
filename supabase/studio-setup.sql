@@ -113,12 +113,24 @@ create table if not exists public.studio_activity (
   action_type text not null check (action_type in ('capture', 'share', 'connect')),
   week_key text not null check (week_key ~ '^[0-9]{4}-W[0-9]{2}$'),
   source_id text not null check (char_length(source_id) between 1 and 100),
+  source_url text,
   occurred_at timestamptz not null default now(),
   updated_by uuid not null references auth.users(id),
   unique (action_type, week_key, source_id)
 );
 
 alter table public.studio_activity enable row level security;
+
+alter table public.studio_activity
+add column if not exists source_url text;
+
+alter table public.studio_activity
+drop constraint if exists studio_activity_source_url_check;
+
+alter table public.studio_activity
+add constraint studio_activity_source_url_check check (
+  source_url is null or source_url ~ '^https://[^[:space:]]+$'
+);
 
 create index if not exists studio_activity_week_idx
 on public.studio_activity (week_key desc, occurred_at desc);
@@ -127,7 +139,7 @@ create index if not exists studio_activity_updated_by_idx
 on public.studio_activity (updated_by);
 
 revoke all on table public.studio_activity from anon, authenticated;
-grant select, insert on table public.studio_activity to authenticated;
+grant select, insert, update on table public.studio_activity to authenticated;
 
 drop policy if exists "studio admin can inspect momentum activity" on public.studio_activity;
 create policy "studio admin can inspect momentum activity"
@@ -144,6 +156,20 @@ create policy "studio admin can record momentum activity"
 on public.studio_activity
 for insert
 to authenticated
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can update momentum activity" on public.studio_activity;
+create policy "studio admin can update momentum activity"
+on public.studio_activity
+for update
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+)
 with check (
   coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
   and updated_by = (select auth.uid())

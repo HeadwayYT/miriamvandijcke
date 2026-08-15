@@ -382,6 +382,7 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
     "spotify-validation": "Use a valid Spotify playlist URL and complete the required fields.",
     "instagram-validation": "Use a valid public Instagram post or Reel URL.",
     "moment-validation": "Complete the Moment fields with valid HTTPS links.",
+    "share-validation": "Use a valid HTTPS link or leave the optional link empty.",
     save: "The content could not be saved. Please try again.",
   };
 
@@ -390,6 +391,7 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
   if (success === "instagram") return { kind: "success" as const, text: "Featured Instagram post saved." };
   if (success === "moment") return { kind: "success" as const, text: "Moment saved." };
   if (success === "moment-deleted") return { kind: "success" as const, text: "Moment deleted." };
+  if (success === "share") return { kind: "success" as const, text: "This week's Share is recorded." };
   return null;
 }
 

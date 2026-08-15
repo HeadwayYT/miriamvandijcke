@@ -17,7 +17,11 @@ import {
   normalizeSpotifyPlaylistUrl,
 } from "@/lib/studio/content";
 import { isStudioAdmin } from "@/lib/studio/data";
-import { getIsoWeekKey, type MomentumAction } from "@/lib/studio/momentum";
+import {
+  getIsoWeekKey,
+  manualShareSourceId,
+  type MomentumAction,
+} from "@/lib/studio/momentum";
 
 export async function signInStudio(formData: FormData) {
   const config = getSupabaseRuntimeConfig();
@@ -122,9 +126,6 @@ export async function saveInstagramContent(formData: FormData) {
   );
 
   if (error) redirect("/studio?editor=instagram&error=save#instagram");
-  if (published) {
-    await recordStudioActivity(supabase, userId, "share", "instagram", savedAt);
-  }
   if (previousCoverUrl && previousCoverUrl !== coverUrl) {
     await removeStoredImage(
       supabase,
@@ -172,9 +173,9 @@ export async function saveMoment(formData: FormData) {
   }
 
   const { data: existingMoment } = id
-    ? await supabase.from("site_moments").select("published").eq("id", id).maybeSingle()
+    ? await supabase.from("site_moments").select("id").eq("id", id).maybeSingle()
     : { data: null };
-  const shouldCapture = !id || !existingMoment || (published && existingMoment.published !== true);
+  const shouldCapture = !id || !existingMoment;
   const savedAt = new Date();
   const { error } = await supabase.from("site_moments").upsert({
     id: momentId,
@@ -205,6 +206,33 @@ export async function saveMoment(formData: FormData) {
   }
   refreshContent();
   redirect("/studio?editor=moments&success=moment#moments");
+}
+
+export async function markShareCompleted(formData: FormData) {
+  const { supabase, userId } = await requireStudioAdmin();
+  const rawShareUrl = cleanText(formData.get("shareUrl"), 1000);
+  const shareUrl = rawShareUrl ? normalizeExternalUrl(rawShareUrl) : null;
+
+  if (rawShareUrl && !shareUrl) {
+    redirect("/studio?error=share-validation#momentum");
+  }
+
+  const occurredAt = new Date();
+  const { error } = await supabase.from("studio_activity").upsert(
+    {
+      action_type: "share",
+      week_key: getIsoWeekKey(occurredAt),
+      source_id: manualShareSourceId,
+      source_url: shareUrl,
+      occurred_at: occurredAt.toISOString(),
+      updated_by: userId,
+    },
+    { onConflict: "action_type,week_key,source_id" },
+  );
+
+  if (error) redirect("/studio?error=save#momentum");
+  revalidatePath("/studio");
+  redirect("/studio?success=share#momentum");
 }
 
 export async function deleteMoment(formData: FormData) {

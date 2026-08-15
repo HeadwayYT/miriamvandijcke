@@ -5,18 +5,28 @@ export type MomentumAction = (typeof momentumActions)[number];
 export type MomentumActivity = {
   action: MomentumAction;
   weekKey: string;
+  sourceUrl?: string | null;
 };
 
 export type MomentumStatus = {
   weekKey: string;
   completed: Record<MomentumAction, boolean>;
   completedCount: number;
+  currentShareUrl: string | null;
   isMomentumWeek: boolean;
   currentStreak: number;
 };
 
 const belgiumTimeZone = "Europe/Brussels";
 const isoWeekPattern = /^(\d{4})-W(\d{2})$/;
+export const manualShareSourceId = "manual-share";
+
+export function isTrustedMomentumSource(
+  action: MomentumAction,
+  sourceId: string,
+): boolean {
+  return action !== "share" || sourceId === manualShareSourceId;
+}
 
 export function getIsoWeekKey(
   value: Date = new Date(),
@@ -79,6 +89,13 @@ export function calculateMomentumStatus(
     connect: currentActions.has("connect"),
   };
   const completedCount = Object.values(completed).filter(Boolean).length;
+  const currentShareUrl = activities.find(
+    (activity) => (
+      activity.action === "share"
+      && activity.weekKey === weekKey
+      && activity.sourceUrl
+    ),
+  )?.sourceUrl ?? null;
   const isMomentumWeek = completedCount >= 2;
 
   let streakWeek = isMomentumWeek ? weekKey : previousIsoWeekKey(weekKey);
@@ -93,6 +110,7 @@ export function calculateMomentumStatus(
     weekKey,
     completed,
     completedCount,
+    currentShareUrl,
     isMomentumWeek,
     currentStreak,
   };

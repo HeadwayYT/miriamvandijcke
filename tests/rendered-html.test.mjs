@@ -192,6 +192,13 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(dashboardSource, /Build the following/);
   assert.match(dashboardSource, /momentum\.completedCount/);
   assert.match(dashboardSource, /momentum\.currentStreak/);
+  assert.match(dashboardSource, /markShareCompleted/);
+  assert.match(dashboardSource, /Momentum secured/);
+  assert.ok(
+    dashboardSource.indexOf('action: "capture"') < dashboardSource.indexOf('action: "share"')
+      && dashboardSource.indexOf('action: "share"') < dashboardSource.indexOf('action: "connect"'),
+    "Momentum actions must remain Capture, Share, Connect",
+  );
   assert.match(dashboardSource, /editor=moments/);
   assert.match(dashboardSource, /editor=instagram/);
   assert.match(dashboardSource, /editor=spotify/);
@@ -212,12 +219,19 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   );
   assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
   assert.match(actionSource, /recordStudioActivity/);
+  assert.match(actionSource, /source_id:\s*manualShareSourceId/);
+  assert.doesNotMatch(
+    actionSource,
+    /recordStudioActivity\(supabase, userId, "share", "instagram"/,
+  );
   assert.match(actionSource, /ignoreDuplicates:\s*true/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);
   assert.match(policies, /enable row level security/i);
   assert.match(policies, /site_moments[\s\S]*?enable row level security/i);
   assert.match(policies, /studio_activity[\s\S]*?enable row level security/i);
   assert.match(policies, /studio_activity_updated_by_idx/i);
+  assert.match(policies, /studio_activity_source_url_check/i);
+  assert.match(policies, /studio admin can update momentum activity/i);
   assert.match(policies, /revoke all on table public\.studio_activity from anon, authenticated/i);
   assert.match(policies, /moment-images[\s\S]*?storage\.objects/i);
   assert.match(policies, /studio admin can upload moment images/i);

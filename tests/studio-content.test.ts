@@ -17,6 +17,8 @@ import {
 import {
   calculateMomentumStatus,
   getIsoWeekKey,
+  isTrustedMomentumSource,
+  manualShareSourceId,
   previousIsoWeekKey,
 } from "../lib/studio/momentum.ts";
 
@@ -41,6 +43,69 @@ test("counts unique weekly actions and qualifies two of three as momentum", () =
   });
   assert.equal(status.completedCount, 2);
   assert.equal(status.isMomentumWeek, true);
+});
+
+test("uses manual weekly shares instead of featured Instagram curation", () => {
+  assert.equal(isTrustedMomentumSource("share", manualShareSourceId), true);
+  assert.equal(isTrustedMomentumSource("share", "instagram"), false);
+  assert.equal(isTrustedMomentumSource("capture", "moment-id"), true);
+
+  const status = calculateMomentumStatus([
+    {
+      action: "share",
+      sourceUrl: "https://www.instagram.com/reel/ABC_123/",
+      weekKey: "2026-W33",
+    },
+  ], new Date("2026-08-13T12:00:00Z"));
+
+  assert.equal(status.completed.share, true);
+  assert.equal(status.currentShareUrl, "https://www.instagram.com/reel/ABC_123/");
+});
+
+test("models the Momentum root scenarios and treats two of three as secured", () => {
+  const now = new Date("2026-08-13T12:00:00Z");
+  const capture = { action: "capture" as const, weekKey: "2026-W33" };
+  const share = { action: "share" as const, weekKey: "2026-W33" };
+  const connect = { action: "connect" as const, weekKey: "2026-W33" };
+
+  const draftOnly = calculateMomentumStatus([capture], now);
+  assert.deepEqual(draftOnly.completed, {
+    capture: true,
+    share: false,
+    connect: false,
+  });
+  assert.equal(draftOnly.isMomentumWeek, false);
+
+  const captureAndShare = calculateMomentumStatus([capture, share], now);
+  assert.equal(captureAndShare.completedCount, 2);
+  assert.equal(captureAndShare.isMomentumWeek, true);
+
+  const shareAndConnect = calculateMomentumStatus([share, connect], now);
+  assert.equal(shareAndConnect.completedCount, 2);
+  assert.equal(shareAndConnect.isMomentumWeek, true);
+
+  const allThree = calculateMomentumStatus([capture, share, connect], now);
+  assert.equal(allThree.completedCount, 3);
+  assert.equal(allThree.isMomentumWeek, true);
+});
+
+test("continues streaks equally for two-of-three and three-of-three weeks", () => {
+  const twoOfThree = calculateMomentumStatus([
+    { action: "capture", weekKey: "2026-W32" },
+    { action: "share", weekKey: "2026-W32" },
+    { action: "capture", weekKey: "2026-W33" },
+    { action: "connect", weekKey: "2026-W33" },
+  ], new Date("2026-08-13T12:00:00Z"));
+  const threeOfThree = calculateMomentumStatus([
+    { action: "capture", weekKey: "2026-W32" },
+    { action: "share", weekKey: "2026-W32" },
+    { action: "connect", weekKey: "2026-W32" },
+    { action: "capture", weekKey: "2026-W33" },
+    { action: "share", weekKey: "2026-W33" },
+  ], new Date("2026-08-13T12:00:00Z"));
+
+  assert.equal(twoOfThree.currentStreak, 2);
+  assert.equal(threeOfThree.currentStreak, 2);
 });
 
 test("keeps a streak alive during an unfinished current week", () => {

@@ -12,6 +12,7 @@ import {
 import {
   calculateMomentumStatus,
   getIsoWeekKey,
+  isTrustedMomentumSource,
   momentumActions,
   type MomentumAction,
   type MomentumActivity,
@@ -102,12 +103,13 @@ export async function getStudioMomentum(
   const [activityResult, contentResult, momentResult] = await Promise.all([
     supabase
       .from("studio_activity")
-      .select("action_type,week_key,occurred_at")
+      .select("action_type,week_key,source_id,source_url,occurred_at")
       .order("occurred_at", { ascending: false })
       .limit(1000),
     supabase
       .from("site_content")
       .select("content_key,published,updated_at")
+      .eq("content_key", "spotify")
       .eq("published", true),
     supabase
       .from("site_moments")
@@ -122,10 +124,13 @@ export async function getStudioMomentum(
     for (const row of activityResult.data ?? []) {
       if (
         momentumActions.includes(row.action_type as MomentumAction) &&
-        typeof row.week_key === "string"
+        typeof row.week_key === "string" &&
+        typeof row.source_id === "string" &&
+        isTrustedMomentumSource(row.action_type as MomentumAction, row.source_id)
       ) {
         activities.push({
           action: row.action_type as MomentumAction,
+          sourceUrl: typeof row.source_url === "string" ? row.source_url : null,
           weekKey: row.week_key,
         });
       }
@@ -134,13 +139,10 @@ export async function getStudioMomentum(
 
   if (!contentResult.error) {
     for (const row of contentResult.data ?? []) {
-      const action = row.content_key === "spotify"
-        ? "connect"
-        : row.content_key === "instagram"
-          ? "share"
-          : null;
       const weekKey = weekKeyFromTimestamp(row.updated_at);
-      if (action && weekKey) activities.push({ action, weekKey });
+      if (row.content_key === "spotify" && weekKey) {
+        activities.push({ action: "connect", weekKey });
+      }
     }
   }
 
