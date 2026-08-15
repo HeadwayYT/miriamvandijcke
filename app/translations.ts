@@ -37,6 +37,7 @@ export const nlTranslations: Record<string, string> = {
   "Want to work out with me? You'll find me teaching regular classes at selected gyms and studios. Access and booking are handled directly by each venue.":
     "Wil je met mij sporten? Je vindt me in vaste lessen bij geselecteerde fitnessclubs en studio's. Toegang en reservatie verlopen rechtstreeks via de locatie.",
   "Move with purpose.": "Beweeg met een doel.",
+  "4 Classes": "4 Lessen",
   "These are the formats I'm qualified and experienced to teach. Current weekly classes are listed in the schedule below.":
     "Dit zijn de formats waarvoor ik gekwalificeerd ben en ervaring in heb. Mijn huidige wekelijkse lessen vind je in het rooster hieronder.",
   "Indoor Cycling": "Indoor Cycling",
@@ -51,6 +52,7 @@ export const nlTranslations: Record<string, string> = {
   "Weekly schedule": "Wekelijks lesrooster",
   "Find me in class every week in Mechelen and Antwerp.":
     "Sport elke week met mij mee in Mechelen en Antwerpen.",
+  "Find me in class every week.": "Sport elke week met mij mee.",
   "Booking and access are handled directly through each gym or studio.":
     "Reservatie en toegang verlopen rechtstreeks via de fitnessclub of studio.",
   Thu: "Do",
@@ -111,6 +113,8 @@ export const nlTranslations: Record<string, string> = {
   "Brand events": "Merkevenementen",
   "About Miriam": "Over Miriam",
   "My energy is contagious.": "Mijn energie werkt aanstekelijk.",
+  "My energy": "Mijn energie",
+  " is contagious.": " werkt aanstekelijk.",
   "I'm Miriam, a group fitness and indoor cycling instructor who brings energy into every class. For me, it's not just about pushing harder — it's about motivating people, creating connection and making the whole room want to move.":
     "Ik ben Miriam, groepsfitness- en indoorcyclinginstructeur, en ik breng energie in elke les. Voor mij draait het niet alleen om harder gaan, maar om mensen motiveren, verbinding creëren en de hele zaal zin geven om te bewegen.",
   "With clear coaching, music and plenty of encouragement, I challenge people at their own level and make sure everyone feels part of the workout.":

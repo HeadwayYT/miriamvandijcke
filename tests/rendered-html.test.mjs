@@ -16,11 +16,16 @@ test("server-renders Miriam's fitness hub priorities", async () => {
   );
   assert.match(html, /href="#contact">Contact<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
-  assert.match(html, /Bring Miriam to your event/i);
+  assert.match(html, />4 Classes<\/h2>/i);
+  assert.match(html, /Find me in class every week\.<\/h3>/i);
   assert.match(html, /Potential partnership/i);
   assert.doesNotMatch(html, /Private group experience/i);
   assert.match(html, /Want to collaborate, plan a fitness event or simply get in touch/i);
   assert.doesNotMatch(html, /Private experiences/i);
+  assert.doesNotMatch(html, /Move with purpose/i);
+  assert.doesNotMatch(html, /These are the formats I&#x27;m qualified and experienced to teach/i);
+  assert.doesNotMatch(html, /Find me in class every week in Mechelen and Antwerp/i);
+  assert.doesNotMatch(html, /Bring Miriam to your event/i);
   assert.doesNotMatch(html, />Book now</i);
 });
 
@@ -47,7 +52,7 @@ test("renders an accessible English and Dutch language switch", async () => {
   assert.doesNotMatch(source, /marquee-band|marquee-track/);
 });
 
-test("renders compact venue schedules and a secondary event path", async () => {
+test("renders compact venue schedules and a contact enquiry path", async () => {
   const html = await render();
 
   assert.match(html, /19:00 - 20:00/);
@@ -56,10 +61,6 @@ test("renders compact venue schedules and a secondary event path", async () => {
   assert.match(html, /BODYATTACK/);
   assert.match(html, /BODYPUMP/);
   assert.match(html, /RIDE: PERFORMANCE/);
-  assert.match(html, /Special rides/);
-  assert.match(html, /Fitness events/);
-  assert.match(html, /Guest classes/);
-  assert.match(html, /Studio collaborations/);
   assert.match(html, /What&#x27;s this about\?/);
   assert.match(html, /Select an option/);
   assert.match(html, /General question/);

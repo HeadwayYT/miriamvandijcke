@@ -209,7 +209,7 @@ export default function Home() {
         toggleClass: { targets: ".site-header", className: "is-scrolled" },
       });
 
-      gsap.from(".hero-kicker, .hero-title span, .hero-text, .hero-context, .hero-actions", {
+      gsap.from(".hero-title span, .hero-text, .hero-context, .hero-actions", {
         y: 34,
         opacity: 0,
         filter: "blur(10px)",
@@ -316,11 +316,6 @@ export default function Home() {
         <div className="hero-media" aria-hidden="true" />
         <div className="hero-wash" />
         <div className="hero-inner">
-          <p className="hero-kicker">
-            {t("Group fitness")} <span aria-hidden="true">&middot;</span>{" "}
-            {t("Indoor cycling")} <span aria-hidden="true">&middot;</span>{" "}
-            {t("Events")}
-          </p>
           <h1 className="hero-title">
             <span>{t("Move together.")}</span>
             <span>
@@ -372,15 +367,8 @@ export default function Home() {
 
       <section className="chapter bento-chapter schedule-chapter">
         <div className="chapter-heading classes-heading" id="classes">
-          <div>
-            <p className="eyebrow">{t("What I teach")}</p>
-            <h2>{t("Move with purpose.")}</h2>
-          </div>
-          <p className="chapter-intro">
-            {t(
-              "These are the formats I'm qualified and experienced to teach. Current weekly classes are listed in the schedule below.",
-            )}
-          </p>
+          <p className="eyebrow">{t("What I teach")}</p>
+          <h2>{t("4 Classes")}</h2>
         </div>
         <div className="class-bento">
           {classTypes.map((classType) => (
@@ -395,9 +383,11 @@ export default function Home() {
               <div className="class-card-shade" />
               <div className="class-card-copy">
                 <h3>{t(classType.name)}</h3>
-                <p id={`class-detail-${classType.name.toLowerCase().replaceAll(" ", "-")}`}>
-                  {t(classType.detail)}
-                </p>
+                <div className="class-card-detail">
+                  <p id={`class-detail-${classType.name.toLowerCase().replaceAll(" ", "-")}`}>
+                    {t(classType.detail)}
+                  </p>
+                </div>
               </div>
               <button
                 className="class-card-trigger"
@@ -413,7 +403,7 @@ export default function Home() {
           <div className="schedule-heading">
             <p className="eyebrow">{t("Weekly schedule")}</p>
             <div>
-              <h3>{t("Find me in class every week in Mechelen and Antwerp.")}</h3>
+              <h3>{t("Find me in class every week.")}</h3>
               <p>{t("Booking and access are handled directly through each gym or studio.")}</p>
             </div>
           </div>
@@ -474,7 +464,10 @@ export default function Home() {
         <div className="about-grid" id="about">
           <div className="about-copy">
             <p className="eyebrow">{t("About Miriam")}</p>
-            <h2>{t("My energy is contagious.")}</h2>
+            <h2>
+              <em>{t("My energy")}</em>
+              {t(" is contagious.")}
+            </h2>
             <p className="about-lead">
               {t(
                 "I'm Miriam, a group fitness and indoor cycling instructor who brings energy into every class. For me, it's not just about pushing harder — it's about motivating people, creating connection and making the whole room want to move.",
@@ -531,35 +524,6 @@ export default function Home() {
               </div>
             )}
           </figure>
-        </div>
-      </section>
-
-      <section className="chapter event-chapter" id="events">
-        <div className="event-inner">
-          <div className="event-copy">
-            <p className="eyebrow">{t("Events & collaborations")}</p>
-            <h2>{t("Bring Miriam to your event.")}</h2>
-            <p>
-              {t(
-                "Planning a special ride, studio event, launch or team workout? Miriam is available for selected fitness events and collaborations.",
-              )}
-            </p>
-            <p className="event-categories">
-              {t("Special rides")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Fitness events")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Studio collaborations")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Guest classes")} <span aria-hidden="true">&middot;</span>{" "}
-              {t("Corporate / team events")}
-            </p>
-          </div>
-          <a
-            className="event-cta"
-            href="#contact"
-            onClick={() => setRequestType("Fitness event")}
-          >
-            {t("Get in touch")}
-            <ArrowRight aria-hidden="true" size={18} weight="bold" />
-          </a>
         </div>
       </section>
 
@@ -773,6 +737,15 @@ function LatestRide({
               </time>
             ) : null}
           </div>
+          <a
+            className="latest-ride-link"
+            href={content.playlistUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("Open in Spotify")}
+            <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
+          </a>
         </div>
         <div className="spotify-embed-shell">
           <iframe
@@ -784,15 +757,6 @@ function LatestRide({
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           />
         </div>
-        <a
-          className="latest-ride-link"
-          href={content.playlistUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t("Open in Spotify")}
-          <ArrowSquareOut aria-hidden="true" size={16} weight="bold" />
-        </a>
       </div>
     </section>
   );
