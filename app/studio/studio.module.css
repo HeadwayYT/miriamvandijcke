@@ -100,6 +100,284 @@
   max-width: 620px;
 }
 
+.dashboard {
+  display: grid;
+  gap: 18px;
+  margin: 0 auto;
+  max-width: 1280px;
+  padding-top: clamp(38px, 6vw, 72px);
+}
+
+.momentumPanel,
+.focusPanel,
+.contentOverview {
+  background: rgba(23, 23, 23, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.momentumPanel {
+  padding: clamp(24px, 3.8vw, 46px);
+}
+
+.momentumHeading {
+  align-items: end;
+  display: flex;
+  gap: 28px;
+  justify-content: space-between;
+  padding-bottom: clamp(22px, 3vw, 34px);
+}
+
+.momentumHeading h2,
+.focusPanel h2,
+.sectionHeading h2 {
+  font-weight: 550;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.momentumHeading h2 {
+  font-size: clamp(1.85rem, 3.6vw, 3.4rem);
+  line-height: 1;
+}
+
+.momentumHeading h2 span {
+  color: #a3a3a3;
+  font-size: 0.48em;
+  white-space: nowrap;
+}
+
+.streak {
+  border-left: 2px solid #ef4444;
+  display: grid;
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 3px 0 3px 14px;
+}
+
+.streak span {
+  color: #737373;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.streak strong {
+  font-size: 1rem;
+}
+
+.momentumActions {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.momentumAction {
+  align-content: start;
+  display: grid;
+  gap: 18px;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+  padding: 24px;
+}
+
+.momentumAction + .momentumAction {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.momentumAction > svg {
+  color: #ef4444;
+}
+
+.momentumAction.complete > svg {
+  color: #86efac;
+}
+
+.actionTitle {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.actionTitle h3 {
+  font-size: 1.05rem;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.actionTitle span {
+  align-items: center;
+  color: #a3a3a3;
+  display: inline-flex;
+  font-size: 0.65rem;
+  font-weight: 800;
+  gap: 5px;
+  text-transform: uppercase;
+}
+
+.complete .actionTitle span {
+  color: #86efac;
+}
+
+.momentumAction p {
+  color: #a3a3a3;
+  font-size: 0.83rem;
+  line-height: 1.55;
+  margin: 8px 0 0;
+  max-width: 29ch;
+}
+
+.momentumAction > a,
+.summaryCard > a {
+  align-items: center;
+  color: #f5f5f5;
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 800;
+  gap: 7px;
+  justify-self: start;
+  min-height: 42px;
+  text-transform: uppercase;
+}
+
+.momentumAction > a:hover,
+.summaryCard > a:hover {
+  color: #ef4444;
+}
+
+.momentumRule {
+  color: #737373;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  margin: 18px 0 0;
+}
+
+.focusPanel {
+  align-items: start;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: clamp(22px, 3vw, 32px);
+}
+
+.focusPanel > svg {
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.focusPanel h2 {
+  font-size: clamp(1.35rem, 2.3vw, 2rem);
+  line-height: 1.08;
+  text-transform: uppercase;
+}
+
+.focusPanel > div > p:last-child {
+  color: #a3a3a3;
+  line-height: 1.55;
+  margin: 12px 0 0;
+  max-width: 670px;
+}
+
+.contentOverview {
+  padding: clamp(24px, 3.8vw, 42px);
+}
+
+.sectionHeading {
+  align-items: end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.sectionHeading h2 {
+  font-size: clamp(1.45rem, 2.6vw, 2.4rem);
+}
+
+.sectionHeading > p {
+  color: #737373;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.summaryGrid {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.summaryCard {
+  align-content: start;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  padding: 24px;
+}
+
+.summaryCard + .summaryCard {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summaryCard > svg {
+  color: #ef4444;
+}
+
+.summaryCard > div {
+  min-width: 0;
+}
+
+.summaryCard p,
+.summaryCard h3 {
+  margin: 0;
+}
+
+.summaryCard p {
+  color: #737373;
+  font-size: 0.63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.summaryCard h3 {
+  font-size: 1rem;
+  line-height: 1.25;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.summaryCard .status {
+  align-self: start;
+}
+
+.summaryCard > a {
+  grid-column: 2 / -1;
+}
+
+.editorTopbar {
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto 18px;
+  max-width: 1280px;
+  padding: clamp(34px, 5vw, 58px) 0 18px;
+}
+
+.editorTopbar p {
+  color: #ef4444;
+  font-size: 0.7rem;
+  font-weight: 800;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.singleEditor {
+  grid-template-columns: minmax(0, 820px);
+}
+
 .editorGrid {
   display: grid;
   gap: 16px;
@@ -678,11 +956,90 @@
   .momentList {
     grid-template-columns: 1fr;
   }
+
+  .momentumActions,
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .momentumAction {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto;
+  }
+
+  .momentumAction + .momentumAction,
+  .summaryCard + .summaryCard {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .momentumAction > a {
+    align-self: center;
+  }
 }
 
 @media (max-width: 560px) {
   .shell {
     padding-inline: 16px;
+  }
+
+  .dashboard {
+    gap: 12px;
+    padding-top: 28px;
+  }
+
+  .momentumPanel,
+  .contentOverview {
+    padding: 20px;
+  }
+
+  .momentumHeading {
+    align-items: start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .momentumHeading h2 {
+    font-size: 1.75rem;
+  }
+
+  .streak {
+    width: 100%;
+  }
+
+  .momentumAction {
+    gap: 12px;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 19px 0;
+  }
+
+  .momentumAction > a {
+    grid-column: 2;
+    min-height: 38px;
+  }
+
+  .actionTitle {
+    align-items: flex-start;
+  }
+
+  .focusPanel {
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .sectionHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .summaryCard {
+    gap: 12px;
+    padding: 19px 0;
+  }
+
+  .editorTopbar {
+    padding-top: 28px;
   }
 
   .header {

@@ -9,6 +9,14 @@ import {
   type PublicSiteContent,
   type SiteContentRow,
 } from "./content";
+import {
+  calculateMomentumStatus,
+  getIsoWeekKey,
+  momentumActions,
+  type MomentumAction,
+  type MomentumActivity,
+  type MomentumStatus,
+} from "./momentum";
 
 const siteContentColumns =
   "content_key,title,class_name,event_date,focus,url,label,published";
@@ -87,6 +95,65 @@ export async function getAdminSiteContent(
   return content;
 }
 
+export async function getStudioMomentum(
+  supabase: SupabaseClient,
+  now: Date = new Date(),
+): Promise<MomentumStatus> {
+  const [activityResult, contentResult, momentResult] = await Promise.all([
+    supabase
+      .from("studio_activity")
+      .select("action_type,week_key,occurred_at")
+      .order("occurred_at", { ascending: false })
+      .limit(1000),
+    supabase
+      .from("site_content")
+      .select("content_key,published,updated_at")
+      .eq("published", true),
+    supabase
+      .from("site_moments")
+      .select("created_at")
+      .order("created_at", { ascending: false })
+      .limit(250),
+  ]);
+
+  const activities: MomentumActivity[] = [];
+
+  if (!activityResult.error) {
+    for (const row of activityResult.data ?? []) {
+      if (
+        momentumActions.includes(row.action_type as MomentumAction) &&
+        typeof row.week_key === "string"
+      ) {
+        activities.push({
+          action: row.action_type as MomentumAction,
+          weekKey: row.week_key,
+        });
+      }
+    }
+  }
+
+  if (!contentResult.error) {
+    for (const row of contentResult.data ?? []) {
+      const action = row.content_key === "spotify"
+        ? "connect"
+        : row.content_key === "instagram"
+          ? "share"
+          : null;
+      const weekKey = weekKeyFromTimestamp(row.updated_at);
+      if (action && weekKey) activities.push({ action, weekKey });
+    }
+  }
+
+  if (!momentResult.error) {
+    for (const row of momentResult.data ?? []) {
+      const weekKey = weekKeyFromTimestamp(row.created_at);
+      if (weekKey) activities.push({ action: "capture", weekKey });
+    }
+  }
+
+  return calculateMomentumStatus(activities, now);
+}
+
 function withInstagramCover(
   rows: SiteContentRow[],
   coverUrl: string | null | undefined,
@@ -96,4 +163,10 @@ function withInstagramCover(
       ? { ...row, cover_url: coverUrl ?? null }
       : row
   ));
+}
+
+function weekKeyFromTimestamp(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : getIsoWeekKey(date);
 }

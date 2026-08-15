@@ -106,6 +106,46 @@ add constraint site_content_cover_url_check check (
 
 alter table public.site_moments enable row level security;
 
+-- Private weekly history for the Studio momentum cockpit.
+-- Completion is derived from real content actions; duplicate saves in one week stay one action.
+create table if not exists public.studio_activity (
+  id uuid primary key default gen_random_uuid(),
+  action_type text not null check (action_type in ('capture', 'share', 'connect')),
+  week_key text not null check (week_key ~ '^[0-9]{4}-W[0-9]{2}$'),
+  source_id text not null check (char_length(source_id) between 1 and 100),
+  occurred_at timestamptz not null default now(),
+  updated_by uuid not null references auth.users(id),
+  unique (action_type, week_key, source_id)
+);
+
+alter table public.studio_activity enable row level security;
+
+create index if not exists studio_activity_week_idx
+on public.studio_activity (week_key desc, occurred_at desc);
+
+revoke all on table public.studio_activity from anon, authenticated;
+grant select, insert on table public.studio_activity to authenticated;
+
+drop policy if exists "studio admin can inspect momentum activity" on public.studio_activity;
+create policy "studio admin can inspect momentum activity"
+on public.studio_activity
+for select
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can record momentum activity" on public.studio_activity;
+create policy "studio admin can record momentum activity"
+on public.studio_activity
+for insert
+to authenticated
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
 -- Public delivery with authenticated, admin-only uploads from Miriam Studio.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (

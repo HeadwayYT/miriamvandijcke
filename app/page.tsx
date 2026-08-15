@@ -370,7 +370,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="chapter bento-chapter">
+      <section className="chapter bento-chapter schedule-chapter">
         <div className="chapter-heading classes-heading" id="classes">
           <div>
             <p className="eyebrow">{t("What I teach")}</p>
@@ -455,14 +455,6 @@ export default function Home() {
               "Schedules may change. Check the studio for the latest availability. Studio access or membership may be required.",
             )}
           </p>
-        </div>
-      </section>
-
-      <section className="marquee-band" aria-label={t("Class formats")}>
-        <div className="marquee-track">
-          {[...classTypes, ...classTypes].map((classType, index) => (
-            <span key={`${classType.name}-${index}`}>{t(classType.name)}</span>
-          ))}
         </div>
       </section>
 

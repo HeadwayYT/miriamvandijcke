@@ -64,7 +64,6 @@ export const nlTranslations: Record<string, string> = {
   "Listen on Spotify": "Luister op Spotify",
   "Open in Spotify": "Open in Spotify",
   "Spotify playlist": "Spotify-playlist",
-  "Class formats": "Lesformaten",
   "Miriam in action": "Miriam in actie",
   "See Miriam in action": "Bekijk Miriam in actie",
   "Classes, special rides and moments from the room.":

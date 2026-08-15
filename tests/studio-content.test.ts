@@ -14,6 +14,57 @@ import {
   type SiteContentRow,
   type MomentRow,
 } from "../lib/studio/content.ts";
+import {
+  calculateMomentumStatus,
+  getIsoWeekKey,
+  previousIsoWeekKey,
+} from "../lib/studio/momentum.ts";
+
+test("uses Belgium-local ISO weeks across Sunday, Monday and year boundaries", () => {
+  assert.equal(getIsoWeekKey(new Date("2026-08-16T21:59:59Z")), "2026-W33");
+  assert.equal(getIsoWeekKey(new Date("2026-08-16T22:00:00Z")), "2026-W34");
+  assert.equal(getIsoWeekKey(new Date("2027-01-01T12:00:00Z")), "2026-W53");
+  assert.equal(previousIsoWeekKey("2027-W01"), "2026-W53");
+});
+
+test("counts unique weekly actions and qualifies two of three as momentum", () => {
+  const status = calculateMomentumStatus([
+    { action: "capture", weekKey: "2026-W33" },
+    { action: "capture", weekKey: "2026-W33" },
+    { action: "share", weekKey: "2026-W33" },
+  ], new Date("2026-08-13T12:00:00Z"));
+
+  assert.deepEqual(status.completed, {
+    capture: true,
+    share: true,
+    connect: false,
+  });
+  assert.equal(status.completedCount, 2);
+  assert.equal(status.isMomentumWeek, true);
+});
+
+test("keeps a streak alive during an unfinished current week", () => {
+  const status = calculateMomentumStatus([
+    { action: "capture", weekKey: "2026-W31" },
+    { action: "connect", weekKey: "2026-W31" },
+    { action: "share", weekKey: "2026-W32" },
+    { action: "connect", weekKey: "2026-W32" },
+    { action: "capture", weekKey: "2026-W33" },
+  ], new Date("2026-08-13T12:00:00Z"));
+
+  assert.equal(status.isMomentumWeek, false);
+  assert.equal(status.currentStreak, 2);
+});
+
+test("ends a streak after a missed completed week", () => {
+  const status = calculateMomentumStatus([
+    { action: "capture", weekKey: "2026-W30" },
+    { action: "share", weekKey: "2026-W30" },
+    { action: "connect", weekKey: "2026-W32" },
+  ], new Date("2026-08-13T12:00:00Z"));
+
+  assert.equal(status.currentStreak, 0);
+});
 
 test("accepts and normalizes Spotify playlist URLs only", () => {
   assert.equal(

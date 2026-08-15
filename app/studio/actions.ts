@@ -17,6 +17,7 @@ import {
   normalizeSpotifyPlaylistUrl,
 } from "@/lib/studio/content";
 import { isStudioAdmin } from "@/lib/studio/data";
+import { getIsoWeekKey, type MomentumAction } from "@/lib/studio/momentum";
 
 export async function signInStudio(formData: FormData) {
   const config = getSupabaseRuntimeConfig();
@@ -59,9 +60,10 @@ export async function saveSpotifyContent(formData: FormData) {
   const published = formData.get("status") === "published";
 
   if (!title || !className || !focus || !playlistUrl || !isValidOptionalDate(dateValue)) {
-    redirect("/studio?error=spotify-validation#spotify");
+    redirect("/studio?editor=spotify&error=spotify-validation#spotify");
   }
 
+  const savedAt = new Date();
   const { error } = await supabase.from("site_content").upsert(
     {
       content_key: "spotify",
@@ -72,15 +74,18 @@ export async function saveSpotifyContent(formData: FormData) {
       url: playlistUrl,
       label: null,
       published,
-      updated_at: new Date().toISOString(),
+      updated_at: savedAt.toISOString(),
       updated_by: userId,
     },
     { onConflict: "content_key" },
   );
 
-  if (error) redirect("/studio?error=save#spotify");
+  if (error) redirect("/studio?editor=spotify&error=save#spotify");
+  if (published) {
+    await recordStudioActivity(supabase, userId, "connect", "spotify", savedAt);
+  }
   refreshContent();
-  redirect("/studio?success=spotify#spotify");
+  redirect("/studio?editor=spotify&success=spotify#spotify");
 }
 
 export async function saveInstagramContent(formData: FormData) {
@@ -95,9 +100,10 @@ export async function saveInstagramContent(formData: FormData) {
   const published = formData.get("status") === "published";
 
   if (!postUrl || (coverUrlValue && !coverUrl)) {
-    redirect("/studio?error=instagram-validation#instagram");
+    redirect("/studio?editor=instagram&error=instagram-validation#instagram");
   }
 
+  const savedAt = new Date();
   const { error } = await supabase.from("site_content").upsert(
     {
       content_key: "instagram",
@@ -109,13 +115,16 @@ export async function saveInstagramContent(formData: FormData) {
       label: label || null,
       cover_url: coverUrl,
       published,
-      updated_at: new Date().toISOString(),
+      updated_at: savedAt.toISOString(),
       updated_by: userId,
     },
     { onConflict: "content_key" },
   );
 
-  if (error) redirect("/studio?error=save#instagram");
+  if (error) redirect("/studio?editor=instagram&error=save#instagram");
+  if (published) {
+    await recordStudioActivity(supabase, userId, "share", "instagram", savedAt);
+  }
   if (previousCoverUrl && previousCoverUrl !== coverUrl) {
     await removeStoredImage(
       supabase,
@@ -126,7 +135,7 @@ export async function saveInstagramContent(formData: FormData) {
     );
   }
   refreshContent();
-  redirect("/studio?success=instagram#instagram");
+  redirect("/studio?editor=instagram&success=instagram#instagram");
 }
 
 export async function saveMoment(formData: FormData) {
@@ -144,6 +153,11 @@ export async function saveMoment(formData: FormData) {
   const rawExternalUrl = cleanText(formData.get("externalUrl"), 1000);
   const externalUrl = normalizeExternalUrl(rawExternalUrl);
   const published = formData.get("status") === "published";
+  const momentId = id || crypto.randomUUID();
+
+  if (id && !/^[0-9a-f-]{36}$/i.test(id)) {
+    redirect("/studio?editor=moments&error=moment-validation#moments");
+  }
 
   if (
     !title ||
@@ -154,11 +168,16 @@ export async function saveMoment(formData: FormData) {
     !media ||
     (rawExternalUrl && !externalUrl)
   ) {
-    redirect("/studio?error=moment-validation#moments");
+    redirect("/studio?editor=moments&error=moment-validation#moments");
   }
 
+  const { data: existingMoment } = id
+    ? await supabase.from("site_moments").select("published").eq("id", id).maybeSingle()
+    : { data: null };
+  const shouldCapture = !id || !existingMoment || (published && existingMoment.published !== true);
+  const savedAt = new Date();
   const { error } = await supabase.from("site_moments").upsert({
-    id: id || crypto.randomUUID(),
+    id: momentId,
     title,
     moment_type: type,
     event_date: dateValue || null,
@@ -167,11 +186,14 @@ export async function saveMoment(formData: FormData) {
     media_url: media,
     external_url: externalUrl,
     published,
-    updated_at: new Date().toISOString(),
+    updated_at: savedAt.toISOString(),
     updated_by: userId,
   });
 
-  if (error) redirect("/studio?error=save#moments");
+  if (error) redirect("/studio?editor=moments&error=save#moments");
+  if (shouldCapture) {
+    await recordStudioActivity(supabase, userId, "capture", momentId, savedAt);
+  }
   if (previousMedia && previousMedia !== media) {
     await removeStoredImage(
       supabase,
@@ -182,13 +204,15 @@ export async function saveMoment(formData: FormData) {
     );
   }
   refreshContent();
-  redirect("/studio?success=moment#moments");
+  redirect("/studio?editor=moments&success=moment#moments");
 }
 
 export async function deleteMoment(formData: FormData) {
   const { config, supabase } = await requireStudioAdmin();
   const id = cleanText(formData.get("id"), 36);
-  if (!/^[0-9a-f-]{36}$/i.test(id)) redirect("/studio?error=moment-validation#moments");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) {
+    redirect("/studio?editor=moments&error=moment-validation#moments");
+  }
 
   const { data: moment } = await supabase
     .from("site_moments")
@@ -196,7 +220,7 @@ export async function deleteMoment(formData: FormData) {
     .eq("id", id)
     .maybeSingle();
   const { error } = await supabase.from("site_moments").delete().eq("id", id);
-  if (error) redirect("/studio?error=save#moments");
+  if (error) redirect("/studio?editor=moments&error=save#moments");
   if (moment?.media_url) {
     await removeStoredImage(
       supabase,
@@ -207,7 +231,7 @@ export async function deleteMoment(formData: FormData) {
     );
   }
   refreshContent();
-  redirect("/studio?success=moment-deleted#moments");
+  redirect("/studio?editor=moments&success=moment-deleted#moments");
 }
 
 async function requireStudioAdmin() {
@@ -232,6 +256,32 @@ async function removeStoredImage(
 ) {
   const path = getStoragePath(mediaUrl, supabaseUrl);
   if (path) await supabase.storage.from(bucket).remove([path]);
+}
+
+async function recordStudioActivity(
+  supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>,
+  userId: string,
+  action: MomentumAction,
+  sourceId: string,
+  occurredAt: Date,
+) {
+  const { error } = await supabase.from("studio_activity").upsert(
+    {
+      action_type: action,
+      week_key: getIsoWeekKey(occurredAt),
+      source_id: sourceId,
+      occurred_at: occurredAt.toISOString(),
+      updated_by: userId,
+    },
+    {
+      ignoreDuplicates: true,
+      onConflict: "action_type,week_key,source_id",
+    },
+  );
+
+  if (error && !["42P01", "PGRST205"].includes(error.code)) {
+    console.error("Unable to record Studio momentum activity", error.code);
+  }
 }
 
 function refreshContent() {

@@ -13,7 +13,7 @@ import {
 } from "./icons";
 import { getMissingStudioEnvironment, getSupabaseRuntimeConfig } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { getAdminSiteContent, isStudioAdmin } from "@/lib/studio/data";
+import { getAdminSiteContent, getStudioMomentum, isStudioAdmin } from "@/lib/studio/data";
 import {
   toSpotifyEmbedUrl,
   type MomentContent,
@@ -21,6 +21,7 @@ import {
 } from "@/lib/studio/content";
 import { MomentForm } from "./moment-form";
 import { InstagramForm } from "./instagram-form";
+import { StudioDashboard } from "./studio-dashboard";
 import {
   saveSpotifyContent,
   deleteMoment,
@@ -38,6 +39,7 @@ type StudioPageProps = {
 export default async function StudioPage({ searchParams }: StudioPageProps) {
   const params = await searchParams;
   const message = getMessage(params);
+  const editor = getEditor(params.editor);
   const config = getSupabaseRuntimeConfig();
 
   if (!config) {
@@ -55,7 +57,10 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     return <AccessDenied />;
   }
 
-  const content = await getAdminSiteContent(supabase!);
+  const [content, momentum] = await Promise.all([
+    getAdminSiteContent(supabase!),
+    getStudioMomentum(supabase!),
+  ]);
   const spotify = content.spotify;
   const instagram = content.instagram;
   const moments = content.moments;
@@ -65,7 +70,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     <main className={styles.shell}>
       <header className={styles.header}>
         <div>
-          <p className={styles.kicker}>Private content control</p>
+          <p className={styles.kicker}>Private instructor cockpit</p>
           <h1>Miriam Studio</h1>
         </div>
         <div className={styles.headerActions}>
@@ -81,16 +86,28 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         </div>
       </header>
 
-      <section className={styles.intro}>
-        <p className={styles.eyebrow}>Content</p>
-        <h2>Three things. Kept current.</h2>
-        <p>Choose what visitors see without changing the rest of the website.</p>
-      </section>
-
       {message ? <p className={`${styles.message} ${styles[message.kind]}`} role={message.kind === "error" ? "alert" : "status"}>{message.text}</p> : null}
 
-      <div className={styles.editorGrid}>
-        <section className={styles.editor} id="spotify">
+      {!editor ? (
+        <StudioDashboard
+          instagram={instagram}
+          momentum={momentum}
+          moments={moments}
+          spotify={spotify}
+        />
+      ) : (
+        <div className={styles.editorTopbar}>
+          <Link href="/studio" className={styles.textLink}>
+            <ArrowLeft aria-hidden="true" size={17} weight="bold" />
+            Studio home
+          </Link>
+          <p>{editor === "spotify" ? "Connect" : editor === "instagram" ? "Share" : "Capture"}</p>
+        </div>
+      )}
+
+      {editor === "spotify" || editor === "instagram" ? (
+        <div className={`${styles.editorGrid} ${styles.singleEditor}`}>
+        {editor === "spotify" ? <section className={styles.editor} id="spotify">
           <div className={styles.editorHeading}>
             <SpotifyLogo aria-hidden="true" size={28} weight="fill" />
             <div>
@@ -140,9 +157,9 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
               Save playlist
             </button>
           </form>
-        </section>
+        </section> : null}
 
-        <section className={styles.editor} id="instagram">
+        {editor === "instagram" ? <section className={styles.editor} id="instagram">
           <div className={styles.editorHeading}>
             <InstagramLogo aria-hidden="true" size={28} weight="bold" />
             <div>
@@ -174,10 +191,11 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
           ) : null}
 
           <InstagramForm content={instagram} storageConfig={storageConfig} />
-        </section>
+        </section> : null}
       </div>
+      ) : null}
 
-      <section className={`${styles.editor} ${styles.momentsEditor}`} id="moments">
+      {editor === "moments" ? <section className={`${styles.editor} ${styles.momentsEditor}`} id="moments">
         <div className={styles.editorHeading}>
           <ImageSquare aria-hidden="true" size={28} weight="duotone" />
           <div>
@@ -210,7 +228,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
           <p className={styles.eyebrow}>Add a real instructor moment</p>
           <MomentForm storageConfig={storageConfig} />
         </div>
-      </section>
+      </section> : null}
     </main>
   );
 }
@@ -373,4 +391,12 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
   if (success === "moment") return { kind: "success" as const, text: "Moment saved." };
   if (success === "moment-deleted") return { kind: "success" as const, text: "Moment deleted." };
   return null;
+}
+
+type StudioEditor = "spotify" | "instagram" | "moments";
+
+function getEditor(value: string | string[] | undefined): StudioEditor | null {
+  return value === "spotify" || value === "instagram" || value === "moments"
+    ? value
+    : null;
 }

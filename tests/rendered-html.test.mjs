@@ -44,6 +44,7 @@ test("renders an accessible English and Dutch language switch", async () => {
   assert.match(translations, /"Send enquiry": "Verstuur aanvraag"/);
   assert.match(translations, /"My energy is contagious\.": "Mijn energie werkt aanstekelijk\."/);
   assert.doesNotMatch(source, /about-certified/);
+  assert.doesNotMatch(source, /marquee-band|marquee-track/);
 });
 
 test("renders compact venue schedules and a secondary event path", async () => {
@@ -132,6 +133,10 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     "utf8",
   );
   const studioSource = await readFile(new URL("../app/studio/page.tsx", import.meta.url), "utf8");
+  const dashboardSource = await readFile(
+    new URL("../app/studio/studio-dashboard.tsx", import.meta.url),
+    "utf8",
+  );
   const momentFormSource = await readFile(
     new URL("../app/studio/moment-form.tsx", import.meta.url),
     "utf8",
@@ -172,6 +177,7 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.doesNotMatch(instagramSource, /instagram-fallback/);
   assert.doesNotMatch(cssSource, /\.instagram-fallback/);
   assert.doesNotMatch(cssSource, /\.instagram-native-embed\s*\{[^}]*position:\s*absolute/s);
+  assert.doesNotMatch(cssSource, /marquee-band|marquee-track|@keyframes\s+marquee/);
   assert.doesNotMatch(
     cssSource,
     /\.compact-card p\s*\{[^}]*background:\s*var\(--bone\)[^}]*padding-(?:top|bottom)/s,
@@ -179,6 +185,16 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.equal((pageSource.match(/<InstagramFeatureMedia/g) ?? []).length, 1);
   assert.match(pageSource, /key=\{siteContent\.instagram\.postUrl\}/);
   assert.match(studioSource, /key=\{instagram\.postUrl\}/);
+  assert.match(studioSource, /getStudioMomentum/);
+  assert.match(studioSource, /<StudioDashboard/);
+  assert.match(dashboardSource, /Keep the momentum/);
+  assert.match(dashboardSource, /Current focus/);
+  assert.match(dashboardSource, /Build the following/);
+  assert.match(dashboardSource, /momentum\.completedCount/);
+  assert.match(dashboardSource, /momentum\.currentStreak/);
+  assert.match(dashboardSource, /editor=moments/);
+  assert.match(dashboardSource, /editor=instagram/);
+  assert.match(dashboardSource, /editor=spotify/);
   assert.match(momentFormSource, /StudioImageUpload/);
   assert.match(imageUploadSource, /createBrowserClient/);
   assert.match(imageUploadSource, /\.storage[\s\S]*?\.upload\(/);
@@ -189,14 +205,19 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(instagramSource, /coverUrl/);
   assert.match(dataSource, /\.eq\("published", true\)/);
   assert.match(dataSource, /from\("site_moments"\)/);
+  assert.match(dataSource, /from\("studio_activity"\)/);
   assert.match(
     dataSource,
     /from\("site_moments"\)[\s\S]*?\.eq\("published", true\)/,
   );
   assert.match(actionSource, /isStudioAdmin\(data\.user\)/);
+  assert.match(actionSource, /recordStudioActivity/);
+  assert.match(actionSource, /ignoreDuplicates:\s*true/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);
   assert.match(policies, /enable row level security/i);
   assert.match(policies, /site_moments[\s\S]*?enable row level security/i);
+  assert.match(policies, /studio_activity[\s\S]*?enable row level security/i);
+  assert.match(policies, /revoke all on table public\.studio_activity from anon, authenticated/i);
   assert.match(policies, /moment-images[\s\S]*?storage\.objects/i);
   assert.match(policies, /studio admin can upload moment images/i);
   assert.match(policies, /about-images[\s\S]*?storage\.objects/i);
