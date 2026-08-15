@@ -112,7 +112,7 @@ test("produces a static root route with resolvable Vercel assets", async () => {
 
   const source = [
     await readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    await readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    await readFile(new URL("../app/site.css", import.meta.url), "utf8"),
     await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ].join("\n");
   const publicAssets = new Set(
@@ -154,7 +154,7 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     new URL("../app/studio/instagram-form.tsx", import.meta.url),
     "utf8",
   );
-  const cssSource = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const cssSource = await readFile(new URL("../app/site.css", import.meta.url), "utf8");
   const dataSource = await readFile(new URL("../lib/studio/data.ts", import.meta.url), "utf8");
   const actionSource = await readFile(
     new URL("../app/studio/actions.ts", import.meta.url),
