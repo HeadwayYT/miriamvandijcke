@@ -217,6 +217,7 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(policies, /enable row level security/i);
   assert.match(policies, /site_moments[\s\S]*?enable row level security/i);
   assert.match(policies, /studio_activity[\s\S]*?enable row level security/i);
+  assert.match(policies, /studio_activity_updated_by_idx/i);
   assert.match(policies, /revoke all on table public\.studio_activity from anon, authenticated/i);
   assert.match(policies, /moment-images[\s\S]*?storage\.objects/i);
   assert.match(policies, /studio admin can upload moment images/i);

@@ -123,6 +123,9 @@ alter table public.studio_activity enable row level security;
 create index if not exists studio_activity_week_idx
 on public.studio_activity (week_key desc, occurred_at desc);
 
+create index if not exists studio_activity_updated_by_idx
+on public.studio_activity (updated_by);
+
 revoke all on table public.studio_activity from anon, authenticated;
 grant select, insert on table public.studio_activity to authenticated;
 
