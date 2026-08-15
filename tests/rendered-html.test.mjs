@@ -136,6 +136,14 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     new URL("../app/studio/moment-form.tsx", import.meta.url),
     "utf8",
   );
+  const imageUploadSource = await readFile(
+    new URL("../app/studio/studio-image-upload.tsx", import.meta.url),
+    "utf8",
+  );
+  const instagramFormSource = await readFile(
+    new URL("../app/studio/instagram-form.tsx", import.meta.url),
+    "utf8",
+  );
   const cssSource = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   const dataSource = await readFile(new URL("../lib/studio/data.ts", import.meta.url), "utf8");
   const actionSource = await readFile(
@@ -164,13 +172,21 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.doesNotMatch(instagramSource, /instagram-fallback/);
   assert.doesNotMatch(cssSource, /\.instagram-fallback/);
   assert.doesNotMatch(cssSource, /\.instagram-native-embed\s*\{[^}]*position:\s*absolute/s);
+  assert.doesNotMatch(
+    cssSource,
+    /\.compact-card p\s*\{[^}]*background:\s*var\(--bone\)[^}]*padding-(?:top|bottom)/s,
+  );
   assert.equal((pageSource.match(/<InstagramFeatureMedia/g) ?? []).length, 1);
   assert.match(pageSource, /key=\{siteContent\.instagram\.postUrl\}/);
   assert.match(studioSource, /key=\{instagram\.postUrl\}/);
-  assert.match(momentFormSource, /createBrowserClient/);
-  assert.match(momentFormSource, /\.storage[\s\S]*?\.upload\(/);
-  assert.match(momentFormSource, /accept=\{acceptedImageTypes\.join/);
-  assert.match(momentFormSource, /maxImageDimension = 2000/);
+  assert.match(momentFormSource, /StudioImageUpload/);
+  assert.match(imageUploadSource, /createBrowserClient/);
+  assert.match(imageUploadSource, /\.storage[\s\S]*?\.upload\(/);
+  assert.match(imageUploadSource, /accept=\{acceptedImageTypes\.join/);
+  assert.match(imageUploadSource, /maxStudioImageDimension = 2000/);
+  assert.match(instagramFormSource, /aboutImagesBucket/);
+  assert.match(instagramFormSource, /previousCoverUrl/);
+  assert.match(instagramSource, /coverUrl/);
   assert.match(dataSource, /\.eq\("published", true\)/);
   assert.match(dataSource, /from\("site_moments"\)/);
   assert.match(
@@ -183,5 +199,7 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(policies, /site_moments[\s\S]*?enable row level security/i);
   assert.match(policies, /moment-images[\s\S]*?storage\.objects/i);
   assert.match(policies, /studio admin can upload moment images/i);
+  assert.match(policies, /about-images[\s\S]*?storage\.objects/i);
+  assert.match(policies, /studio admin can upload about images/i);
   assert.match(policies, /app_metadata[\s\S]*?studio_admin/i);
 });

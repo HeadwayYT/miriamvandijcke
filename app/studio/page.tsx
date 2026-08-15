@@ -20,8 +20,8 @@ import {
   type SpotifyContent,
 } from "@/lib/studio/content";
 import { MomentForm } from "./moment-form";
+import { InstagramForm } from "./instagram-form";
 import {
-  saveInstagramContent,
   saveSpotifyContent,
   deleteMoment,
   signInStudio,
@@ -165,6 +165,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
                 key={instagram.postUrl}
                 postUrl={instagram.postUrl}
                 label={instagram.label}
+                coverUrl={instagram.coverUrl}
                 viewLabel="Open post on Instagram"
                 fallbackAlt="Miriam smiling in a fitness studio while wearing her instructor headset"
                 compact
@@ -172,30 +173,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
             </div>
           ) : null}
 
-          <form action={saveInstagramContent} className={styles.form}>
-            <label>
-              Instagram post / Reel URL
-              <input id="instagram-url" name="postUrl" type="url" inputMode="url" defaultValue={instagram?.postUrl ?? ""} placeholder="https://www.instagram.com/reel/..." required />
-            </label>
-            <label>
-              Internal label <span>optional</span>
-              <input name="label" type="text" maxLength={80} defaultValue={instagram?.label ?? ""} placeholder="Saturday RIDE energy" />
-            </label>
-            <label className={styles.publishToggle}>
-              <input
-                name="status"
-                type="checkbox"
-                value="published"
-                defaultChecked={instagram?.published ?? false}
-              />
-              <span aria-hidden="true" />
-              Published
-            </label>
-            <button className={styles.saveButton} type="submit">
-              <FloppyDisk aria-hidden="true" size={19} weight="bold" />
-              Save featured post
-            </button>
-          </form>
+          <InstagramForm content={instagram} storageConfig={storageConfig} />
         </section>
       </div>
 
@@ -206,6 +184,18 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
             <p>Moments / In Action</p>
             <h2>{moments.length ? `${moments.length} saved moment${moments.length === 1 ? "" : "s"}` : "No moments yet"}</h2>
           </div>
+        </div>
+
+        <div className={styles.momentGuidance}>
+          <p>
+            Miriam in Action is your professional instructor portfolio. Add moments that show
+            you teaching, leading a room, creating an experience or connecting with a fitness
+            community.
+          </p>
+          <span>
+            Classes / Special rides / Fitness events / Guest teaching / Studio collaborations /
+            Brand collaborations
+          </span>
         </div>
 
         {moments.length ? (

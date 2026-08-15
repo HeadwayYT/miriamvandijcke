@@ -17,6 +17,7 @@ declare global {
 type InstagramFeatureMediaProps = {
   postUrl: string;
   label: string | null;
+  coverUrl?: string | null;
   viewLabel: string;
   fallbackAlt: string;
   compact?: boolean;
@@ -32,6 +33,7 @@ const embedTimeoutMs = 12_000;
 export function InstagramFeatureMedia({
   postUrl,
   label,
+  coverUrl = null,
   viewLabel,
   fallbackAlt,
   compact = false,
@@ -44,6 +46,7 @@ export function InstagramFeatureMedia({
   const status = embedResult.postUrl === postUrl ? embedResult.status : "loading";
 
   useEffect(() => {
+    if (coverUrl) return;
     const root = embedRoot.current;
     if (!root) return;
 
@@ -79,7 +82,31 @@ export function InstagramFeatureMedia({
       window.clearTimeout(processTimer);
       window.clearTimeout(failureTimer);
     };
-  }, [postUrl]);
+  }, [coverUrl, postUrl]);
+
+  if (coverUrl) {
+    return (
+      <a
+        className={`about-static-visual is-linked${compact ? " is-compact" : ""}`}
+        href={postUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={viewLabel}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="about-photo"
+          src={coverUrl}
+          alt={label || fallbackAlt}
+          width={1600}
+          height={1200}
+          loading="lazy"
+          decoding="async"
+        />
+        <div className="about-media-shade" aria-hidden="true" />
+      </a>
+    );
+  }
 
   if (status === "failed") {
     return (

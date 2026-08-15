@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  aboutCoverStoragePath,
   normalizeInstagramPostUrl,
   normalizeExternalUrl,
   normalizeMomentMediaUrl,
   momentImageStoragePath,
+  momentGridClassName,
   normalizeSpotifyPlaylistUrl,
   rowsToMoments,
   rowsToSiteContent,
@@ -62,6 +64,24 @@ test("recognizes only Moment images stored in the configured Supabase bucket", (
   );
 });
 
+test("recognizes only About covers stored in the dedicated Supabase bucket", () => {
+  const projectUrl = "https://project-ref.supabase.co";
+  assert.equal(
+    aboutCoverStoragePath(
+      "https://project-ref.supabase.co/storage/v1/object/public/about-images/user-id/cover.webp",
+      projectUrl,
+    ),
+    "user-id/cover.webp",
+  );
+  assert.equal(
+    aboutCoverStoragePath(
+      "https://project-ref.supabase.co/storage/v1/object/public/moment-images/user-id/cover.webp",
+      projectUrl,
+    ),
+    null,
+  );
+});
+
 test("maps valid Moments and drops malformed portfolio records", () => {
   const rows: MomentRow[] = [
     {
@@ -101,6 +121,14 @@ test("maps valid Moments and drops malformed portfolio records", () => {
   }]);
 });
 
+test("uses intentional Moment grids for low and balanced content counts", () => {
+  assert.equal(momentGridClassName(1), "moments-grid is-single");
+  assert.equal(momentGridClassName(2), "moments-grid is-pair");
+  assert.equal(momentGridClassName(3), "moments-grid");
+  assert.equal(momentGridClassName(4), "moments-grid is-four");
+  assert.equal(momentGridClassName(5), "moments-grid");
+});
+
 test("accepts and normalizes public Instagram post and Reel URLs only", () => {
   assert.equal(
     normalizeInstagramPostUrl("https://instagram.com/reel/ABC_123/?igsh=example"),
@@ -124,6 +152,7 @@ test("maps normalized database rows without turning drafts into published conten
       focus: "Power / Speed / Endurance",
       url: "https://open.spotify.com/playlist/abc123",
       label: null,
+      cover_url: null,
       published: false,
     },
     {
@@ -134,6 +163,7 @@ test("maps normalized database rows without turning drafts into published conten
       focus: null,
       url: "https://www.instagram.com/reel/ABC_123/",
       label: "Saturday RIDE energy",
+      cover_url: "https://cdn.example.com/about-cover.webp",
       published: true,
     },
   ];
@@ -142,6 +172,7 @@ test("maps normalized database rows without turning drafts into published conten
   assert.equal(content.spotify?.published, false);
   assert.equal(content.instagram?.published, true);
   assert.equal(content.instagram?.label, "Saturday RIDE energy");
+  assert.equal(content.instagram?.coverUrl, "https://cdn.example.com/about-cover.webp");
 });
 
 test("drops malformed stored URLs instead of exposing broken public content", () => {
@@ -154,6 +185,7 @@ test("drops malformed stored URLs instead of exposing broken public content", ()
       focus: "Power / Speed / Endurance",
       url: "https://open.spotify.com/track/not-a-playlist",
       label: null,
+      cover_url: null,
       published: true,
     },
     {
@@ -164,6 +196,7 @@ test("drops malformed stored URLs instead of exposing broken public content", ()
       focus: null,
       url: "https://www.instagram.com/mir.i.am_vd/",
       label: "Not a post",
+      cover_url: null,
       published: true,
     },
   ];

@@ -12,6 +12,7 @@ export type SpotifyContent = {
 export type InstagramContent = {
   postUrl: string;
   label: string | null;
+  coverUrl: string | null;
   published: boolean;
 };
 
@@ -26,6 +27,7 @@ export const momentTypes = [
 ] as const;
 
 export const momentImagesBucket = "moment-images";
+export const aboutImagesBucket = "about-images";
 
 export type MomentType = (typeof momentTypes)[number];
 export type MomentContent = {
@@ -54,6 +56,7 @@ export type SiteContentRow = {
   focus: string | null;
   url: string;
   label: string | null;
+  cover_url?: string | null;
   published: boolean;
 };
 
@@ -133,26 +136,22 @@ export function normalizeMomentMediaUrl(
 }
 
 export function momentImageStoragePath(value: string, supabaseUrl: string): string | null {
-  const mediaUrl = normalizeMomentMediaUrl(value);
-  const projectUrl = parseHttpsUrl(supabaseUrl);
-  if (!mediaUrl || !projectUrl) return null;
+  return storageImagePath(value, supabaseUrl, momentImagesBucket);
+}
 
-  const url = new URL(mediaUrl);
-  const prefix = `/storage/v1/object/public/${momentImagesBucket}/`;
-  if (url.origin !== projectUrl.origin || !url.pathname.startsWith(prefix)) return null;
-
-  let path: string;
-  try {
-    path = decodeURIComponent(url.pathname.slice(prefix.length));
-  } catch {
-    return null;
-  }
-  if (!path || path.split("/").some((segment) => !segment || segment === "..")) return null;
-  return path;
+export function aboutCoverStoragePath(value: string, supabaseUrl: string): string | null {
+  return storageImagePath(value, supabaseUrl, aboutImagesBucket);
 }
 
 export function isMomentType(value: string): value is MomentType {
   return momentTypes.includes(value as MomentType);
+}
+
+export function momentGridClassName(count: number): string {
+  if (count === 1) return "moments-grid is-single";
+  if (count === 2) return "moments-grid is-pair";
+  if (count === 4) return "moments-grid is-four";
+  return "moments-grid";
 }
 
 export function rowsToMoments(rows: MomentRow[]): MomentContent[] {
@@ -212,9 +211,11 @@ export function rowsToSiteContent(rows: SiteContentRow[]): PublicSiteContent {
     }
 
     if (row.content_key === "instagram" && normalizedUrl) {
+      const coverUrl = row.cover_url ? normalizeMomentMediaUrl(row.cover_url) : null;
       result.instagram = {
         postUrl: normalizedUrl,
         label: row.label,
+        coverUrl,
         published: row.published,
       };
     }
@@ -234,4 +235,27 @@ function parseHttpsUrl(value: string): URL | null {
   } catch {
     return null;
   }
+}
+
+function storageImagePath(
+  value: string,
+  supabaseUrl: string,
+  bucket: string,
+): string | null {
+  const mediaUrl = normalizeMomentMediaUrl(value);
+  const projectUrl = parseHttpsUrl(supabaseUrl);
+  if (!mediaUrl || !projectUrl) return null;
+
+  const url = new URL(mediaUrl);
+  const prefix = `/storage/v1/object/public/${bucket}/`;
+  if (url.origin !== projectUrl.origin || !url.pathname.startsWith(prefix)) return null;
+
+  let path: string;
+  try {
+    path = decodeURIComponent(url.pathname.slice(prefix.length));
+  } catch {
+    return null;
+  }
+  if (!path || path.split("/").some((segment) => !segment || segment === "..")) return null;
+  return path;
 }

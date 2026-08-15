@@ -92,6 +92,18 @@ create table if not exists public.site_moments (
   updated_by uuid not null references auth.users(id)
 );
 
+alter table public.site_content
+add column if not exists cover_url text;
+
+alter table public.site_content
+drop constraint if exists site_content_cover_url_check;
+
+alter table public.site_content
+add constraint site_content_cover_url_check check (
+  cover_url is null
+  or cover_url ~* '^https://[^[:space:]]+\.(jpg|jpeg|png|webp|avif)(\?[^[:space:]]*)?$'
+);
+
 alter table public.site_moments enable row level security;
 
 -- Public delivery with authenticated, admin-only uploads from Miriam Studio.
@@ -99,6 +111,20 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values (
   'moment-images',
   'moment-images',
+  true,
+  6291456,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+-- Optional clean cover selected for the public About section.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'about-images',
+  'about-images',
   true,
   6291456,
   array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
@@ -185,6 +211,39 @@ for delete
 to authenticated
 using (
   bucket_id = 'moment-images'
+  and owner_id = (select auth.uid()::text)
+  and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+drop policy if exists "studio admin can upload about images" on storage.objects;
+create policy "studio admin can upload about images"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'about-images'
+  and (storage.foldername(name))[1] = (select auth.uid()::text)
+  and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+drop policy if exists "studio admin can inspect about images" on storage.objects;
+create policy "studio admin can inspect about images"
+on storage.objects
+for select
+to authenticated
+using (
+  bucket_id = 'about-images'
+  and owner_id = (select auth.uid()::text)
+  and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+drop policy if exists "studio admin can delete about images" on storage.objects;
+create policy "studio admin can delete about images"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'about-images'
   and owner_id = (select auth.uid()::text)
   and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
 );

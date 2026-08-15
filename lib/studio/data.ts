@@ -28,8 +28,14 @@ export async function getPublicSiteContent(): Promise<PublicSiteContent> {
   const supabase = createPublicSupabaseClient();
   if (!supabase) return emptyPublicSiteContent;
 
-  const [siteResult, momentResult] = await Promise.all([
+  const [siteResult, coverResult, momentResult] = await Promise.all([
     supabase.from("site_content").select(siteContentColumns).eq("published", true),
+    supabase
+      .from("site_content")
+      .select("cover_url")
+      .eq("content_key", "instagram")
+      .eq("published", true)
+      .maybeSingle(),
     supabase
       .from("site_moments")
       .select(momentColumns)
@@ -38,9 +44,13 @@ export async function getPublicSiteContent(): Promise<PublicSiteContent> {
       .order("created_at", { ascending: false }),
   ]);
 
+  const siteRows = withInstagramCover(
+    (siteResult.data ?? []) as SiteContentRow[],
+    coverResult.error ? null : coverResult.data?.cover_url,
+  );
   const content = siteResult.error || !siteResult.data
     ? { ...emptyPublicSiteContent }
-    : rowsToSiteContent(siteResult.data as SiteContentRow[]);
+    : rowsToSiteContent(siteRows);
   content.moments = momentResult.error || !momentResult.data
     ? []
     : rowsToMoments(momentResult.data as MomentRow[]);
@@ -50,8 +60,13 @@ export async function getPublicSiteContent(): Promise<PublicSiteContent> {
 export async function getAdminSiteContent(
   supabase: SupabaseClient,
 ): Promise<PublicSiteContent> {
-  const [siteResult, momentResult] = await Promise.all([
+  const [siteResult, coverResult, momentResult] = await Promise.all([
     supabase.from("site_content").select(siteContentColumns),
+    supabase
+      .from("site_content")
+      .select("cover_url")
+      .eq("content_key", "instagram")
+      .maybeSingle(),
     supabase
       .from("site_moments")
       .select(momentColumns)
@@ -59,11 +74,26 @@ export async function getAdminSiteContent(
       .order("created_at", { ascending: false }),
   ]);
 
+  const siteRows = withInstagramCover(
+    (siteResult.data ?? []) as SiteContentRow[],
+    coverResult.error ? null : coverResult.data?.cover_url,
+  );
   const content = siteResult.error || !siteResult.data
     ? { ...emptyPublicSiteContent }
-    : rowsToSiteContent(siteResult.data as SiteContentRow[]);
+    : rowsToSiteContent(siteRows);
   content.moments = momentResult.error || !momentResult.data
     ? []
     : rowsToMoments(momentResult.data as MomentRow[]);
   return content;
+}
+
+function withInstagramCover(
+  rows: SiteContentRow[],
+  coverUrl: string | null | undefined,
+): SiteContentRow[] {
+  return rows.map((row) => (
+    row.content_key === "instagram"
+      ? { ...row, cover_url: coverUrl ?? null }
+      : row
+  ));
 }

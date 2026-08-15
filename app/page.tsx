@@ -17,6 +17,7 @@ import { siteConfig } from "@/lib/site-config";
 import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media";
 import {
   emptyPublicSiteContent,
+  momentGridClassName,
   toSpotifyEmbedUrl,
   type MomentContent,
   type PublicSiteContent,
@@ -394,16 +395,15 @@ export default function Home() {
               <div className="class-card-shade" />
               <div className="class-card-copy">
                 <h3>{t(classType.name)}</h3>
-                <p>{t(classType.detail)}</p>
+                <p id={`class-detail-${classType.name.toLowerCase().replaceAll(" ", "-")}`}>
+                  {t(classType.detail)}
+                </p>
               </div>
               <button
                 className="class-card-trigger"
                 type="button"
-                aria-label={
-                  language === "nl"
-                    ? `Bekijk details over ${t(classType.name)}`
-                    : `Reveal ${classType.name} details`
-                }
+                aria-label={language === "nl" ? `Details over ${t(classType.name)}` : `${classType.name} details`}
+                aria-describedby={`class-detail-${classType.name.toLowerCase().replaceAll(" ", "-")}`}
               />
             </article>
           ))}
@@ -517,6 +517,7 @@ export default function Home() {
                 key={siteContent.instagram.postUrl}
                 postUrl={siteContent.instagram.postUrl}
                 label={siteContent.instagram.label}
+                coverUrl={siteContent.instagram.coverUrl}
                 viewLabel={t("View post on Instagram")}
                 fallbackAlt={t(
                   "Miriam smiling in a fitness studio while wearing her instructor headset",
@@ -707,12 +708,12 @@ function Moments({
         <p className="eyebrow">{t("Miriam in action")}</p>
         <h2>{t("Classes, special rides and moments from the room.")}</h2>
       </div>
-      <div className={`moments-grid${moments.length === 1 ? " is-single" : ""}`}>
+      <div className={momentGridClassName(moments.length)}>
         {moments.map((moment) => (
           <article className="moment-card" key={moment.id}>
             <div className="moment-media motion-image">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={moment.mediaUrl} alt="" loading="lazy" decoding="async" />
+              <img src={moment.mediaUrl} alt={moment.title} loading="lazy" decoding="async" />
             </div>
             <div className="moment-copy">
               <p className="moment-type">{t(moment.type)}</p>

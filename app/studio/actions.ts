@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { getSupabaseRuntimeConfig } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
+  aboutCoverStoragePath,
+  aboutImagesBucket,
   cleanText,
   isMomentType,
   momentImagesBucket,
@@ -82,12 +84,19 @@ export async function saveSpotifyContent(formData: FormData) {
 }
 
 export async function saveInstagramContent(formData: FormData) {
-  const { supabase, userId } = await requireStudioAdmin();
+  const { config, supabase, userId } = await requireStudioAdmin();
   const postUrl = normalizeInstagramPostUrl(cleanText(formData.get("postUrl"), 500));
   const label = cleanText(formData.get("label"), 80);
+  const coverUrlValue = cleanText(formData.get("coverUrl"), 1000);
+  const coverUrl = coverUrlValue ? normalizeMomentMediaUrl(coverUrlValue) : null;
+  const previousCoverUrl = normalizeMomentMediaUrl(
+    cleanText(formData.get("previousCoverUrl"), 1000),
+  );
   const published = formData.get("status") === "published";
 
-  if (!postUrl) redirect("/studio?error=instagram-validation#instagram");
+  if (!postUrl || (coverUrlValue && !coverUrl)) {
+    redirect("/studio?error=instagram-validation#instagram");
+  }
 
   const { error } = await supabase.from("site_content").upsert(
     {
@@ -98,6 +107,7 @@ export async function saveInstagramContent(formData: FormData) {
       focus: null,
       url: postUrl,
       label: label || null,
+      cover_url: coverUrl,
       published,
       updated_at: new Date().toISOString(),
       updated_by: userId,
@@ -106,6 +116,15 @@ export async function saveInstagramContent(formData: FormData) {
   );
 
   if (error) redirect("/studio?error=save#instagram");
+  if (previousCoverUrl && previousCoverUrl !== coverUrl) {
+    await removeStoredImage(
+      supabase,
+      previousCoverUrl,
+      config.url,
+      aboutImagesBucket,
+      aboutCoverStoragePath,
+    );
+  }
   refreshContent();
   redirect("/studio?success=instagram#instagram");
 }
@@ -154,7 +173,13 @@ export async function saveMoment(formData: FormData) {
 
   if (error) redirect("/studio?error=save#moments");
   if (previousMedia && previousMedia !== media) {
-    await removeStoredMomentImage(supabase, previousMedia, config.url);
+    await removeStoredImage(
+      supabase,
+      previousMedia,
+      config.url,
+      momentImagesBucket,
+      momentImageStoragePath,
+    );
   }
   refreshContent();
   redirect("/studio?success=moment#moments");
@@ -173,7 +198,13 @@ export async function deleteMoment(formData: FormData) {
   const { error } = await supabase.from("site_moments").delete().eq("id", id);
   if (error) redirect("/studio?error=save#moments");
   if (moment?.media_url) {
-    await removeStoredMomentImage(supabase, moment.media_url, config.url);
+    await removeStoredImage(
+      supabase,
+      moment.media_url,
+      config.url,
+      momentImagesBucket,
+      momentImageStoragePath,
+    );
   }
   refreshContent();
   redirect("/studio?success=moment-deleted#moments");
@@ -192,13 +223,15 @@ async function requireStudioAdmin() {
   return { config, supabase, userId: data.user.id };
 }
 
-async function removeStoredMomentImage(
+async function removeStoredImage(
   supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>,
   mediaUrl: string,
   supabaseUrl: string,
+  bucket: string,
+  getStoragePath: (value: string, projectUrl: string) => string | null,
 ) {
-  const path = momentImageStoragePath(mediaUrl, supabaseUrl);
-  if (path) await supabase.storage.from(momentImagesBucket).remove([path]);
+  const path = getStoragePath(mediaUrl, supabaseUrl);
+  if (path) await supabase.storage.from(bucket).remove([path]);
 }
 
 function refreshContent() {

@@ -513,6 +513,15 @@ p {
   transform: scale(1.025);
 }
 
+.about-static-visual.is-linked {
+  display: block;
+}
+
+.about-static-visual.is-linked:focus-visible {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.76);
+  outline: none;
+}
+
 .instagram-embed-shell {
   margin-inline: auto;
   max-width: 480px;
@@ -665,13 +674,6 @@ p {
   z-index: 1;
 }
 
-.compact-card p {
-  background: var(--bone);
-  color: #fff;
-  padding-bottom: clamp(64px, 8vw, 104px);
-  padding-top: clamp(64px, 8vw, 104px);
-}
-
 .event-chapter {
   background: var(--bone);
   color: #fff;
@@ -748,6 +750,7 @@ p {
 
 .compact-card {
   cursor: default;
+  isolation: isolate;
   padding: 0;
   transition: border-color 420ms ease, transform 420ms ease;
 }
@@ -758,7 +761,6 @@ p {
     #101010;
 }
 
-.compact-card:hover,
 .compact-card:focus-visible,
 .compact-card:focus-within {
   border-color: rgba(255, 255, 255, 0.24);
@@ -817,7 +819,7 @@ p {
   background: transparent;
   border: 0;
   border-radius: inherit;
-  cursor: pointer;
+  cursor: default;
   inset: 0;
   padding: 0;
   position: absolute;
@@ -830,6 +832,7 @@ p {
 }
 
 .compact-card p {
+  background: transparent;
   font-size: 0.92rem;
   line-height: 1.5;
   margin: 0;
@@ -841,37 +844,62 @@ p {
   transition: max-height 520ms ease, opacity 360ms ease, transform 420ms ease;
 }
 
-.compact-card:hover .class-card-image,
 .compact-card:focus-visible .class-card-image,
 .compact-card:focus-within .class-card-image {
   filter: grayscale(0.28) contrast(1.12);
   transform: scale(1.055);
 }
 
-.bodypump-card:hover .class-card-image,
 .bodypump-card:focus-visible .class-card-image,
 .bodypump-card:focus-within .class-card-image {
   transform: scale(1.15);
 }
 
-.cycling-card:hover .class-card-image,
 .cycling-card:focus-visible .class-card-image,
 .cycling-card:focus-within .class-card-image {
   transform: scale(1.025);
 }
 
-.compact-card:hover .class-card-shade,
 .compact-card:focus-visible .class-card-shade,
 .compact-card:focus-within .class-card-shade {
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.28), rgba(10, 10, 10, 0.96));
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.94));
 }
 
-.compact-card:hover p,
 .compact-card:focus-visible p,
 .compact-card:focus-within p {
   max-height: 140px;
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .compact-card:hover {
+    border-color: rgba(255, 255, 255, 0.24);
+    transform: translateY(-6px);
+  }
+
+  .compact-card:hover .class-card-image {
+    filter: grayscale(0.28) contrast(1.12);
+    transform: scale(1.055);
+  }
+
+  .bodypump-card:hover .class-card-image {
+    transform: scale(1.15);
+  }
+
+  .cycling-card:hover .class-card-image {
+    transform: scale(1.025);
+  }
+
+  .compact-card:hover .class-card-shade {
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.18), rgba(10, 10, 10, 0.94));
+  }
+
+  .compact-card:hover p {
+    max-height: 140px;
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .compact-card h3,
@@ -1084,6 +1112,12 @@ p {
 
 .moments-grid.is-single {
   grid-template-columns: minmax(0, 760px);
+}
+
+.moments-grid.is-pair,
+.moments-grid.is-four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 960px;
 }
 
 .moment-card {
@@ -1607,6 +1641,10 @@ footer a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .moments-grid.is-single {
+    grid-template-columns: minmax(0, 760px);
+  }
+
   .about-grid {
     gap: 40px;
     grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
@@ -1806,8 +1844,24 @@ footer a {
   .class-bento,
   .faq-grid,
   .moments-grid,
-  .moments-grid.is-single {
+  .moments-grid.is-single,
+  .moments-grid.is-pair,
+  .moments-grid.is-four {
     grid-template-columns: 1fr;
+  }
+
+  .compact-card {
+    min-height: 300px;
+  }
+
+  .compact-card .class-card-shade {
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.08) 12%, rgba(10, 10, 10, 0.94) 100%);
+  }
+
+  .compact-card p {
+    max-height: 140px;
+    opacity: 1;
+    transform: none;
   }
 
   .faq-grid article {
