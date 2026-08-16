@@ -64,7 +64,9 @@ test("keeps the public navigation contained above the hero", async () => {
 
   assert.match(source, /className="site-nav-container"/);
   assert.match(styles, /\.site-header\s*\{[\s\S]*?position:\s*sticky;/);
-  assert.match(styles, /\.site-nav-container\s*\{[\s\S]*?max-width:\s*1120px;/);
+  assert.match(styles, /\.site-header\s*\{[\s\S]*?background:\s*transparent;/);
+  assert.match(styles, /\.site-nav-container\s*\{[\s\S]*?width:\s*max-content;/);
+  assert.match(styles, /\.site-nav-container\s*\{[\s\S]*?background:\s*#141414;/);
   assert.match(styles, /\.site-header\.is-scrolled \.site-nav-container/);
   assert.doesNotMatch(styles, /\.site-header\s*\{[\s\S]*?position:\s*fixed;/);
   assert.match(styles, /\.hero-media\s*\{[\s\S]*?miriam-kettlebell-coach\.jpg/);

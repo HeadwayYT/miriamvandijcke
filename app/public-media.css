@@ -66,8 +66,8 @@ textarea {
 }
 
 .site-header {
-  background: var(--bone);
-  padding: 4px clamp(18px, 5vw, 76px);
+  background: transparent;
+  padding: 6px clamp(18px, 5vw, 76px);
   position: sticky;
   top: 0;
   width: 100%;
@@ -76,26 +76,26 @@ textarea {
 
 .site-nav-container {
   align-items: center;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
   display: flex;
-  gap: 24px;
-  justify-content: space-between;
+  gap: 16px;
+  justify-content: flex-start;
   margin: 0 auto;
-  max-width: 1120px;
-  min-height: 56px;
-  padding: 0 14px;
+  max-width: calc(100vw - 36px);
+  min-height: 52px;
+  padding: 0 12px;
   position: relative;
   transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
-  width: 100%;
+  width: max-content;
 }
 
 .site-header.is-scrolled .site-nav-container,
 .site-header.is-menu-open .site-nav-container {
-  backdrop-filter: blur(16px);
-  background: rgba(23, 23, 23, 0.92);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  background: #171717;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
 }
 
 .brand,
@@ -105,25 +105,26 @@ textarea {
 }
 
 .brand {
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 780;
-  min-height: 40px;
-  padding-inline: 4px;
+  font-size: 0.94rem;
+  font-weight: 840;
+  min-height: 34px;
+  padding: 0 16px 0 4px;
   white-space: nowrap;
 }
 
 .site-header nav {
-  gap: 6px;
-  margin-left: auto;
+  gap: 4px;
+  margin-left: 0;
 }
 
 .site-header nav a {
   border-bottom: 2px solid transparent;
   color: #d4d4d4;
-  font-size: 0.72rem;
-  font-weight: 740;
-  padding: 11px 9px 9px;
+  font-size: 0.78rem;
+  font-weight: 760;
+  padding: 10px 10px 8px;
   text-transform: uppercase;
   transition: border-color 180ms ease, color 180ms ease;
   white-space: nowrap;
@@ -175,11 +176,11 @@ textarea {
   display: grid;
   flex: 0 0 auto;
   grid-template-columns: repeat(2, 1fr);
-  height: 32px;
-  margin-left: 8px;
+  height: 30px;
+  margin-left: 4px;
   overflow: hidden;
   padding: 2px;
-  width: 70px;
+  width: 68px;
 }
 
 .language-toggle button {
@@ -1693,13 +1694,20 @@ footer a {
 
 @media (max-width: 800px) {
   .site-header {
-    padding: 4px 16px;
+    padding: 6px 16px 4px;
   }
 
   .site-nav-container {
     gap: 12px;
     min-height: 54px;
     padding: 0 10px;
+    width: 100%;
+  }
+
+  .brand {
+    border-right: 0;
+    font-size: 0.92rem;
+    padding-right: 4px;
   }
 
   .mobile-nav-toggle {
@@ -1709,8 +1717,7 @@ footer a {
 
   .site-header nav {
     align-items: stretch;
-    backdrop-filter: blur(18px);
-    background: rgba(23, 23, 23, 0.98);
+    background: #171717;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
