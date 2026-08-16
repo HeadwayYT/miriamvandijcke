@@ -2129,24 +2129,78 @@ footer a {
     padding-bottom: 52px;
   }
 
+  .site-header {
+    padding: 0;
+  }
+
+  .site-nav-container {
+    backdrop-filter: blur(0);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+    min-height: 58px;
+    padding: 0 16px;
+    transition: background-color 240ms ease, border-color 240ms ease, backdrop-filter 240ms ease;
+    width: 100%;
+  }
+
+  .site-header.is-scrolled .site-nav-container,
+  .site-header.is-menu-open .site-nav-container {
+    backdrop-filter: blur(20px);
+    background: rgba(10, 10, 10, 0.86);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+  }
+
+  .brand {
+    padding-left: 0;
+  }
+
+  .mobile-nav-toggle {
+    border-radius: 4px;
+    height: 44px;
+    transition: background-color 180ms ease, color 180ms ease;
+    width: 44px;
+  }
+
+  .mobile-nav-toggle:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
   .site-header nav {
-    background: rgba(10, 10, 10, 0.97);
-    border-color: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
-    padding: 4px 10px 8px;
+    backdrop-filter: blur(20px);
+    background: rgba(10, 10, 10, 0.9);
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+    grid-template-columns: minmax(0, 1fr) auto;
+    left: 0;
+    padding: 4px 16px 10px;
+    right: 0;
+    top: 100%;
   }
 
   .site-header nav a {
+    grid-column: 1 / -1;
     min-height: 42px;
-    padding: 8px;
+    padding: 8px 0;
   }
 
   .site-header nav a.nav-cta {
-    margin-top: 2px;
+    border-bottom: 0;
+    grid-column: 1;
+    margin: 2px 0 0;
   }
 
   .language-toggle {
-    margin-top: 7px;
+    align-self: center;
+    grid-column: 2;
+    justify-self: end;
+    margin: 2px 0 0 16px;
   }
 
   .schedule-block {
@@ -2175,21 +2229,13 @@ footer a {
     padding: 54px 16px;
   }
 
-  .site-header {
-    padding-inline: 15px;
-  }
-
   .site-nav-container {
-    max-width: calc(100vw - 30px);
-    min-height: 52px;
+    min-height: 56px;
+    padding-inline: 16px;
   }
 
   .brand {
     font-size: 0.88rem;
-  }
-
-  .site-header nav {
-    top: calc(100% + 5px);
   }
 
   .site-header nav a {
