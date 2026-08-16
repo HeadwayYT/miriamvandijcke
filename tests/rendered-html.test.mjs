@@ -14,7 +14,8 @@ test("server-renders Miriam's fitness hub priorities", async () => {
     html,
     /href="https:\/\/www\.instagram\.com\/mir\.i\.am_vd\/"[^>]*>[\s\S]*?Follow Miriam/i,
   );
-  assert.match(html, /href="#contact">Contact<\/a>/i);
+  assert.match(html, /href="#contact"[^>]*>Collaborate<\/a>/i);
+  assert.match(html, /href="\/#home"[^>]*>\s*MV\s*<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
   assert.match(html, />4 Classes<\/h2>/i);
   assert.match(html, /Find me in class every week\.<\/h3>/i);
@@ -42,6 +43,11 @@ test("renders an accessible English and Dutch language switch", async () => {
   assert.match(html, />NL<\/button>/i);
   assert.match(source, /localStorage\.setItem\("miriam-language"/);
   assert.match(source, /document\.documentElement\.lang = language/);
+  assert.match(source, /aria-controls="site-navigation"/);
+  assert.match(source, /aria-expanded=\{mobileNavOpen\}/);
+  assert.match(source, /href="#moments"/);
+  assert.match(source, /href="#contact"/);
+  assert.match(source, /siteConfig\.instagramProfileUrl/);
   assert.match(translations, /"Move together\.": "Samen in beweging\."/);
   assert.match(translations, /"Rides & music": "Rides & muziek"/);
   assert.match(translations, /"Follow Miriam": "Volg Miriam"/);
@@ -50,6 +56,19 @@ test("renders an accessible English and Dutch language switch", async () => {
   assert.match(translations, /"My energy is contagious\.": "Mijn energie werkt aanstekelijk\."/);
   assert.doesNotMatch(source, /about-certified/);
   assert.doesNotMatch(source, /marquee-band|marquee-track/);
+});
+
+test("keeps the public navigation contained above the hero", async () => {
+  const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/public-media.css", import.meta.url), "utf8");
+
+  assert.match(source, /className="site-nav-container"/);
+  assert.match(styles, /\.site-header\s*\{[\s\S]*?position:\s*sticky;/);
+  assert.match(styles, /\.site-nav-container\s*\{[\s\S]*?max-width:\s*1120px;/);
+  assert.match(styles, /\.site-header\.is-scrolled \.site-nav-container/);
+  assert.doesNotMatch(styles, /\.site-header\s*\{[\s\S]*?position:\s*fixed;/);
+  assert.match(styles, /\.hero-media\s*\{[\s\S]*?miriam-kettlebell-coach\.jpg/);
+  assert.match(styles, /background-position:\s*69% 96px;/);
 });
 
 test("renders compact venue schedules and a contact enquiry path", async () => {

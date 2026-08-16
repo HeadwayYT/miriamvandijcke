@@ -9,10 +9,13 @@ import {
   CalendarDots,
   ImageSquare,
   InstagramLogo,
+  List,
   PaperPlaneTilt,
   SpotifyLogo,
+  X,
 } from "@phosphor-icons/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media";
 import { MomentMedia } from "@/app/components/moment-media";
@@ -119,6 +122,7 @@ const eventRequestTypes = new Set([
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [language, setLanguage] = useState<Language>("en");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [requestType, setRequestType] = useState("");
   const [siteContent, setSiteContent] = useState<PublicSiteContent>(emptyPublicSiteContent);
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">(
@@ -152,6 +156,26 @@ export default function Home() {
 
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileNavOpen(false);
+    };
+    const desktopQuery = window.matchMedia("(min-width: 801px)");
+    const closeOnDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setMobileNavOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    desktopQuery.addEventListener("change", closeOnDesktop);
+
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      desktopQuery.removeEventListener("change", closeOnDesktop);
+    };
+  }, [mobileNavOpen]);
 
   useEffect(() => {
     const localizeMetadata = (value: string) =>
@@ -285,31 +309,74 @@ export default function Home() {
 
   return (
     <main ref={root} className="site-shell">
-      <header className="site-header" aria-label={t("Main navigation")}>
-        <a className="brand" href="#home" aria-label={t("Miriam Van Dijcke home")}>
-          <span>Miriam Van Dijcke</span>
-        </a>
-        <nav>
-          <a href="#classes">{t("Classes")}</a>
-          {publishedRide ? (
-            <a href="#rides">{t("Rides & music")}</a>
-          ) : null}
-          <a href="#about">{t("About")}</a>
-          <a className="nav-cta" href="#contact">{t("Contact")}</a>
-        </nav>
-        <div className="language-toggle" role="group" aria-label={t("Choose language")}>
-          {(["en", "nl"] as const).map((option) => (
-            <button
-              className={language === option ? "is-active" : undefined}
-              type="button"
-              lang={option}
-              aria-pressed={language === option}
-              onClick={() => chooseLanguage(option)}
-              key={option}
+      <header
+        className={`site-header${mobileNavOpen ? " is-menu-open" : ""}`}
+        aria-label={t("Main navigation")}
+      >
+        <div className="site-nav-container">
+          <Link
+            className="brand"
+            href="/#home"
+            aria-label={t("Miriam Van Dijcke home")}
+            onClick={() => setMobileNavOpen(false)}
+          >
+            MV
+          </Link>
+          <button
+            className="mobile-nav-toggle"
+            type="button"
+            aria-controls="site-navigation"
+            aria-expanded={mobileNavOpen}
+            aria-label={t(mobileNavOpen ? "Close navigation" : "Open navigation")}
+            onClick={() => setMobileNavOpen((open) => !open)}
+          >
+            {mobileNavOpen ? (
+              <X aria-hidden="true" size={22} weight="bold" />
+            ) : (
+              <List aria-hidden="true" size={24} weight="bold" />
+            )}
+          </button>
+          <nav id="site-navigation" aria-label={t("Main navigation")}>
+            <a href="#classes" onClick={() => setMobileNavOpen(false)}>
+              {t("Classes")}
+            </a>
+            {siteContent.moments.length ? (
+              <a href="#moments" onClick={() => setMobileNavOpen(false)}>
+                {t("In action")}
+              </a>
+            ) : null}
+            <a href="#about" onClick={() => setMobileNavOpen(false)}>
+              {t("About")}
+            </a>
+            <a href="#contact" onClick={() => setMobileNavOpen(false)}>
+              {t("Collaborate")}
+            </a>
+            <a
+              className="nav-cta"
+              href={siteConfig.instagramProfileUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${t("Follow Miriam")} ${t("on Instagram")}`}
+              onClick={() => setMobileNavOpen(false)}
             >
-              {option.toUpperCase()}
-            </button>
-          ))}
+              <InstagramLogo aria-hidden="true" size={15} weight="bold" />
+              {t("Follow Miriam")}
+            </a>
+            <div className="language-toggle" role="group" aria-label={t("Choose language")}>
+              {(["en", "nl"] as const).map((option) => (
+                <button
+                  className={language === option ? "is-active" : undefined}
+                  type="button"
+                  lang={option}
+                  aria-pressed={language === option}
+                  onClick={() => chooseLanguage(option)}
+                  key={option}
+                >
+                  {option.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </nav>
         </div>
       </header>
 
