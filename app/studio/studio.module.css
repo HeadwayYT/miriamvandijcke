@@ -1270,119 +1270,168 @@
   justify-content: center;
 }
 
-.growthSignalsPanel {
-  background: rgba(23, 23, 23, 0.34);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.followerTracker {
+  align-items: stretch;
+  background: rgba(23, 23, 23, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 8px;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.65fr);
+  min-width: 0;
   padding: clamp(22px, 3vw, 32px);
 }
 
-.growthSignalsHeading {
-  align-items: start;
+.followerInputPanel {
+  align-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.09);
   display: grid;
-  gap: 16px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  padding-right: clamp(24px, 4vw, 52px);
 }
 
-.growthSignalsHeading > svg {
-  color: #ef4444;
-}
-
-.growthSignalsHeading h2 {
-  font-size: clamp(1.2rem, 2vw, 1.65rem);
-  font-weight: 550;
-  margin: 0;
-  text-transform: capitalize;
-}
-
-.growthSignalsHeading div > p:last-child {
-  color: #737373;
-  font-size: 0.75rem;
-  line-height: 1.5;
-  margin: 8px 0 0;
-}
-
-.growthSignalsHeading > a,
-.growthHistory a {
-  align-items: center;
-  color: #f5f5f5;
-  display: inline-flex;
-  font-size: 0.7rem;
-  font-weight: 800;
-  gap: 7px;
-  min-height: 42px;
-  text-transform: uppercase;
-}
-
-.growthSignalsHeading > a:hover,
-.growthHistory a:hover {
-  color: #ef4444;
-}
-
-.growthMetrics {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 22px;
-  padding-top: 20px;
-}
-
-.growthMetrics > div {
-  display: grid;
-  gap: 5px;
-  padding-right: 22px;
-}
-
-.growthMetrics > div + div {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  padding-left: 22px;
-}
-
-.growthMetrics span,
-.growthMetrics small {
-  color: #737373;
-  font-size: 0.64rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.growthMetrics strong {
-  font-size: 1.5rem;
-}
-
-.growthHistory {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: grid;
-}
-
-.growthHistory article {
+.followerLabel,
+.followerChartHeading,
+.followerSaveStatus {
   align-items: center;
   display: flex;
-  gap: 20px;
-  justify-content: space-between;
-  padding: 18px 0;
 }
 
-.growthHistory article + article {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.followerLabel {
+  color: #ef4444;
+  gap: 8px;
 }
 
-.growthHistory article > div {
+.followerLabel label,
+.followerChartHeading p {
+  color: #d4d4d4;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.followerInput {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 520;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-top: 15px;
+  max-width: 5.8ch;
+  min-width: 0;
+  outline: none;
+  padding: 0 0 8px;
+  width: 100%;
+}
+
+.followerInput:focus {
+  border-color: #ef4444;
+}
+
+.followerInput:disabled {
+  opacity: 0.72;
+}
+
+.followerSaveStatus {
+  color: #86efac;
+  font-size: 0.68rem;
+  gap: 6px;
+  min-height: 22px;
+  margin: 7px 0 0;
+}
+
+.followerSaveError {
+  color: #fca5a5;
+}
+
+.followerChartPanel {
   display: grid;
-  gap: 4px;
+  min-width: 0;
+  padding-left: clamp(24px, 4vw, 52px);
+}
+
+.followerChartHeading {
+  align-self: start;
+  color: #ef4444;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.followerChart {
+  align-items: stretch;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 148px;
   min-width: 0;
 }
 
-.growthHistory strong {
-  font-size: 0.88rem;
-  text-transform: capitalize;
+.followerYAxis {
+  color: #737373;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  justify-content: space-between;
+  padding: 5px 0 24px;
+  text-align: right;
 }
 
-.growthHistory span,
-.growthHistory small {
-  color: #8e8e8e;
-  font-size: 0.72rem;
-  line-height: 1.45;
+.followerPlot {
+  display: grid;
+  grid-template-rows: minmax(112px, 1fr) 22px;
+  min-width: 0;
+}
+
+.followerPlot svg {
+  display: block;
+  height: 100%;
+  min-height: 112px;
+  overflow: visible;
+  width: 100%;
+}
+
+.chartGridLine {
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.chartLine {
+  fill: none;
+  stroke: #ef4444;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.followerXAxis {
+  color: #737373;
+  display: flex;
+  font-size: 0.62rem;
+  justify-content: space-between;
+  min-width: 0;
+  padding-top: 5px;
+}
+
+.followerXAxis span:only-child {
+  margin: 0 auto;
+}
+
+.followerEmpty {
+  align-self: center;
+  color: #737373;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .savedMomentContent {
@@ -1788,32 +1837,23 @@
     width: 82px;
   }
 
-  .growthSignalsHeading {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .growthSignalsHeading > a {
-    grid-column: 2;
-    justify-self: start;
-  }
-
-  .growthMetrics {
+  .followerTracker {
     grid-template-columns: 1fr;
   }
 
-  .growthMetrics > div {
-    padding: 14px 0;
+  .followerInputPanel {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    border-right: 0;
+    padding: 0 0 22px;
   }
 
-  .growthMetrics > div + div {
-    border-left: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-left: 0;
+  .followerChartPanel {
+    min-height: 205px;
+    padding: 22px 0 0;
   }
 
-  .growthHistory article {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
+  .followerInput {
+    font-size: 3.35rem;
+    max-width: 7ch;
   }
 }

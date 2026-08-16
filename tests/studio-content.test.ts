@@ -18,12 +18,12 @@ import {
   type MomentRow,
 } from "../lib/studio/content.ts";
 import {
-  followerDeltaForMonth,
-  formatGrowthMonth,
-  getBelgiumMonthKey,
-  rowsToGrowthSignals,
-  type GrowthSignal,
-} from "../lib/studio/growth.ts";
+  getBelgiumDateKey,
+  mergeFollowerSnapshot,
+  parsePositiveFollowerCount,
+  rowsToFollowerSnapshots,
+  type FollowerSnapshot,
+} from "../lib/studio/followers.ts";
 import {
   calculateMomentumStatus,
   getIsoWeekKey,
@@ -305,34 +305,53 @@ test("maps published-style video Moments with an optional image poster", () => {
   }]);
 });
 
-test("uses Belgium-local calendar months", () => {
-  assert.equal(getBelgiumMonthKey(new Date("2026-08-31T21:59:59Z")), "2026-08");
-  assert.equal(getBelgiumMonthKey(new Date("2026-08-31T22:00:00Z")), "2026-09");
-  assert.equal(formatGrowthMonth("2026-08", "en"), "August 2026");
-  assert.equal(formatGrowthMonth("2026-08", "nl"), "augustus 2026");
+test("uses Belgium-local calendar days for follower snapshots", () => {
+  assert.equal(getBelgiumDateKey(new Date("2026-08-16T21:59:59Z")), "2026-08-16");
+  assert.equal(getBelgiumDateKey(new Date("2026-08-16T22:00:00Z")), "2026-08-17");
 });
 
-test("maps Growth Signals with zero outcomes and orders months newest first", () => {
-  const records = rowsToGrowthSignals([
-    { id: "1", month: "2026-07", instagram_followers: 799, invitations: 0, collaborations: 1, note: null },
-    { id: "2", month: "2026-08", instagram_followers: 842, invitations: 1, collaborations: 0, note: "First guest ride invitation." },
+test("maps follower history in chronological order and drops invalid values", () => {
+  const records = rowsToFollowerSnapshots([
+    { id: "2", snapshot_date: "2026-08-17", follower_count: 843, created_at: "2026-08-17T08:00:00Z", updated_at: "2026-08-17T08:00:00Z" },
+    { id: "1", snapshot_date: "2026-08-16", follower_count: 842, created_at: "2026-08-16T08:00:00Z", updated_at: "2026-08-16T08:00:00Z" },
+    { id: "bad", snapshot_date: "2026-08-18", follower_count: 0, created_at: "2026-08-18T08:00:00Z", updated_at: "2026-08-18T08:00:00Z" },
   ]);
 
-  assert.deepEqual(records.map((record) => record.month), ["2026-08", "2026-07"]);
-  assert.equal(records[0].collaborations, 0);
-  assert.equal(records[0].note, "First guest ride invitation.");
+  assert.deepEqual(records.map((record) => record.date), ["2026-08-16", "2026-08-17"]);
+  assert.deepEqual(records.map((record) => record.followerCount), [842, 843]);
 });
 
-test("calculates follower deltas without inventing first-month data", () => {
-  const records: GrowthSignal[] = [
-    { id: "1", month: "2026-06", instagramFollowers: 807, invitations: 0, collaborations: 0, note: null },
-    { id: "2", month: "2026-07", instagramFollowers: 799, invitations: 0, collaborations: 1, note: null },
-    { id: "3", month: "2026-08", instagramFollowers: 842, invitations: 1, collaborations: 0, note: null },
+test("replaces a same-day follower snapshot and appends the next day", () => {
+  const records: FollowerSnapshot[] = [
+    { id: "1", date: "2026-08-16", followerCount: 842, createdAt: "2026-08-16T08:00:00Z", updatedAt: "2026-08-16T08:00:00Z" },
   ];
+  const sameDay = mergeFollowerSnapshot(records, {
+    id: "1",
+    date: "2026-08-16",
+    followerCount: 843,
+    createdAt: "2026-08-16T08:00:00Z",
+    updatedAt: "2026-08-16T18:00:00Z",
+  });
+  const nextDay = mergeFollowerSnapshot(sameDay, {
+    id: "2",
+    date: "2026-08-17",
+    followerCount: 845,
+    createdAt: "2026-08-17T08:00:00Z",
+    updatedAt: "2026-08-17T08:00:00Z",
+  });
 
-  assert.deepEqual(followerDeltaForMonth(records, "2026-08"), { value: 43, previousMonth: "2026-07" });
-  assert.deepEqual(followerDeltaForMonth(records, "2026-07"), { value: -8, previousMonth: "2026-06" });
-  assert.equal(followerDeltaForMonth(records, "2026-06"), null);
+  assert.deepEqual(sameDay.map((record) => record.followerCount), [843]);
+  assert.deepEqual(nextDay.map((record) => record.date), ["2026-08-16", "2026-08-17"]);
+  assert.deepEqual(nextDay.map((record) => record.followerCount), [843, 845]);
+});
+
+test("accepts only positive whole follower counts", () => {
+  assert.equal(parsePositiveFollowerCount("842"), 842);
+  assert.equal(parsePositiveFollowerCount(843), 843);
+  assert.equal(parsePositiveFollowerCount(""), null);
+  assert.equal(parsePositiveFollowerCount("12.5"), null);
+  assert.equal(parsePositiveFollowerCount("-1"), null);
+  assert.equal(parsePositiveFollowerCount(0), null);
 });
 
 test("uses intentional Moment grids for low and balanced content counts", () => {

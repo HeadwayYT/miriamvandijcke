@@ -423,6 +423,60 @@ using (
   and updated_by = (select auth.uid())
 );
 
+-- Compact daily Instagram follower history. The legacy growth_signals table is
+-- retained so existing monthly data is not destroyed.
+create table if not exists public.instagram_follower_snapshots (
+  id uuid primary key default gen_random_uuid(),
+  snapshot_date date not null,
+  follower_count integer not null check (follower_count > 0),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  updated_by uuid not null references auth.users(id),
+  unique (updated_by, snapshot_date)
+);
+
+alter table public.instagram_follower_snapshots enable row level security;
+
+create index if not exists instagram_follower_snapshots_date_idx
+on public.instagram_follower_snapshots (snapshot_date asc);
+
+revoke all on table public.instagram_follower_snapshots from anon, authenticated;
+grant select, insert, update on table public.instagram_follower_snapshots to authenticated;
+
+drop policy if exists "studio admin can inspect follower snapshots" on public.instagram_follower_snapshots;
+create policy "studio admin can inspect follower snapshots"
+on public.instagram_follower_snapshots
+for select
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can insert follower snapshots" on public.instagram_follower_snapshots;
+create policy "studio admin can insert follower snapshots"
+on public.instagram_follower_snapshots
+for insert
+to authenticated
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can update follower snapshots" on public.instagram_follower_snapshots;
+create policy "studio admin can update follower snapshots"
+on public.instagram_follower_snapshots
+for update
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+)
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
 drop policy if exists "studio admin can delete about images" on storage.objects;
 create policy "studio admin can delete about images"
 on storage.objects

@@ -20,7 +20,12 @@ import {
   normalizeSpotifyPlaylistUrl,
 } from "@/lib/studio/content";
 import { isStudioAdmin } from "@/lib/studio/data";
-import { isGrowthMonthKey } from "@/lib/studio/growth";
+import {
+  getBelgiumDateKey,
+  parsePositiveFollowerCount,
+  rowsToFollowerSnapshots,
+  type FollowerSnapshotRow,
+} from "@/lib/studio/followers";
 import {
   getIsoWeekKey,
   manualShareSourceId,
@@ -237,39 +242,28 @@ export async function saveMoment(formData: FormData) {
   redirect("/studio?editor=moments&success=moment#moments");
 }
 
-export async function saveGrowthSignal(formData: FormData) {
+export async function saveInstagramFollowerCount(rawValue: unknown) {
   const { supabase, userId } = await requireStudioAdmin();
-  const month = cleanText(formData.get("month"), 7);
-  const instagramFollowers = parseNonNegativeInteger(formData.get("instagramFollowers"));
-  const invitations = parseNonNegativeInteger(formData.get("invitations"));
-  const collaborations = parseNonNegativeInteger(formData.get("collaborations"));
-  const note = cleanText(formData.get("note"), 160);
+  const followerCount = parsePositiveFollowerCount(rawValue);
+  if (followerCount === null) return { ok: false as const };
 
-  if (
-    !isGrowthMonthKey(month) ||
-    instagramFollowers === null ||
-    invitations === null ||
-    collaborations === null
-  ) {
-    redirect(`/studio?editor=growth&month=${encodeURIComponent(month)}&error=growth-validation#growth`);
-  }
-
-  const { error } = await supabase.from("growth_signals").upsert(
+  const savedAt = new Date();
+  const { data, error } = await supabase.from("instagram_follower_snapshots").upsert(
     {
-      month,
-      instagram_followers: instagramFollowers,
-      invitations,
-      collaborations,
-      note: note || null,
-      updated_at: new Date().toISOString(),
+      snapshot_date: getBelgiumDateKey(savedAt),
+      follower_count: followerCount,
+      updated_at: savedAt.toISOString(),
       updated_by: userId,
     },
-    { onConflict: "month" },
-  );
+    { onConflict: "updated_by,snapshot_date" },
+  ).select("id,snapshot_date,follower_count,created_at,updated_at").single();
 
-  if (error) redirect(`/studio?editor=growth&month=${month}&error=save#growth`);
+  if (error || !data) return { ok: false as const };
+  const snapshot = rowsToFollowerSnapshots([data as FollowerSnapshotRow])[0];
+  if (!snapshot) return { ok: false as const };
+
   revalidatePath("/studio");
-  redirect(`/studio?editor=growth&month=${month}&success=growth#growth`);
+  return { ok: true as const, snapshot };
 }
 
 export async function markShareCompleted(formData: FormData) {
@@ -357,12 +351,6 @@ async function removeStoredMedia(
 ) {
   const path = getStoragePath(mediaUrl, supabaseUrl);
   if (path) await supabase.storage.from(bucket).remove([path]);
-}
-
-function parseNonNegativeInteger(value: FormDataEntryValue | null): number | null {
-  if (typeof value !== "string" || !/^\d+$/.test(value.trim())) return null;
-  const parsed = Number(value);
-  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : null;
 }
 
 async function recordStudioActivity(

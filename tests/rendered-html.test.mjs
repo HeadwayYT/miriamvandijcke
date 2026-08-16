@@ -188,8 +188,8 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     new URL("../app/studio/saved-moment-summary.tsx", import.meta.url),
     "utf8",
   );
-  const growthEditorSource = await readFile(
-    new URL("../app/studio/growth-signals.tsx", import.meta.url),
+  const followerTrackerSource = await readFile(
+    new URL("../app/studio/instagram-follower-tracker.tsx", import.meta.url),
     "utf8",
   );
   const instagramFormSource = await readFile(
@@ -271,11 +271,11 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(dashboardSource, /editor=moments/);
   assert.match(dashboardSource, /editor=instagram/);
   assert.match(dashboardSource, /editor=spotify/);
-  assert.match(dashboardSource, /GrowthSignalsSummary/);
+  assert.match(dashboardSource, /InstagramFollowerTracker/);
   assert.match(
     dashboardSource,
-    /className=\{styles\.contentOverview\}[\s\S]*?<GrowthSignalsSummary/,
-    "Growth Signals must remain below the core Studio workflow",
+    /className=\{styles\.momentumPanel\}[\s\S]*?<InstagramFollowerTracker[\s\S]*?className=\{styles\.focusPanel\}/,
+    "The follower tracker must sit between Momentum and Current Focus",
   );
   assert.match(momentFormSource, /StudioImageUpload/);
   assert.match(momentFormSource, /StudioVideoUpload/);
@@ -319,16 +319,21 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     /recordStudioActivity\(supabase, userId, "share", "instagram"/,
   );
   assert.match(actionSource, /ignoreDuplicates:\s*true/);
-  assert.match(actionSource, /saveGrowthSignal/);
-  assert.match(actionSource, /from\("growth_signals"\)\.upsert/);
-  assert.match(actionSource, /onConflict:\s*"month"/);
-  assert.match(growthEditorSource, /type="month"/);
-  assert.match(growthEditorSource, /min="0"/);
-  assert.match(growthEditorSource, /Monthly snapshots/);
-  const growthAction = actionSource.match(
-    /export async function saveGrowthSignal[\s\S]*?(?=export async function|async function requireStudioAdmin)/,
+  assert.match(actionSource, /saveInstagramFollowerCount/);
+  assert.match(actionSource, /from\("instagram_follower_snapshots"\)\.upsert/);
+  assert.match(actionSource, /onConflict:\s*"updated_by,snapshot_date"/);
+  assert.match(followerTrackerSource, /onBlur=\{commitValue\}/);
+  assert.match(followerTrackerSource, /event\.key === "Enter"[\s\S]*?event\.currentTarget\.blur\(\)/);
+  assert.match(followerTrackerSource, /latest\?\.date === today/);
+  assert.match(followerTrackerSource, /aria-live="polite"/);
+  assert.match(followerTrackerSource, /mergeFollowerSnapshot/);
+  assert.doesNotMatch(followerTrackerSource, /<button|Save month|Update month/i);
+  assert.doesNotMatch(studioSource, /editor === "growth"|GrowthSignalsEditor/);
+  assert.doesNotMatch(dashboardSource, /Growth signals|Invitations|Collaborations|Update month/i);
+  const followerAction = actionSource.match(
+    /export async function saveInstagramFollowerCount[\s\S]*?(?=export async function|async function requireStudioAdmin)/,
   )?.[0] ?? "";
-  assert.doesNotMatch(growthAction, /recordStudioActivity|Momentum|streak/i);
+  assert.doesNotMatch(followerAction, /recordStudioActivity|Momentum|streak/i);
   assert.match(
     actionSource,
     /saveMoment[\s\S]*?shouldCapture[\s\S]*?recordStudioActivity\(supabase, userId, "capture"/,
@@ -359,4 +364,11 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   );
   assert.match(policies, /studio admin can inspect growth signals/i);
   assert.match(policies, /studio admin can update growth signals/i);
+  assert.match(policies, /instagram_follower_snapshots[\s\S]*?enable row level security/i);
+  assert.match(policies, /unique \(updated_by, snapshot_date\)/i);
+  assert.match(policies, /revoke all on table public\.instagram_follower_snapshots from anon, authenticated/i);
+  assert.match(policies, /grant select, insert, update on table public\.instagram_follower_snapshots to authenticated/i);
+  assert.doesNotMatch(policies, /grant select on table public\.instagram_follower_snapshots to anon/i);
+  assert.match(policies, /studio admin can inspect follower snapshots/i);
+  assert.match(policies, /studio admin can update follower snapshots/i);
 });

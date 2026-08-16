@@ -10,10 +10,10 @@ import {
   type SiteContentRow,
 } from "./content";
 import {
-  rowsToGrowthSignals,
-  type GrowthSignal,
-  type GrowthSignalRow,
-} from "./growth";
+  rowsToFollowerSnapshots,
+  type FollowerSnapshot,
+  type FollowerSnapshotRow,
+} from "./followers";
 import {
   calculateMomentumStatus,
   getIsoWeekKey,
@@ -28,8 +28,8 @@ const siteContentColumns =
   "content_key,title,class_name,event_date,focus,url,label,published";
 const momentColumns =
   "id,title,moment_type,event_date,location,caption,media_type,media_url,poster_url,external_url,published";
-const growthSignalColumns =
-  "id,month,instagram_followers,invitations,collaborations,note";
+const followerSnapshotColumns =
+  "id,snapshot_date,follower_count,created_at,updated_at";
 
 export function isStudioAdmin(user: User): boolean {
   const config = getSupabaseRuntimeConfig();
@@ -90,18 +90,18 @@ export async function getAdminSiteContent(
   return content;
 }
 
-export async function getGrowthSignals(
+export async function getInstagramFollowerSnapshots(
   supabase: SupabaseClient,
-): Promise<GrowthSignal[]> {
+): Promise<FollowerSnapshot[]> {
   const result = await supabase
-    .from("growth_signals")
-    .select(growthSignalColumns)
-    .order("month", { ascending: false })
-    .limit(60);
+    .from("instagram_follower_snapshots")
+    .select(followerSnapshotColumns)
+    .order("snapshot_date", { ascending: true })
+    .limit(730);
 
   return result.error || !result.data
     ? []
-    : rowsToGrowthSignals(result.data as GrowthSignalRow[]);
+    : rowsToFollowerSnapshots(result.data as FollowerSnapshotRow[]);
 }
 
 export async function getStudioMomentum(

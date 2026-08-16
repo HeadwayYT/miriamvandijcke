@@ -15,11 +15,10 @@ import { getMissingStudioEnvironment, getSupabaseRuntimeConfig } from "@/lib/sup
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   getAdminSiteContent,
-  getGrowthSignals,
+  getInstagramFollowerSnapshots,
   getStudioMomentum,
   isStudioAdmin,
 } from "@/lib/studio/data";
-import { getBelgiumMonthKey, isGrowthMonthKey } from "@/lib/studio/growth";
 import {
   toSpotifyEmbedUrl,
   type SpotifyContent,
@@ -28,7 +27,6 @@ import { MomentForm } from "./moment-form";
 import { InstagramForm } from "./instagram-form";
 import { StudioDashboard } from "./studio-dashboard";
 import { ShareDetailAction } from "./share-detail-action";
-import { GrowthSignalsEditor } from "./growth-signals";
 import { SavedMomentSummary } from "./saved-moment-summary";
 import {
   saveSpotifyContent,
@@ -65,10 +63,10 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     return <AccessDenied />;
   }
 
-  const [content, momentum, growthSignals] = await Promise.all([
+  const [content, momentum, followerSnapshots] = await Promise.all([
     getAdminSiteContent(supabase!),
     getStudioMomentum(supabase!),
-    getGrowthSignals(supabase!),
+    getInstagramFollowerSnapshots(supabase!),
   ]);
   const spotify = content.spotify;
   const instagram = content.instagram;
@@ -78,9 +76,6 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     ? moments.find((moment) => moment.id === selectedMomentId) ?? null
     : null;
   const storageConfig = { url: config.url, publishableKey: config.publishableKey };
-  const currentMonth = getBelgiumMonthKey();
-  const requestedMonth = typeof params.month === "string" ? params.month : "";
-  const selectedGrowthMonth = isGrowthMonthKey(requestedMonth) ? requestedMonth : currentMonth;
 
   return (
     <main className={styles.shell}>
@@ -106,8 +101,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
 
       {!editor ? (
         <StudioDashboard
-          currentMonth={currentMonth}
-          growthSignals={growthSignals}
+          followerSnapshots={followerSnapshots}
           instagram={instagram}
           momentum={momentum}
           moments={moments}
@@ -119,7 +113,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
             <ArrowLeft aria-hidden="true" size={17} weight="bold" />
             Studio home
           </Link>
-          <p>{editor === "spotify" ? "Connect" : editor === "instagram" ? "Share" : editor === "growth" ? "Growth signals" : "Capture"}</p>
+          <p>{editor === "spotify" ? "Connect" : editor === "instagram" ? "Share" : "Capture"}</p>
         </div>
       )}
 
@@ -297,13 +291,6 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         </div>
       ) : null}
 
-      {editor === "growth" ? (
-        <GrowthSignalsEditor
-          currentMonth={currentMonth}
-          records={growthSignals}
-          selectedMonth={selectedGrowthMonth}
-        />
-      ) : null}
     </main>
   );
 }
@@ -431,7 +418,6 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
     "spotify-validation": "Use a valid Spotify playlist URL and complete the required fields.",
     "instagram-validation": "Use a valid public Instagram post or Reel URL.",
     "moment-validation": "Complete the Moment fields with valid HTTPS links.",
-    "growth-validation": "Enter a valid month and non-negative whole numbers.",
     "share-validation": "Use a valid HTTPS link or leave the optional link empty.",
     save: "The content could not be saved. Please try again.",
   };
@@ -442,14 +428,13 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
   if (success === "moment") return { kind: "success" as const, text: "Moment saved." };
   if (success === "moment-deleted") return { kind: "success" as const, text: "Moment deleted." };
   if (success === "share") return { kind: "success" as const, text: "This week's Share is recorded." };
-  if (success === "growth") return { kind: "success" as const, text: "Monthly Growth Signals saved." };
   return null;
 }
 
-type StudioEditor = "spotify" | "instagram" | "moments" | "growth";
+type StudioEditor = "spotify" | "instagram" | "moments";
 
 function getEditor(value: string | string[] | undefined): StudioEditor | null {
-  return value === "spotify" || value === "instagram" || value === "moments" || value === "growth"
+  return value === "spotify" || value === "instagram" || value === "moments"
     ? value
     : null;
 }
