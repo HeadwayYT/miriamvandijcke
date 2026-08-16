@@ -63,6 +63,9 @@ test("keeps the public navigation contained above the hero", async () => {
   const styles = await readFile(new URL("../app/public-media.css", import.meta.url), "utf8");
 
   assert.match(source, /className="site-nav-container"/);
+  assert.match(source, /header\.classList\.toggle\("is-scrolled", window\.scrollY > 24\)/);
+  assert.match(source, /addEventListener\("scroll", syncHeaderMode, \{ passive: true \}\)/);
+  assert.doesNotMatch(source, /toggleClass:\s*\{\s*targets:\s*"\.site-header"/);
   assert.match(styles, /\.site-header\s*\{[\s\S]*?position:\s*sticky;/);
   assert.match(styles, /\.site-header\s*\{[\s\S]*?background:\s*transparent;/);
   assert.match(styles, /\.site-header\s*\{[\s\S]*?margin-bottom:\s*-64px;/);

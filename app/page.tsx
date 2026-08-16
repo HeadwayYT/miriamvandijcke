@@ -223,16 +223,23 @@ export default function Home() {
     }
   }
 
+  useEffect(() => {
+    const header = root.current?.querySelector<HTMLElement>(".site-header");
+    if (!header) return;
+
+    const syncHeaderMode = () => {
+      header.classList.toggle("is-scrolled", window.scrollY > 24);
+    };
+
+    syncHeaderMode();
+    window.addEventListener("scroll", syncHeaderMode, { passive: true });
+
+    return () => window.removeEventListener("scroll", syncHeaderMode);
+  }, []);
+
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger);
-
-      ScrollTrigger.create({
-        trigger: ".hero",
-        start: "top -24px",
-        end: "max",
-        toggleClass: { targets: ".site-header", className: "is-scrolled" },
-      });
 
       gsap.from(".hero-title span, .hero-text, .hero-context, .hero-actions", {
         y: 34,
