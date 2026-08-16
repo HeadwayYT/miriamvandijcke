@@ -733,51 +733,90 @@ function Moments({
   language: Language;
   t: (value: string) => string;
 }) {
+  const [featuredMoment, ...additionalMoments] = moments;
+
   return (
     <section className="chapter moments-chapter" id="moments">
-      <div className="moments-heading">
-        <p className="eyebrow">{t("Miriam in action")}</p>
-        <h2>{t("Classes, special rides and moments from the room.")}</h2>
-      </div>
-      <div className={momentGridClassName(moments.length)}>
-        {moments.map((moment) => (
-          <article className="moment-card" key={moment.id}>
-            <div className="moment-media motion-image">
-              <MomentMedia
-                mediaType={moment.mediaType}
-                mediaUrl={moment.mediaUrl}
-                posterUrl={moment.posterUrl}
-                title={moment.title}
-              />
-            </div>
-            <div className="moment-copy">
-              <p className="moment-type">{t(moment.type)}</p>
-              <h3>{moment.title}</h3>
-              <div className="moment-meta">
-                <span>{moment.location}</span>
-                {moment.date ? (
-                  <time dateTime={moment.date}>
-                    {new Intl.DateTimeFormat(language === "nl" ? "nl-BE" : "en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                      timeZone: "UTC",
-                    }).format(new Date(`${moment.date}T00:00:00Z`))}
-                  </time>
-                ) : null}
-              </div>
-              <p>{moment.caption}</p>
-              {moment.externalUrl ? (
-                <a href={moment.externalUrl} target="_blank" rel="noopener noreferrer">
-                  {t("View moment")}
-                  <ArrowSquareOut aria-hidden="true" size={15} weight="bold" />
-                </a>
-              ) : null}
-            </div>
-          </article>
-        ))}
+      <div className="moments-editorial">
+        <article className="moment-feature">
+          <div className="moments-heading">
+            <h2>{t("Miriam in Action")}</h2>
+            <p>{t("Energy, movement and moments from the room.")}</p>
+          </div>
+          <div className="moment-media motion-image">
+            <MomentMedia
+              mediaType={featuredMoment.mediaType}
+              mediaUrl={featuredMoment.mediaUrl}
+              posterUrl={featuredMoment.posterUrl}
+              title={featuredMoment.title}
+            />
+          </div>
+          <MomentDetails
+            className="moment-feature-details"
+            language={language}
+            moment={featuredMoment}
+            t={t}
+          />
+        </article>
+
+        {additionalMoments.length ? (
+          <div className={momentGridClassName(additionalMoments.length)}>
+            {additionalMoments.map((moment) => (
+              <article className="moment-card" key={moment.id}>
+                <div className="moment-media motion-image">
+                  <MomentMedia
+                    mediaType={moment.mediaType}
+                    mediaUrl={moment.mediaUrl}
+                    posterUrl={moment.posterUrl}
+                    title={moment.title}
+                  />
+                </div>
+                <MomentDetails language={language} moment={moment} t={t} />
+              </article>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
+  );
+}
+
+function MomentDetails({
+  className,
+  language,
+  moment,
+  t,
+}: {
+  className?: string;
+  language: Language;
+  moment: MomentContent;
+  t: (value: string) => string;
+}) {
+  return (
+    <div className={`moment-copy${className ? ` ${className}` : ""}`}>
+      <p className="moment-type">{t(moment.type)}</p>
+      <h3>{moment.title}</h3>
+      <div className="moment-meta">
+        <span>{moment.location}</span>
+        {moment.date ? (
+          <time dateTime={moment.date}>
+            {new Intl.DateTimeFormat(language === "nl" ? "nl-BE" : "en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              timeZone: "UTC",
+            }).format(new Date(`${moment.date}T00:00:00Z`))}
+          </time>
+        ) : null}
+      </div>
+      <p>{moment.caption}</p>
+      {moment.externalUrl ? (
+        <a href={moment.externalUrl} target="_blank" rel="noopener noreferrer">
+          {t("View moment")}
+          <ArrowSquareOut aria-hidden="true" size={15} weight="bold" />
+        </a>
+      ) : null}
+    </div>
   );
 }
 

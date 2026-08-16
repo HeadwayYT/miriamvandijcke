@@ -215,7 +215,15 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(pageSource, /Follow[\s\S]*?siteConfig\.instagramHandle/);
   assert.match(pageSource, /publishedRide[\s\S]*?href="#rides"[\s\S]*?Latest ride/);
   assert.match(pageSource, /\{siteContent\.moments\.length \? \(/);
-  assert.match(pageSource, /Miriam in action/);
+  assert.match(pageSource, /Miriam in Action/);
+  assert.match(pageSource, /Energy, movement and moments from the room\./);
+  assert.doesNotMatch(pageSource, /Classes, special rides and moments from the room\./);
+  assert.match(pageSource, /const \[featuredMoment, \.\.\.additionalMoments\] = moments/);
+  assert.match(pageSource, /moment-feature[\s\S]*?moment-media motion-image[\s\S]*?MomentDetails/);
+  assert.match(cssSource, /\.moments-chapter\s*\{[^}]*background:\s*var\(--bone\)/s);
+  assert.match(cssSource, /\.moment-feature\s*\{[^}]*"media heading"[^}]*"media details"/s);
+  assert.match(cssSource, /@media \(max-width: 980px\)[\s\S]*?"heading"[\s\S]*?"media"[\s\S]*?"details"/);
+  assert.doesNotMatch(cssSource, /\.moment-card\s*\{[^}]*(?:border|background):/s);
   assert.match(pageSource, /toSpotifyEmbedUrl/);
   assert.match(pageSource, /height="152"/);
   assert.match(instagramSource, /https:\/\/www\.instagram\.com\/embed\.js/);
