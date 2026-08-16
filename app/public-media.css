@@ -2137,12 +2137,12 @@ footer a {
     backdrop-filter: blur(0);
     background: transparent;
     border: 0;
-    border-bottom: 1px solid transparent;
+    border-bottom: 0 solid transparent;
     border-radius: 0;
     box-shadow: none;
     max-width: none;
-    min-height: 58px;
-    padding: 0 16px;
+    min-height: calc(58px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 16px 0;
     transition: background-color 240ms ease, border-color 240ms ease, backdrop-filter 240ms ease;
     width: 100%;
   }
@@ -2151,7 +2151,7 @@ footer a {
   .site-header.is-menu-open .site-nav-container {
     backdrop-filter: blur(20px);
     background: rgba(10, 10, 10, 0.86);
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: none;
   }
 
@@ -2164,6 +2164,10 @@ footer a {
     height: 44px;
     transition: background-color 180ms ease, color 180ms ease;
     width: 44px;
+  }
+
+  .site-header:not(.is-scrolled):not(.is-menu-open) .mobile-nav-toggle {
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.72));
   }
 
   .mobile-nav-toggle:hover {
@@ -2230,7 +2234,7 @@ footer a {
   }
 
   .site-nav-container {
-    min-height: 56px;
+    min-height: calc(56px + env(safe-area-inset-top));
     padding-inline: 16px;
   }
 
@@ -2247,6 +2251,18 @@ footer a {
     min-height: min(100svh, 820px);
     padding-bottom: 26px;
     padding-top: 112px;
+  }
+
+  .hero-media {
+    bottom: auto;
+    height: 100%;
+    top: -96px;
+  }
+
+  .hero::after {
+    background:
+      linear-gradient(90deg, rgba(10, 10, 10, 0.86) 0%, rgba(10, 10, 10, 0.68) 34%, rgba(10, 10, 10, 0.24) 70%, rgba(10, 10, 10, 0.08) 100%),
+      linear-gradient(180deg, rgba(10, 10, 10, 0.18) 0%, transparent 34%, rgba(10, 10, 10, 0.84) 67%, #0a0a0a 100%);
   }
 
   .hero-title {
