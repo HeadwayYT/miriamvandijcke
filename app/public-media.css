@@ -67,7 +67,9 @@ textarea {
 
 .site-header {
   background: transparent;
+  margin-bottom: -64px;
   padding: 6px clamp(18px, 5vw, 76px);
+  pointer-events: none;
   position: sticky;
   top: 0;
   width: 100%;
@@ -76,18 +78,21 @@ textarea {
 
 .site-nav-container {
   align-items: center;
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 6px;
   display: flex;
   gap: 16px;
   justify-content: flex-start;
+  left: 0;
   margin: 0 auto;
   max-width: calc(100vw - 36px);
   min-height: 52px;
   padding: 0 12px;
+  pointer-events: auto;
   position: relative;
-  transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  transform: translateX(calc(-50vw + 50% + clamp(18px, 5vw, 76px)));
+  transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 300ms ease;
   width: max-content;
 }
 
@@ -96,6 +101,11 @@ textarea {
   background: #171717;
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+  transform: translate(0, 0);
+}
+
+.site-header.is-scrolled .site-nav-container {
+  transform: translate(0, 4px);
 }
 
 .brand,
@@ -111,6 +121,7 @@ textarea {
   font-weight: 840;
   min-height: 34px;
   padding: 0 16px 0 4px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.72);
   white-space: nowrap;
 }
 
@@ -125,6 +136,7 @@ textarea {
   font-size: 0.78rem;
   font-weight: 760;
   padding: 10px 10px 8px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.72);
   text-transform: uppercase;
   transition: border-color 180ms ease, color 180ms ease;
   white-space: nowrap;
@@ -1692,16 +1704,25 @@ footer a {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1100px) {
   .site-header {
     padding: 6px 16px 4px;
   }
 
   .site-nav-container {
+    background: rgba(20, 20, 20, 0.86);
+    border-color: rgba(255, 255, 255, 0.08);
     gap: 12px;
+    max-width: min(480px, calc(100vw - 32px));
     min-height: 54px;
     padding: 0 10px;
+    transform: none;
     width: 100%;
+  }
+
+  .site-header.is-scrolled .site-nav-container,
+  .site-header.is-menu-open .site-nav-container {
+    transform: none;
   }
 
   .brand {
