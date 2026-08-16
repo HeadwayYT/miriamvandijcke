@@ -264,7 +264,6 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(studioSource, /<SavedMomentSummary/);
   assert.match(savedMomentSource, /editor=moments&moment=\$\{moment\.id\}/);
   assert.doesNotMatch(studioSource, /<MomentForm moment=\{moment\}/);
-  assert.match(dashboardSource, /Keep the momentum/);
   assert.match(dashboardSource, /Current focus/);
   assert.match(dashboardSource, /Build the following/);
   assert.match(dashboardSource, /momentum\.completedCount/);
@@ -280,11 +279,18 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(dashboardSource, /editor=instagram/);
   assert.match(dashboardSource, /editor=spotify/);
   assert.match(dashboardSource, /InstagramFollowerTracker/);
+  assert.match(dashboardSource, /focusDescription=\{text\.focusDescription\}/);
+  assert.match(dashboardSource, /className=\{styles\.shareQuickAction\}/);
   assert.match(
     dashboardSource,
-    /className=\{styles\.momentumPanel\}[\s\S]*?<InstagramFollowerTracker[\s\S]*?className=\{styles\.focusPanel\}/,
-    "The follower tracker must sit between Momentum and Current Focus",
+    /<InstagramFollowerTracker[\s\S]*?className=\{styles\.momentumPanel\}[\s\S]*?className=\{styles\.contentOverview\}/,
+    "Strategic follower tracking must precede compact Momentum and Content",
   );
+  assert.doesNotMatch(dashboardSource, /Keep the momentum/);
+  assert.doesNotMatch(dashboardSource, /Two of three actions make a momentum week/);
+  assert.doesNotMatch(dashboardSource, /The detailed editors stay one tap away/);
+  assert.doesNotMatch(dashboardSource, /Save one strong instructor moment/);
+  assert.doesNotMatch(dashboardSource, /className=\{styles\.focusPanel\}/);
   assert.match(momentFormSource, /StudioImageUpload/);
   assert.match(momentFormSource, /StudioVideoUpload/);
   assert.match(momentFormSource, /mediaType/);

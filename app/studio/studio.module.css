@@ -6,7 +6,7 @@
 }
 
 .shell {
-  padding: 0 clamp(18px, 5vw, 72px) 72px;
+  padding: 0 clamp(18px, 5vw, 72px) 48px;
 }
 
 .header {
@@ -16,7 +16,7 @@
   justify-content: space-between;
   margin: 0 auto;
   max-width: 1280px;
-  min-height: 92px;
+  min-height: 78px;
 }
 
 .header h1,
@@ -30,7 +30,7 @@
 }
 
 .header h1 {
-  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
   text-transform: uppercase;
 }
 
@@ -102,66 +102,63 @@
 
 .dashboard {
   display: grid;
-  gap: 18px;
+  gap: 0;
   margin: 0 auto;
   max-width: 1280px;
-  padding-top: clamp(38px, 6vw, 72px);
-}
-
-.momentumPanel,
-.focusPanel,
-.contentOverview {
-  background: rgba(23, 23, 23, 0.52);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  padding-top: clamp(28px, 4vw, 48px);
 }
 
 .momentumPanel {
-  padding: clamp(24px, 3.8vw, 46px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: clamp(22px, 2.8vw, 32px) 0;
 }
 
 .momentumHeading {
-  align-items: end;
+  align-items: center;
+  display: grid;
+  gap: clamp(24px, 4vw, 64px);
+  grid-template-columns: minmax(190px, 0.9fr) minmax(190px, 1.3fr) auto;
+}
+
+.momentumProgress {
+  align-items: baseline;
   display: flex;
-  gap: 28px;
-  justify-content: space-between;
-  padding-bottom: clamp(22px, 3vw, 34px);
+  gap: 16px;
 }
 
-.momentumHeading h2,
-.focusPanel h2,
-.sectionHeading h2 {
-  font-weight: 550;
-  letter-spacing: 0;
+.momentumProgress h2 {
+  color: #ef4444;
+  font-size: 0.7rem;
+  font-weight: 800;
   margin: 0;
+  text-transform: uppercase;
 }
 
-.momentumHeading h2 {
-  font-size: clamp(1.85rem, 3.6vw, 3.4rem);
-  line-height: 1;
-}
-
-.momentumHeading h2 span {
-  color: #a3a3a3;
-  font-size: 0.48em;
+.momentumProgress strong {
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 550;
   white-space: nowrap;
 }
 
-.momentumSecured {
+.momentumState {
   align-items: center;
-  color: #86efac;
-  display: flex;
+  color: #a3a3a3;
+  display: inline-flex;
   font-size: 0.7rem;
   font-weight: 800;
   gap: 6px;
-  margin: 12px 0 0;
+  margin: 0;
   text-transform: uppercase;
+}
+
+.momentumState.secured {
+  color: #86efac;
 }
 
 .streak {
   border-left: 2px solid #ef4444;
   display: grid;
-  flex: 0 0 auto;
   gap: 4px;
   padding: 3px 0 3px 14px;
 }
@@ -178,47 +175,48 @@
 }
 
 .momentumActions {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 22px;
 }
 
 .momentumAction {
-  align-content: start;
+  align-items: center;
   display: grid;
-  gap: 18px;
-  grid-template-rows: auto 1fr auto;
+  gap: 10px 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
   min-width: 0;
-  padding: 24px;
+  padding: 17px clamp(18px, 2vw, 28px);
 }
 
 .momentumAction + .momentumAction {
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.momentumAction > svg {
-  color: #ef4444;
+.actionIdentity {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
 }
 
-.momentumAction.complete > svg {
+.actionIdentity > svg {
+  color: #ef4444;
+  flex: 0 0 auto;
+}
+
+.complete .actionIdentity > svg {
   color: #86efac;
 }
 
-.actionTitle {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-}
-
-.actionTitle h3 {
-  font-size: 1.05rem;
+.actionIdentity h3 {
+  font-size: 0.88rem;
   margin: 0;
   text-transform: uppercase;
 }
 
-.actionTitle span {
+.actionStatus {
   align-items: center;
   color: #a3a3a3;
   display: inline-flex;
@@ -228,34 +226,42 @@
   text-transform: uppercase;
 }
 
-.complete .actionTitle span {
+.complete .actionStatus {
   color: #86efac;
 }
 
-.momentumAction p {
-  color: #a3a3a3;
-  font-size: 0.83rem;
-  line-height: 1.55;
-  margin: 8px 0 0;
-  max-width: 29ch;
+.shareQuickAction {
+  color: #d4d4d4;
+  font-size: 0.68rem;
+  grid-column: 1 / -1;
+  margin-left: 30px;
 }
 
-.momentumAction > a,
-.summaryCard > a {
+.shareQuickAction summary {
   align-items: center;
-  color: #f5f5f5;
+  cursor: pointer;
   display: inline-flex;
-  font-size: 0.7rem;
   font-weight: 800;
   gap: 7px;
-  justify-self: start;
-  min-height: 42px;
+  list-style: none;
+  min-height: 28px;
   text-transform: uppercase;
+}
+
+.shareQuickAction summary::-webkit-details-marker {
+  display: none;
+}
+
+.shareQuickAction summary:hover,
+.shareQuickAction summary:focus-visible {
+  color: #ef4444;
 }
 
 .shareActionForm {
   display: grid;
   gap: 9px;
+  margin-top: 10px;
+  max-width: 310px;
 }
 
 .shareActionForm label {
@@ -289,7 +295,7 @@
 }
 
 .shareActionForm button,
-.shareComplete > span {
+.summaryCardFooter a {
   align-items: center;
   display: inline-flex;
   font-size: 0.7rem;
@@ -311,115 +317,57 @@
   color: #ef4444;
 }
 
-.shareComplete {
-  display: grid;
-  gap: 8px;
-}
-
-.shareComplete > span {
-  color: #86efac;
-}
-
-.shareComplete details {
-  color: #a3a3a3;
-  font-size: 0.68rem;
-}
-
 .shareComplete summary {
-  cursor: pointer;
-  font-weight: 800;
-  min-height: 34px;
-  text-transform: uppercase;
-}
-
-.shareComplete details[open] summary {
-  margin-bottom: 10px;
-}
-
-.momentumAction > a:hover,
-.summaryCard > a:hover {
-  color: #ef4444;
-}
-
-.momentumRule {
-  color: #737373;
-  font-size: 0.7rem;
-  line-height: 1.5;
-  margin: 18px 0 0;
-}
-
-.focusPanel {
-  align-items: start;
-  display: grid;
-  gap: 20px;
-  grid-template-columns: auto minmax(0, 1fr);
-  padding: clamp(22px, 3vw, 32px);
-}
-
-.focusPanel > svg {
-  color: #ef4444;
-  margin-top: 2px;
-}
-
-.focusPanel h2 {
-  font-size: clamp(1.35rem, 2.3vw, 2rem);
-  line-height: 1.08;
-  text-transform: uppercase;
-}
-
-.focusPanel > div > p:last-child {
   color: #a3a3a3;
-  line-height: 1.55;
-  margin: 12px 0 0;
-  max-width: 670px;
 }
 
 .contentOverview {
-  padding: clamp(24px, 3.8vw, 42px);
+  padding: clamp(22px, 2.8vw, 32px) 0 0;
 }
 
 .sectionHeading {
-  align-items: end;
-  display: flex;
-  gap: 24px;
-  justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
 }
 
 .sectionHeading h2 {
-  font-size: clamp(1.45rem, 2.6vw, 2.4rem);
-}
-
-.sectionHeading > p {
-  color: #737373;
-  font-size: 0.75rem;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-weight: 550;
   margin: 0;
 }
 
 .summaryGrid {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .summaryCard {
-  align-content: start;
-  display: grid;
-  gap: 16px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  padding: 24px;
+  min-height: 188px;
+  padding: 20px clamp(18px, 2vw, 28px);
 }
 
 .summaryCard + .summaryCard {
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.summaryCard > svg {
-  color: #ef4444;
+.summaryCardHeading,
+.summaryCardFooter {
+  align-items: center;
+  display: flex;
 }
 
-.summaryCard > div {
+.summaryCardHeading {
+  color: #ef4444;
+  gap: 8px;
+}
+
+.summaryCardBody {
+  flex: 1;
+  margin-top: 18px;
   min-width: 0;
 }
 
@@ -436,39 +384,8 @@
   margin-top: 7px;
 }
 
-.weeklyShareStatus {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: grid;
-  gap: 4px;
-  margin-top: 13px;
-  padding-top: 11px;
-}
-
-.weeklyShareStatus > span {
-  color: #737373;
-  font-size: 0.6rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.weeklyShareStatus strong {
-  align-items: center;
-  color: #d4d4d4;
-  display: flex;
-  font-size: 0.72rem;
-  gap: 6px;
-}
-
-.shareSummaryCard small {
-  color: #737373;
-  display: block;
-  font-size: 0.65rem;
-  line-height: 1.45;
-  margin-top: 10px;
-}
-
 .summaryCard p {
-  color: #737373;
+  color: currentColor;
   font-size: 0.63rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -481,12 +398,30 @@
   overflow-wrap: anywhere;
 }
 
-.summaryCard .status {
-  align-self: start;
+.summaryCardFooter {
+  justify-content: space-between;
+  margin-top: 16px;
+  min-height: 28px;
 }
 
-.summaryCard > a {
-  grid-column: 2 / -1;
+.summaryStatus {
+  color: #a3a3a3;
+  font-size: 0.63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.summaryStatusPositive {
+  color: #86efac;
+}
+
+.summaryCardFooter a {
+  color: #f5f5f5;
+  min-height: 28px;
+}
+
+.summaryCardFooter a:hover {
+  color: #ef4444;
 }
 
 .editorTopbar {
@@ -1271,22 +1206,57 @@
 }
 
 .followerTracker {
-  align-items: stretch;
-  background: rgba(23, 23, 23, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 8px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.65fr);
+  grid-template-columns: minmax(250px, 0.78fr) minmax(175px, 0.44fr) minmax(360px, 1.35fr);
   min-width: 0;
-  padding: clamp(22px, 3vw, 32px);
+  padding: 0 0 clamp(24px, 3vw, 34px);
+}
+
+.strategyFocus {
+  align-content: center;
+  display: grid;
+  min-width: 0;
+  padding-right: clamp(24px, 3.5vw, 48px);
+}
+
+.strategyFocus p,
+.strategyFocus h2,
+.strategyFocus span {
+  margin: 0;
+}
+
+.strategyFocus p {
+  color: #ef4444;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.strategyFocus h2 {
+  font-size: clamp(1.25rem, 2.1vw, 1.8rem);
+  font-weight: 550;
+  line-height: 1.08;
+  margin-top: 9px;
+  text-transform: uppercase;
+}
+
+.strategyFocus span {
+  color: #a3a3a3;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin-top: 11px;
+  max-width: 36ch;
 }
 
 .followerInputPanel {
   align-content: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
   min-width: 0;
-  padding-right: clamp(24px, 4vw, 52px);
+  padding: 2px clamp(22px, 3vw, 38px);
 }
 
 .followerLabel,
@@ -1318,12 +1288,12 @@
   border-radius: 0;
   color: #fff;
   font: inherit;
-  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  font-size: clamp(2.15rem, 3.6vw, 3.3rem);
   font-variant-numeric: tabular-nums;
   font-weight: 520;
   letter-spacing: 0;
   line-height: 1;
-  margin-top: 15px;
+  margin-top: 11px;
   max-width: 5.8ch;
   min-width: 0;
   outline: none;
@@ -1352,16 +1322,17 @@
 }
 
 .followerChartPanel {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
   min-width: 0;
-  padding-left: clamp(24px, 4vw, 52px);
+  padding-left: clamp(24px, 3.5vw, 46px);
 }
 
 .followerChartHeading {
   align-self: start;
   color: #ef4444;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .followerChart {
@@ -1369,7 +1340,7 @@
   display: grid;
   gap: 12px;
   grid-template-columns: auto minmax(0, 1fr);
-  min-height: 148px;
+  min-height: 116px;
   min-width: 0;
 }
 
@@ -1380,20 +1351,20 @@
   font-size: 0.62rem;
   font-variant-numeric: tabular-nums;
   justify-content: space-between;
-  padding: 5px 0 24px;
+  padding: 5px 0 20px;
   text-align: right;
 }
 
 .followerPlot {
   display: grid;
-  grid-template-rows: minmax(112px, 1fr) 22px;
+  grid-template-rows: minmax(86px, 1fr) 20px;
   min-width: 0;
 }
 
 .followerPlot svg {
   display: block;
   height: 100%;
-  min-height: 112px;
+  min-height: 86px;
   overflow: visible;
   width: 100%;
 }
@@ -1634,29 +1605,52 @@
     grid-template-columns: 1fr;
   }
 
+  .followerTracker {
+    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 0.55fr);
+  }
+
+  .followerChartPanel {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    grid-column: 1 / -1;
+    margin-top: 22px;
+    padding: 20px 0 0;
+  }
+
+  .momentumHeading {
+    gap: 24px;
+    grid-template-columns: minmax(180px, 1fr) minmax(170px, 1fr) auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .followerTracker,
   .momentumActions,
   .summaryGrid {
     grid-template-columns: 1fr;
   }
 
-  .momentumAction {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-rows: auto;
+  .strategyFocus {
+    padding: 0 0 20px;
+  }
+
+  .followerInputPanel,
+  .followerChartPanel {
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+    padding: 20px 0 0;
+  }
+
+  .followerChartPanel {
+    margin-top: 20px;
   }
 
   .momentumAction + .momentumAction,
   .summaryCard + .summaryCard {
     border-left: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .momentumAction > a {
-    align-self: center;
-  }
-
-  .momentumAction > .shareActionForm,
-  .momentumAction > .shareComplete {
-    align-self: center;
   }
 }
 
@@ -1666,64 +1660,40 @@
   }
 
   .dashboard {
-    gap: 12px;
-    padding-top: 28px;
+    padding-top: 24px;
   }
 
-  .momentumPanel,
-  .contentOverview {
-    padding: 20px;
+  .followerTracker {
+    padding-bottom: 22px;
   }
 
   .momentumHeading {
-    align-items: start;
-    flex-direction: column;
-    gap: 18px;
+    align-items: center;
+    gap: 12px 18px;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .momentumHeading h2 {
-    font-size: 1.75rem;
+  .momentumState {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 
   .streak {
-    width: 100%;
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .momentumAction {
-    gap: 12px;
-    grid-template-columns: auto minmax(0, 1fr);
-    padding: 19px 0;
-  }
-
-  .momentumAction > a {
-    grid-column: 2;
-    min-height: 38px;
-  }
-
-  .momentumAction > .shareActionForm,
-  .momentumAction > .shareComplete {
-    grid-column: 2;
-    width: 100%;
-  }
-
-  .actionTitle {
-    align-items: flex-start;
-  }
-
-  .focusPanel {
-    gap: 14px;
-    padding: 20px;
+    padding: 16px 0;
   }
 
   .sectionHeading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
+    margin-bottom: 12px;
   }
 
   .summaryCard {
-    gap: 12px;
-    padding: 19px 0;
+    min-height: 0;
+    padding: 18px 0;
   }
 
   .editorTopbar {
@@ -1837,23 +1807,8 @@
     width: 82px;
   }
 
-  .followerTracker {
-    grid-template-columns: 1fr;
-  }
-
-  .followerInputPanel {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-    border-right: 0;
-    padding: 0 0 22px;
-  }
-
-  .followerChartPanel {
-    min-height: 205px;
-    padding: 22px 0 0;
-  }
-
   .followerInput {
-    font-size: 3.35rem;
+    font-size: 2.75rem;
     max-width: 7ch;
   }
 }

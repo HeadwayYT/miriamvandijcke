@@ -80,10 +80,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
   return (
     <main className={styles.shell}>
       <header className={styles.header}>
-        <div>
-          <p className={styles.kicker}>Private instructor cockpit</p>
-          <h1>Miriam Studio</h1>
-        </div>
+        <h1>Miriam Studio</h1>
         <div className={styles.headerActions}>
           <Link href="/" className={styles.textLink}>
             <ArrowLeft aria-hidden="true" size={17} weight="bold" />

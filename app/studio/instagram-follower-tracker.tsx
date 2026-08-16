@@ -16,8 +16,14 @@ import styles from "./studio.module.css";
 type SaveState = "idle" | "invalid" | "saving" | "saved" | "error";
 
 export function InstagramFollowerTracker({
+  focusDescription,
+  focusLabel,
+  focusTitle,
   initialSnapshots,
 }: {
+  focusDescription: string;
+  focusLabel: string;
+  focusTitle: string;
   initialSnapshots: FollowerSnapshot[];
 }) {
   const language = useStudioLanguage();
@@ -65,11 +71,17 @@ export function InstagramFollowerTracker({
   }
 
   return (
-    <section className={styles.followerTracker} aria-labelledby="follower-tracker-title">
+    <section className={styles.followerTracker} aria-labelledby="strategy-overview-title">
+      <div className={styles.strategyFocus}>
+        <p>{focusLabel}</p>
+        <h2 id="strategy-overview-title">{focusTitle}</h2>
+        <span>{focusDescription}</span>
+      </div>
+
       <div className={styles.followerInputPanel}>
         <div className={styles.followerLabel}>
           <InstagramLogo aria-hidden="true" size={19} weight="bold" />
-          <label htmlFor="instagram-followers" id="follower-tracker-title">
+          <label htmlFor="instagram-followers">
             {copy.instagramFollowers}
           </label>
         </div>
