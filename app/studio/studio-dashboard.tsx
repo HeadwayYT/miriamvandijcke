@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import type { Language } from "@/app/translations";
 import { markShareCompleted } from "./actions";
 import type {
@@ -11,6 +10,12 @@ import type {
 } from "@/lib/studio/content";
 import type { MomentumAction, MomentumStatus } from "@/lib/studio/momentum";
 import {
+  followerDeltaForMonth,
+  formatGrowthMonth,
+  type GrowthSignal,
+} from "@/lib/studio/growth";
+import { useStudioLanguage } from "./studio-language";
+import {
   ArrowRight,
   Camera,
   CheckCircle,
@@ -19,11 +24,14 @@ import {
   ImageSquare,
   ShareNetwork,
   Target,
+  TrendUp,
 } from "./icons";
 import styles from "./studio.module.css";
 
 type StudioDashboardProps = {
   instagram: InstagramContent | null;
+  currentMonth: string;
+  growthSignals: GrowthSignal[];
   momentum: MomentumStatus;
   moments: MomentContent[];
   spotify: SpotifyContent | null;
@@ -69,15 +77,13 @@ const actionDetails: Array<{
 
 export function StudioDashboard({
   instagram,
+  currentMonth,
+  growthSignals,
   momentum,
   moments,
   spotify,
 }: StudioDashboardProps) {
-  const language = useSyncExternalStore<Language>(
-    subscribeToLanguage,
-    getLanguage,
-    getServerLanguage,
-  );
+  const language = useStudioLanguage();
   const text = studioCopy[language];
   const draftMoments = moments.filter((moment) => !moment.published).length;
 
@@ -191,6 +197,12 @@ export function StudioDashboard({
           />
         </div>
       </section>
+
+      <GrowthSignalsSummary
+        currentMonth={currentMonth}
+        language={language}
+        records={growthSignals}
+      />
     </div>
   );
 }
@@ -240,6 +252,14 @@ const studioCopy = {
     addLinkOptional: "Add link (optional)",
     shareLink: "Public share link",
     editShare: "View / edit share",
+    growthSignals: "Growth signals",
+    monthlyOutcomes: "A lightweight monthly view of following and professional opportunities.",
+    instagramFollowers: "Instagram followers",
+    invitations: "Invitations",
+    collaborations: "Collaborations",
+    updateMonth: "Update month",
+    addMonth: "Add this month",
+    versus: "vs",
   },
   nl: {
     keepMomentum: "Hou de vaart erin",
@@ -285,20 +305,67 @@ const studioCopy = {
     addLinkOptional: "Voeg link toe (optioneel)",
     shareLink: "Publieke link",
     editShare: "Bekijk / bewerk deelactie",
+    growthSignals: "Groeisignalen",
+    monthlyOutcomes: "Een beknopt maandoverzicht van volgers en professionele kansen.",
+    instagramFollowers: "Instagramvolgers",
+    invitations: "Uitnodigingen",
+    collaborations: "Samenwerkingen",
+    updateMonth: "Werk maand bij",
+    addMonth: "Voeg deze maand toe",
+    versus: "t.o.v.",
   },
 } satisfies Record<Language, Record<string, string>>;
 
-function subscribeToLanguage(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  return () => window.removeEventListener("storage", onStoreChange);
-}
+function GrowthSignalsSummary({
+  currentMonth,
+  language,
+  records,
+}: {
+  currentMonth: string;
+  language: Language;
+  records: GrowthSignal[];
+}) {
+  const text = studioCopy[language];
+  const current = records.find((record) => record.month === currentMonth) ?? null;
+  const delta = current ? followerDeltaForMonth(records, current.month) : null;
 
-function getLanguage(): Language {
-  return window.localStorage.getItem("miriam-language") === "nl" ? "nl" : "en";
-}
-
-function getServerLanguage(): Language {
-  return "en";
+  return (
+    <section className={styles.growthSignalsPanel} aria-labelledby="growth-signals-title">
+      <div className={styles.growthSignalsHeading}>
+        <TrendUp aria-hidden="true" size={22} weight="duotone" />
+        <div>
+          <p className={styles.eyebrow}>{text.growthSignals}</p>
+          <h2 id="growth-signals-title">{formatGrowthMonth(currentMonth, language)}</h2>
+          <p>{text.monthlyOutcomes}</p>
+        </div>
+        <Link href={`/studio?editor=growth&month=${currentMonth}#growth`}>
+          {current ? text.updateMonth : text.addMonth}
+          <ArrowRight aria-hidden="true" size={16} weight="bold" />
+        </Link>
+      </div>
+      {current ? (
+        <div className={styles.growthMetrics}>
+          <div>
+            <span>{text.instagramFollowers}</span>
+            <strong>{current.instagramFollowers}</strong>
+            {delta ? (
+              <small>
+                {delta.value >= 0 ? "+" : ""}{delta.value} {text.versus} {formatGrowthMonth(delta.previousMonth, language)}
+              </small>
+            ) : null}
+          </div>
+          <div>
+            <span>{text.invitations}</span>
+            <strong>{current.invitations}</strong>
+          </div>
+          <div>
+            <span>{text.collaborations}</span>
+            <strong>{current.collaborations}</strong>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
 }
 
 function SummaryCard({

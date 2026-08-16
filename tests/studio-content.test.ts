@@ -4,7 +4,10 @@ import {
   aboutCoverStoragePath,
   normalizeInstagramPostUrl,
   normalizeExternalUrl,
+  normalizeImageMediaUrl,
   normalizeMomentMediaUrl,
+  normalizeVideoMediaUrl,
+  momentMediaStoragePath,
   momentImageStoragePath,
   momentGridClassName,
   normalizeSpotifyPlaylistUrl,
@@ -14,6 +17,13 @@ import {
   type SiteContentRow,
   type MomentRow,
 } from "../lib/studio/content.ts";
+import {
+  followerDeltaForMonth,
+  formatGrowthMonth,
+  getBelgiumMonthKey,
+  rowsToGrowthSignals,
+  type GrowthSignal,
+} from "../lib/studio/growth.ts";
 import {
   calculateMomentumStatus,
   getIsoWeekKey,
@@ -151,11 +161,33 @@ test("accepts and normalizes Spotify playlist URLs only", () => {
 test("accepts only direct HTTPS media URLs for Moments", () => {
   assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/pride-ride.JPG?width=1200"), "https://cdn.example.com/pride-ride.JPG?width=1200");
   assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/ride.webm"), null);
+  assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/ride.mp4", "video"), "https://cdn.example.com/ride.mp4");
+  assert.equal(normalizeVideoMediaUrl("https://cdn.example.com/ride.webm?version=2"), "https://cdn.example.com/ride.webm?version=2");
+  assert.equal(normalizeVideoMediaUrl("https://cdn.example.com/ride.mov"), null);
+  assert.equal(normalizeImageMediaUrl("https://cdn.example.com/poster.webp"), "https://cdn.example.com/poster.webp");
   assert.equal(normalizeMomentMediaUrl("http://cdn.example.com/photo.jpg"), null);
   assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/photo.svg"), null);
   assert.equal(normalizeMomentMediaUrl("https://cdn.example.com/media"), null);
   assert.equal(normalizeExternalUrl("javascript:alert(1)"), null);
   assert.equal(normalizeExternalUrl("https://www.instagram.com/p/ABC/"), "https://www.instagram.com/p/ABC/");
+});
+
+test("recognizes photo and video media in the existing Moment storage bucket", () => {
+  const projectUrl = "https://project-ref.supabase.co";
+  assert.equal(
+    momentMediaStoragePath(
+      "https://project-ref.supabase.co/storage/v1/object/public/moment-images/user-id/clip.mp4",
+      projectUrl,
+    ),
+    "user-id/clip.mp4",
+  );
+  assert.equal(
+    momentMediaStoragePath(
+      "https://project-ref.supabase.co/storage/v1/object/public/moment-images/user-id/clip.mov",
+      projectUrl,
+    ),
+    null,
+  );
 });
 
 test("recognizes only Moment images stored in the configured Supabase bucket", () => {
@@ -207,7 +239,9 @@ test("maps valid Moments and drops malformed portfolio records", () => {
       event_date: "2026-08-05",
       location: "Pulsate Antwerp",
       caption: "A real ride from Antwerp Pride week.",
+      media_type: null,
       media_url: "https://cdn.example.com/pride.jpg",
+      poster_url: null,
       external_url: "https://www.instagram.com/p/ABC/",
       published: true,
     },
@@ -218,7 +252,9 @@ test("maps valid Moments and drops malformed portfolio records", () => {
       event_date: null,
       location: "Antwerp",
       caption: "Invalid type.",
+      media_type: "photo",
       media_url: "https://cdn.example.com/image.jpg",
+      poster_url: null,
       external_url: null,
       published: true,
     },
@@ -231,10 +267,72 @@ test("maps valid Moments and drops malformed portfolio records", () => {
     date: "2026-08-05",
     location: "Pulsate Antwerp",
     caption: "A real ride from Antwerp Pride week.",
+    mediaType: "photo",
     mediaUrl: "https://cdn.example.com/pride.jpg",
+    posterUrl: null,
     externalUrl: "https://www.instagram.com/p/ABC/",
     published: true,
   }]);
+});
+
+test("maps published-style video Moments with an optional image poster", () => {
+  const rows: MomentRow[] = [{
+    id: "33333333-3333-4333-8333-333333333333",
+    title: "Ride energy",
+    moment_type: "Special ride",
+    event_date: "2026-08-15",
+    location: "Pulsate Antwerp",
+    caption: "The room responding to a strong cue.",
+    media_type: "video",
+    media_url: "https://cdn.example.com/ride-energy.mp4",
+    poster_url: "https://cdn.example.com/ride-cover.webp",
+    external_url: null,
+    published: true,
+  }];
+
+  assert.deepEqual(rowsToMoments(rows), [{
+    id: "33333333-3333-4333-8333-333333333333",
+    title: "Ride energy",
+    type: "Special ride",
+    date: "2026-08-15",
+    location: "Pulsate Antwerp",
+    caption: "The room responding to a strong cue.",
+    mediaType: "video",
+    mediaUrl: "https://cdn.example.com/ride-energy.mp4",
+    posterUrl: "https://cdn.example.com/ride-cover.webp",
+    externalUrl: null,
+    published: true,
+  }]);
+});
+
+test("uses Belgium-local calendar months", () => {
+  assert.equal(getBelgiumMonthKey(new Date("2026-08-31T21:59:59Z")), "2026-08");
+  assert.equal(getBelgiumMonthKey(new Date("2026-08-31T22:00:00Z")), "2026-09");
+  assert.equal(formatGrowthMonth("2026-08", "en"), "August 2026");
+  assert.equal(formatGrowthMonth("2026-08", "nl"), "augustus 2026");
+});
+
+test("maps Growth Signals with zero outcomes and orders months newest first", () => {
+  const records = rowsToGrowthSignals([
+    { id: "1", month: "2026-07", instagram_followers: 799, invitations: 0, collaborations: 1, note: null },
+    { id: "2", month: "2026-08", instagram_followers: 842, invitations: 1, collaborations: 0, note: "First guest ride invitation." },
+  ]);
+
+  assert.deepEqual(records.map((record) => record.month), ["2026-08", "2026-07"]);
+  assert.equal(records[0].collaborations, 0);
+  assert.equal(records[0].note, "First guest ride invitation.");
+});
+
+test("calculates follower deltas without inventing first-month data", () => {
+  const records: GrowthSignal[] = [
+    { id: "1", month: "2026-06", instagramFollowers: 807, invitations: 0, collaborations: 0, note: null },
+    { id: "2", month: "2026-07", instagramFollowers: 799, invitations: 0, collaborations: 1, note: null },
+    { id: "3", month: "2026-08", instagramFollowers: 842, invitations: 1, collaborations: 0, note: null },
+  ];
+
+  assert.deepEqual(followerDeltaForMonth(records, "2026-08"), { value: 43, previousMonth: "2026-07" });
+  assert.deepEqual(followerDeltaForMonth(records, "2026-07"), { value: -8, previousMonth: "2026-06" });
+  assert.equal(followerDeltaForMonth(records, "2026-06"), null);
 });
 
 test("uses intentional Moment grids for low and balanced content counts", () => {

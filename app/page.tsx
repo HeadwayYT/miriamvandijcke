@@ -15,6 +15,7 @@ import {
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { siteConfig } from "@/lib/site-config";
 import { InstagramFeatureMedia } from "@/app/components/instagram-feature-media";
+import { MomentMedia } from "@/app/components/moment-media";
 import {
   emptyPublicSiteContent,
   momentGridClassName,
@@ -668,8 +669,12 @@ function Moments({
         {moments.map((moment) => (
           <article className="moment-card" key={moment.id}>
             <div className="moment-media motion-image">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={moment.mediaUrl} alt={moment.title} loading="lazy" decoding="async" />
+              <MomentMedia
+                mediaType={moment.mediaType}
+                mediaUrl={moment.mediaUrl}
+                posterUrl={moment.posterUrl}
+                title={moment.title}
+              />
             </div>
             <div className="moment-copy">
               <p className="moment-type">{t(moment.type)}</p>

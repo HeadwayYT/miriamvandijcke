@@ -29,6 +29,9 @@ export const momentTypes = [
 export const momentImagesBucket = "moment-images";
 export const aboutImagesBucket = "about-images";
 
+export const momentMediaTypes = ["photo", "video"] as const;
+export type MomentMediaType = (typeof momentMediaTypes)[number];
+
 export type MomentType = (typeof momentTypes)[number];
 export type MomentContent = {
   id: string;
@@ -37,7 +40,9 @@ export type MomentContent = {
   date: string | null;
   location: string;
   caption: string;
+  mediaType: MomentMediaType;
   mediaUrl: string;
+  posterUrl: string | null;
   externalUrl: string | null;
   published: boolean;
 };
@@ -67,7 +72,9 @@ export type MomentRow = {
   event_date: string | null;
   location: string;
   caption: string;
+  media_type?: string | null;
   media_url: string;
+  poster_url?: string | null;
   external_url: string | null;
   published: boolean;
 };
@@ -124,7 +131,14 @@ export function normalizeExternalUrl(value: string): string | null {
 
 export function normalizeMomentMediaUrl(
   value: string,
+  mediaType: MomentMediaType = "photo",
 ): string | null {
+  return mediaType === "video"
+    ? normalizeVideoMediaUrl(value)
+    : normalizeImageMediaUrl(value);
+}
+
+export function normalizeImageMediaUrl(value: string): string | null {
   const url = parseHttpsUrl(value);
   if (!url || url.username || url.password) return null;
 
@@ -135,12 +149,33 @@ export function normalizeMomentMediaUrl(
   return null;
 }
 
+export function normalizeVideoMediaUrl(value: string): string | null {
+  const url = parseHttpsUrl(value);
+  if (!url || url.username || url.password) return null;
+
+  const extension = url.pathname.split(".").pop()?.toLowerCase();
+  return ["mp4", "webm"].includes(extension ?? "") ? url.toString() : null;
+}
+
+export function isMomentMediaType(value: string): value is MomentMediaType {
+  return momentMediaTypes.includes(value as MomentMediaType);
+}
+
 export function momentImageStoragePath(value: string, supabaseUrl: string): string | null {
-  return storageImagePath(value, supabaseUrl, momentImagesBucket);
+  return storageMediaPath(value, supabaseUrl, momentImagesBucket, normalizeImageMediaUrl);
+}
+
+export function momentMediaStoragePath(value: string, supabaseUrl: string): string | null {
+  return storageMediaPath(
+    value,
+    supabaseUrl,
+    momentImagesBucket,
+    (candidate) => normalizeImageMediaUrl(candidate) ?? normalizeVideoMediaUrl(candidate),
+  );
 }
 
 export function aboutCoverStoragePath(value: string, supabaseUrl: string): string | null {
-  return storageImagePath(value, supabaseUrl, aboutImagesBucket);
+  return storageMediaPath(value, supabaseUrl, aboutImagesBucket, normalizeImageMediaUrl);
 }
 
 export function isMomentType(value: string): value is MomentType {
@@ -156,7 +191,12 @@ export function momentGridClassName(count: number): string {
 
 export function rowsToMoments(rows: MomentRow[]): MomentContent[] {
   return rows.flatMap((row) => {
-    const media = normalizeMomentMediaUrl(row.media_url);
+    const storedMediaType = row.media_type ?? "photo";
+    const mediaType: MomentMediaType = isMomentMediaType(storedMediaType)
+      ? storedMediaType
+      : "photo";
+    const media = normalizeMomentMediaUrl(row.media_url, mediaType);
+    const posterUrl = row.poster_url ? normalizeImageMediaUrl(row.poster_url) : null;
     const externalUrl = row.external_url ? normalizeExternalUrl(row.external_url) : null;
     if (
       !row.id ||
@@ -165,6 +205,7 @@ export function rowsToMoments(rows: MomentRow[]): MomentContent[] {
       !row.location ||
       !row.caption ||
       !media ||
+      (row.poster_url && !posterUrl) ||
       (row.external_url && !externalUrl)
     ) {
       return [];
@@ -177,7 +218,9 @@ export function rowsToMoments(rows: MomentRow[]): MomentContent[] {
       date: row.event_date,
       location: row.location,
       caption: row.caption,
+      mediaType,
       mediaUrl: media,
+      posterUrl: mediaType === "video" ? posterUrl : null,
       externalUrl,
       published: row.published,
     }];
@@ -211,7 +254,7 @@ export function rowsToSiteContent(rows: SiteContentRow[]): PublicSiteContent {
     }
 
     if (row.content_key === "instagram" && normalizedUrl) {
-      const coverUrl = row.cover_url ? normalizeMomentMediaUrl(row.cover_url) : null;
+      const coverUrl = row.cover_url ? normalizeImageMediaUrl(row.cover_url) : null;
       result.instagram = {
         postUrl: normalizedUrl,
         label: row.label,
@@ -237,12 +280,13 @@ function parseHttpsUrl(value: string): URL | null {
   }
 }
 
-function storageImagePath(
+function storageMediaPath(
   value: string,
   supabaseUrl: string,
   bucket: string,
+  normalize: (value: string) => string | null,
 ): string | null {
-  const mediaUrl = normalizeMomentMediaUrl(value);
+  const mediaUrl = normalize(value);
   const projectUrl = parseHttpsUrl(supabaseUrl);
   if (!mediaUrl || !projectUrl) return null;
 

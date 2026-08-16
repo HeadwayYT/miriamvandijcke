@@ -28,6 +28,7 @@ type StudioImageUploadProps = {
   onBusyChange: (busy: boolean) => void;
   onChange: (url: string) => void;
   optional?: boolean;
+  label?: string;
 };
 
 type UploadState = "idle" | "processing" | "uploading" | "ready" | "error";
@@ -40,6 +41,7 @@ export function StudioImageUpload({
   onBusyChange,
   onChange,
   optional = false,
+  label = "Photo",
 }: StudioImageUploadProps) {
   const inputId = useId();
   const [uploadState, setUploadState] = useState<UploadState>(value ? "ready" : "idle");
@@ -100,7 +102,7 @@ export function StudioImageUpload({
 
   return (
     <div className={styles.imageUploadField}>
-      <p>Photo {optional ? <span>optional</span> : null}</p>
+      <p>{label} {optional ? <span>optional</span> : null}</p>
       <div className={styles.imageUploadPanel}>
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element

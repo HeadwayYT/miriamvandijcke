@@ -13,16 +13,23 @@ import {
 } from "./icons";
 import { getMissingStudioEnvironment, getSupabaseRuntimeConfig } from "@/lib/supabase/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { getAdminSiteContent, getStudioMomentum, isStudioAdmin } from "@/lib/studio/data";
+import {
+  getAdminSiteContent,
+  getGrowthSignals,
+  getStudioMomentum,
+  isStudioAdmin,
+} from "@/lib/studio/data";
+import { getBelgiumMonthKey, isGrowthMonthKey } from "@/lib/studio/growth";
 import {
   toSpotifyEmbedUrl,
-  type MomentContent,
   type SpotifyContent,
 } from "@/lib/studio/content";
 import { MomentForm } from "./moment-form";
 import { InstagramForm } from "./instagram-form";
 import { StudioDashboard } from "./studio-dashboard";
 import { ShareDetailAction } from "./share-detail-action";
+import { GrowthSignalsEditor } from "./growth-signals";
+import { SavedMomentSummary } from "./saved-moment-summary";
 import {
   saveSpotifyContent,
   deleteMoment,
@@ -58,9 +65,10 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     return <AccessDenied />;
   }
 
-  const [content, momentum] = await Promise.all([
+  const [content, momentum, growthSignals] = await Promise.all([
     getAdminSiteContent(supabase!),
     getStudioMomentum(supabase!),
+    getGrowthSignals(supabase!),
   ]);
   const spotify = content.spotify;
   const instagram = content.instagram;
@@ -70,6 +78,9 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     ? moments.find((moment) => moment.id === selectedMomentId) ?? null
     : null;
   const storageConfig = { url: config.url, publishableKey: config.publishableKey };
+  const currentMonth = getBelgiumMonthKey();
+  const requestedMonth = typeof params.month === "string" ? params.month : "";
+  const selectedGrowthMonth = isGrowthMonthKey(requestedMonth) ? requestedMonth : currentMonth;
 
   return (
     <main className={styles.shell}>
@@ -95,6 +106,8 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
 
       {!editor ? (
         <StudioDashboard
+          currentMonth={currentMonth}
+          growthSignals={growthSignals}
           instagram={instagram}
           momentum={momentum}
           moments={moments}
@@ -106,7 +119,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
             <ArrowLeft aria-hidden="true" size={17} weight="bold" />
             Studio home
           </Link>
-          <p>{editor === "spotify" ? "Connect" : editor === "instagram" ? "Share" : "Capture"}</p>
+          <p>{editor === "spotify" ? "Connect" : editor === "instagram" ? "Share" : editor === "growth" ? "Growth signals" : "Capture"}</p>
         </div>
       )}
 
@@ -274,7 +287,7 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
             {moments.length ? (
               <div className={styles.savedMomentList}>
                 {moments.map((moment) => (
-                  <MomentSummary key={moment.id} moment={moment} selected={moment.id === selectedMoment?.id} />
+                  <SavedMomentSummary key={moment.id} moment={moment} selected={moment.id === selectedMoment?.id} />
                 ))}
               </div>
             ) : (
@@ -283,33 +296,15 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
           </section>
         </div>
       ) : null}
-    </main>
-  );
-}
 
-function MomentSummary({
-  moment,
-  selected,
-}: {
-  moment: MomentContent;
-  selected: boolean;
-}) {
-  return (
-    <article className={`${styles.savedMomentRow} ${selected ? styles.selectedMoment : ""}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={moment.mediaUrl} alt="" loading="lazy" />
-      <div className={styles.savedMomentContent}>
-        <p>{moment.type}</p>
-        <h3>{moment.title}</h3>
-        <span>{[moment.date, moment.location].filter(Boolean).join(" · ")}</span>
-        <small>{moment.caption}</small>
-      </div>
-      <Status published={moment.published} />
-      <Link href={`/studio?editor=moments&moment=${moment.id}#moment-work`}>
-        Edit
-        <ArrowRight aria-hidden="true" size={16} weight="bold" />
-      </Link>
-    </article>
+      {editor === "growth" ? (
+        <GrowthSignalsEditor
+          currentMonth={currentMonth}
+          records={growthSignals}
+          selectedMonth={selectedGrowthMonth}
+        />
+      ) : null}
+    </main>
   );
 }
 
@@ -436,6 +431,7 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
     "spotify-validation": "Use a valid Spotify playlist URL and complete the required fields.",
     "instagram-validation": "Use a valid public Instagram post or Reel URL.",
     "moment-validation": "Complete the Moment fields with valid HTTPS links.",
+    "growth-validation": "Enter a valid month and non-negative whole numbers.",
     "share-validation": "Use a valid HTTPS link or leave the optional link empty.",
     save: "The content could not be saved. Please try again.",
   };
@@ -446,13 +442,14 @@ function getMessage(params: Record<string, string | string[] | undefined>) {
   if (success === "moment") return { kind: "success" as const, text: "Moment saved." };
   if (success === "moment-deleted") return { kind: "success" as const, text: "Moment deleted." };
   if (success === "share") return { kind: "success" as const, text: "This week's Share is recorded." };
+  if (success === "growth") return { kind: "success" as const, text: "Monthly Growth Signals saved." };
   return null;
 }
 
-type StudioEditor = "spotify" | "instagram" | "moments";
+type StudioEditor = "spotify" | "instagram" | "moments" | "growth";
 
 function getEditor(value: string | string[] | undefined): StudioEditor | null {
-  return value === "spotify" || value === "instagram" || value === "moments"
+  return value === "spotify" || value === "instagram" || value === "moments" || value === "growth"
     ? value
     : null;
 }

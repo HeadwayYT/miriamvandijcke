@@ -84,12 +84,57 @@ create table if not exists public.site_moments (
   event_date date,
   location text not null check (char_length(location) between 1 and 100),
   caption text not null check (char_length(caption) between 1 and 240),
-  media_url text not null check (media_url ~* '^https://[^[:space:]]+\.(jpg|jpeg|png|webp|avif)(\?[^[:space:]]*)?$'),
+  media_type text not null default 'photo',
+  media_url text not null,
+  poster_url text,
   external_url text check (external_url is null or external_url ~ '^https://[^[:space:]]+$'),
   published boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   updated_by uuid not null references auth.users(id)
+);
+
+alter table public.site_moments
+add column if not exists media_type text not null default 'photo';
+
+alter table public.site_moments
+add column if not exists poster_url text;
+
+update public.site_moments
+set media_type = 'photo'
+where media_type is null;
+
+alter table public.site_moments
+drop constraint if exists site_moments_media_type_check;
+
+alter table public.site_moments
+add constraint site_moments_media_type_check check (
+  media_type in ('photo', 'video')
+);
+
+alter table public.site_moments
+drop constraint if exists site_moments_media_url_check;
+
+alter table public.site_moments
+add constraint site_moments_media_url_check check (
+  (
+    media_type = 'photo'
+    and media_url ~* '^https://[^[:space:]]+\.(jpg|jpeg|png|webp|avif)(\?[^[:space:]]*)?$'
+  )
+  or
+  (
+    media_type = 'video'
+    and media_url ~* '^https://[^[:space:]]+\.(mp4|webm)(\?[^[:space:]]*)?$'
+  )
+);
+
+alter table public.site_moments
+drop constraint if exists site_moments_poster_url_check;
+
+alter table public.site_moments
+add constraint site_moments_poster_url_check check (
+  poster_url is null
+  or poster_url ~* '^https://[^[:space:]]+\.(jpg|jpeg|png|webp|avif)(\?[^[:space:]]*)?$'
 );
 
 alter table public.site_content
@@ -176,13 +221,14 @@ with check (
 );
 
 -- Public delivery with authenticated, admin-only uploads from Miriam Studio.
+-- The existing bucket name is retained so current Moment image URLs remain valid.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'moment-images',
   'moment-images',
   true,
-  6291456,
-  array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+  26214400,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'video/mp4', 'video/webm']
 )
 on conflict (id) do update set
   public = excluded.public,
@@ -252,7 +298,8 @@ to authenticated
 using (coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false));
 
 drop policy if exists "studio admin can upload moment images" on storage.objects;
-create policy "studio admin can upload moment images"
+drop policy if exists "studio admin can upload moment media" on storage.objects;
+create policy "studio admin can upload moment media"
 on storage.objects
 for insert
 to authenticated
@@ -263,7 +310,8 @@ with check (
 );
 
 drop policy if exists "studio admin can inspect moment images" on storage.objects;
-create policy "studio admin can inspect moment images"
+drop policy if exists "studio admin can inspect moment media" on storage.objects;
+create policy "studio admin can inspect moment media"
 on storage.objects
 for select
 to authenticated
@@ -274,7 +322,8 @@ using (
 );
 
 drop policy if exists "studio admin can delete moment images" on storage.objects;
-create policy "studio admin can delete moment images"
+drop policy if exists "studio admin can delete moment media" on storage.objects;
+create policy "studio admin can delete moment media"
 on storage.objects
 for delete
 to authenticated
@@ -304,6 +353,74 @@ using (
   bucket_id = 'about-images'
   and owner_id = (select auth.uid()::text)
   and coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+);
+
+-- Private monthly outcome snapshots. These never participate in weekly Momentum.
+create table if not exists public.growth_signals (
+  id uuid primary key default gen_random_uuid(),
+  month text not null unique check (month ~ '^[0-9]{4}-(0[1-9]|1[0-2])$'),
+  instagram_followers integer not null check (instagram_followers >= 0),
+  invitations integer not null default 0 check (invitations >= 0),
+  collaborations integer not null default 0 check (collaborations >= 0),
+  note text check (note is null or char_length(note) <= 160),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  updated_by uuid not null references auth.users(id)
+);
+
+alter table public.growth_signals enable row level security;
+
+create index if not exists growth_signals_month_idx
+on public.growth_signals (month desc);
+
+create index if not exists growth_signals_updated_by_idx
+on public.growth_signals (updated_by);
+
+revoke all on table public.growth_signals from anon, authenticated;
+grant select, insert, update, delete on table public.growth_signals to authenticated;
+
+drop policy if exists "studio admin can inspect growth signals" on public.growth_signals;
+create policy "studio admin can inspect growth signals"
+on public.growth_signals
+for select
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can insert growth signals" on public.growth_signals;
+create policy "studio admin can insert growth signals"
+on public.growth_signals
+for insert
+to authenticated
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can update growth signals" on public.growth_signals;
+create policy "studio admin can update growth signals"
+on public.growth_signals
+for update
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+)
+with check (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
+);
+
+drop policy if exists "studio admin can delete growth signals" on public.growth_signals;
+create policy "studio admin can delete growth signals"
+on public.growth_signals
+for delete
+to authenticated
+using (
+  coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'studio_admin')::boolean, false)
+  and updated_by = (select auth.uid())
 );
 
 drop policy if exists "studio admin can delete about images" on storage.objects;

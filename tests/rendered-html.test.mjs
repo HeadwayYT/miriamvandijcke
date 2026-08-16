@@ -112,7 +112,7 @@ test("produces a static root route with resolvable Vercel assets", async () => {
 
   const source = [
     await readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    await readFile(new URL("../app/public-site.css", import.meta.url), "utf8"),
+    await readFile(new URL("../app/public-media.css", import.meta.url), "utf8"),
     await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ].join("\n");
   const publicAssets = new Set(
@@ -150,14 +150,34 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     new URL("../app/studio/studio-image-upload.tsx", import.meta.url),
     "utf8",
   );
+  const videoUploadSource = await readFile(
+    new URL("../app/studio/studio-video-upload.tsx", import.meta.url),
+    "utf8",
+  );
+  const momentMediaSource = await readFile(
+    new URL("../app/components/moment-media.tsx", import.meta.url),
+    "utf8",
+  );
+  const savedMomentSource = await readFile(
+    new URL("../app/studio/saved-moment-summary.tsx", import.meta.url),
+    "utf8",
+  );
+  const growthEditorSource = await readFile(
+    new URL("../app/studio/growth-signals.tsx", import.meta.url),
+    "utf8",
+  );
   const instagramFormSource = await readFile(
     new URL("../app/studio/instagram-form.tsx", import.meta.url),
     "utf8",
   );
-  const cssSource = await readFile(new URL("../app/public-site.css", import.meta.url), "utf8");
+  const cssSource = await readFile(new URL("../app/public-media.css", import.meta.url), "utf8");
   const dataSource = await readFile(new URL("../lib/studio/data.ts", import.meta.url), "utf8");
   const actionSource = await readFile(
     new URL("../app/studio/actions.ts", import.meta.url),
+    "utf8",
+  );
+  const apiSource = await readFile(
+    new URL("../app/api/site-content/route.ts", import.meta.url),
     "utf8",
   );
   const policies = await readFile(
@@ -207,8 +227,8 @@ test("keeps Miriam Studio private and fail-closed", async () => {
       < studioSource.indexOf("Saved Moments"),
     "Capture must show the Moment work area before saved moments",
   );
-  assert.match(studioSource, /function MomentSummary/);
-  assert.match(studioSource, /editor=moments&moment=\$\{moment\.id\}/);
+  assert.match(studioSource, /<SavedMomentSummary/);
+  assert.match(savedMomentSource, /editor=moments&moment=\$\{moment\.id\}/);
   assert.doesNotMatch(studioSource, /<MomentForm moment=\{moment\}/);
   assert.match(dashboardSource, /Keep the momentum/);
   assert.match(dashboardSource, /Current focus/);
@@ -225,11 +245,36 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(dashboardSource, /editor=moments/);
   assert.match(dashboardSource, /editor=instagram/);
   assert.match(dashboardSource, /editor=spotify/);
+  assert.match(dashboardSource, /GrowthSignalsSummary/);
+  assert.match(
+    dashboardSource,
+    /className=\{styles\.contentOverview\}[\s\S]*?<GrowthSignalsSummary/,
+    "Growth Signals must remain below the core Studio workflow",
+  );
   assert.match(momentFormSource, /StudioImageUpload/);
+  assert.match(momentFormSource, /StudioVideoUpload/);
+  assert.match(momentFormSource, /mediaType/);
+  assert.match(momentFormSource, /posterUrl/);
   assert.match(imageUploadSource, /createBrowserClient/);
   assert.match(imageUploadSource, /\.storage[\s\S]*?\.upload\(/);
   assert.match(imageUploadSource, /accept=\{acceptedImageTypes\.join/);
   assert.match(imageUploadSource, /maxStudioImageDimension = 2000/);
+  assert.match(videoUploadSource, /video\/mp4/);
+  assert.match(videoUploadSource, /video\/webm/);
+  assert.match(videoUploadSource, /maxStudioVideoSize = 25 \* 1024 \* 1024/);
+  assert.match(videoUploadSource, /controls/);
+  assert.match(videoUploadSource, /muted/);
+  assert.match(savedMomentSource, /moment\.posterUrl/);
+  assert.doesNotMatch(savedMomentSource, /<video/);
+  assert.match(momentMediaSource, /IntersectionObserver/);
+  assert.match(momentMediaSource, /prefers-reduced-motion/);
+  assert.match(momentMediaSource, /video\.pause\(\)/);
+  assert.match(momentMediaSource, /autoPlay=\{nearViewport && !reducedMotion\}/);
+  assert.match(momentMediaSource, /muted/);
+  assert.match(momentMediaSource, /loop/);
+  assert.match(momentMediaSource, /playsInline/);
+  assert.match(momentMediaSource, /controls=\{false\}/);
+  assert.match(momentMediaSource, /disablePictureInPicture/);
   assert.match(instagramFormSource, /aboutImagesBucket/);
   assert.match(instagramFormSource, /previousCoverUrl/);
   assert.match(instagramSource, /coverUrl/);
@@ -248,6 +293,21 @@ test("keeps Miriam Studio private and fail-closed", async () => {
     /recordStudioActivity\(supabase, userId, "share", "instagram"/,
   );
   assert.match(actionSource, /ignoreDuplicates:\s*true/);
+  assert.match(actionSource, /saveGrowthSignal/);
+  assert.match(actionSource, /from\("growth_signals"\)\.upsert/);
+  assert.match(actionSource, /onConflict:\s*"month"/);
+  assert.match(growthEditorSource, /type="month"/);
+  assert.match(growthEditorSource, /min="0"/);
+  assert.match(growthEditorSource, /Monthly snapshots/);
+  const growthAction = actionSource.match(
+    /export async function saveGrowthSignal[\s\S]*?(?=export async function|async function requireStudioAdmin)/,
+  )?.[0] ?? "";
+  assert.doesNotMatch(growthAction, /recordStudioActivity|Momentum|streak/i);
+  assert.match(
+    actionSource,
+    /saveMoment[\s\S]*?shouldCapture[\s\S]*?recordStudioActivity\(supabase, userId, "capture"/,
+  );
+  assert.doesNotMatch(apiSource, /growth_signals|instagram_followers/);
   assert.doesNotMatch(actionSource, /localStorage|service[_-]?role/i);
   assert.match(policies, /enable row level security/i);
   assert.match(policies, /site_moments[\s\S]*?enable row level security/i);
@@ -257,8 +317,20 @@ test("keeps Miriam Studio private and fail-closed", async () => {
   assert.match(policies, /studio admin can update momentum activity/i);
   assert.match(policies, /revoke all on table public\.studio_activity from anon, authenticated/i);
   assert.match(policies, /moment-images[\s\S]*?storage\.objects/i);
-  assert.match(policies, /studio admin can upload moment images/i);
+  assert.match(policies, /studio admin can upload moment media/i);
+  assert.match(policies, /video\/mp4/i);
+  assert.match(policies, /video\/webm/i);
+  assert.match(policies, /media_type[\s\S]*?poster_url/i);
   assert.match(policies, /about-images[\s\S]*?storage\.objects/i);
   assert.match(policies, /studio admin can upload about images/i);
   assert.match(policies, /app_metadata[\s\S]*?studio_admin/i);
+  assert.match(policies, /growth_signals[\s\S]*?enable row level security/i);
+  assert.match(policies, /unique check \(month/i);
+  assert.match(policies, /revoke all on table public\.growth_signals from anon, authenticated/i);
+  assert.doesNotMatch(
+    policies,
+    /grant select on table public\.growth_signals to anon/i,
+  );
+  assert.match(policies, /studio admin can inspect growth signals/i);
+  assert.match(policies, /studio admin can update growth signals/i);
 });

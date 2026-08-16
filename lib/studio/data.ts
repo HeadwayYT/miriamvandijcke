@@ -10,6 +10,11 @@ import {
   type SiteContentRow,
 } from "./content";
 import {
+  rowsToGrowthSignals,
+  type GrowthSignal,
+  type GrowthSignalRow,
+} from "./growth";
+import {
   calculateMomentumStatus,
   getIsoWeekKey,
   isTrustedMomentumSource,
@@ -22,7 +27,9 @@ import {
 const siteContentColumns =
   "content_key,title,class_name,event_date,focus,url,label,published";
 const momentColumns =
-  "id,title,moment_type,event_date,location,caption,media_url,external_url,published";
+  "id,title,moment_type,event_date,location,caption,media_type,media_url,poster_url,external_url,published";
+const growthSignalColumns =
+  "id,month,instagram_followers,invitations,collaborations,note";
 
 export function isStudioAdmin(user: User): boolean {
   const config = getSupabaseRuntimeConfig();
@@ -37,7 +44,7 @@ export async function getPublicSiteContent(): Promise<PublicSiteContent> {
   const supabase = createPublicSupabaseClient();
   if (!supabase) return emptyPublicSiteContent;
 
-  const [siteResult, coverResult, momentResult] = await Promise.all([
+  const [siteResult, coverResult, momentRows] = await Promise.all([
     supabase.from("site_content").select(siteContentColumns).eq("published", true),
     supabase
       .from("site_content")
@@ -45,12 +52,7 @@ export async function getPublicSiteContent(): Promise<PublicSiteContent> {
       .eq("content_key", "instagram")
       .eq("published", true)
       .maybeSingle(),
-    supabase
-      .from("site_moments")
-      .select(momentColumns)
-      .eq("published", true)
-      .order("event_date", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false }),
+    getPublicMomentRows(supabase),
   ]);
 
   const siteRows = withInstagramCover(
@@ -60,27 +62,21 @@ export async function getPublicSiteContent(): Promise<PublicSiteContent> {
   const content = siteResult.error || !siteResult.data
     ? { ...emptyPublicSiteContent }
     : rowsToSiteContent(siteRows);
-  content.moments = momentResult.error || !momentResult.data
-    ? []
-    : rowsToMoments(momentResult.data as MomentRow[]);
+  content.moments = rowsToMoments(momentRows);
   return content;
 }
 
 export async function getAdminSiteContent(
   supabase: SupabaseClient,
 ): Promise<PublicSiteContent> {
-  const [siteResult, coverResult, momentResult] = await Promise.all([
+  const [siteResult, coverResult, momentRows] = await Promise.all([
     supabase.from("site_content").select(siteContentColumns),
     supabase
       .from("site_content")
       .select("cover_url")
       .eq("content_key", "instagram")
       .maybeSingle(),
-    supabase
-      .from("site_moments")
-      .select(momentColumns)
-      .order("event_date", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false }),
+    getAdminMomentRows(supabase),
   ]);
 
   const siteRows = withInstagramCover(
@@ -90,10 +86,22 @@ export async function getAdminSiteContent(
   const content = siteResult.error || !siteResult.data
     ? { ...emptyPublicSiteContent }
     : rowsToSiteContent(siteRows);
-  content.moments = momentResult.error || !momentResult.data
-    ? []
-    : rowsToMoments(momentResult.data as MomentRow[]);
+  content.moments = rowsToMoments(momentRows);
   return content;
+}
+
+export async function getGrowthSignals(
+  supabase: SupabaseClient,
+): Promise<GrowthSignal[]> {
+  const result = await supabase
+    .from("growth_signals")
+    .select(growthSignalColumns)
+    .order("month", { ascending: false })
+    .limit(60);
+
+  return result.error || !result.data
+    ? []
+    : rowsToGrowthSignals(result.data as GrowthSignalRow[]);
 }
 
 export async function getStudioMomentum(
@@ -165,6 +173,49 @@ function withInstagramCover(
       ? { ...row, cover_url: coverUrl ?? null }
       : row
   ));
+}
+
+async function getPublicMomentRows(supabase: SupabaseClient): Promise<MomentRow[]> {
+  const result = await supabase
+    .from("site_moments")
+    .select(momentColumns)
+    .eq("published", true)
+    .order("event_date", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
+  if (!result.error) return (result.data ?? []) as MomentRow[];
+  if (!isMissingMomentMediaColumn(result.error)) return [];
+
+  const legacy = await supabase
+    .from("site_moments")
+    .select("id,title,moment_type,event_date,location,caption,media_url,external_url,published")
+    .eq("published", true)
+    .order("event_date", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
+  return legacy.error ? [] : (legacy.data ?? []) as MomentRow[];
+}
+
+async function getAdminMomentRows(supabase: SupabaseClient): Promise<MomentRow[]> {
+  const result = await supabase
+    .from("site_moments")
+    .select(momentColumns)
+    .order("event_date", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
+  if (!result.error) return (result.data ?? []) as MomentRow[];
+  if (!isMissingMomentMediaColumn(result.error)) return [];
+
+  const legacy = await supabase
+    .from("site_moments")
+    .select("id,title,moment_type,event_date,location,caption,media_url,external_url,published")
+    .order("event_date", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
+  return legacy.error ? [] : (legacy.data ?? []) as MomentRow[];
+}
+
+function isMissingMomentMediaColumn(error: { code?: string; message?: string }): boolean {
+  return (
+    ["42703", "PGRST204"].includes(error.code ?? "")
+    || /media_type|poster_url/i.test(error.message ?? "")
+  );
 }
 
 function weekKeyFromTimestamp(value: unknown): string | null {

@@ -17,7 +17,9 @@ export {
   SpotifyLogo,
   SpinnerGap,
   Target,
+  TrendUp,
   Trash,
   UploadSimple,
+  VideoCamera,
   WarningCircle,
 } from "@phosphor-icons/react";

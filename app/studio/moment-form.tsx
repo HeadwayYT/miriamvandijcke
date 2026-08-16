@@ -3,8 +3,15 @@
 import { useState } from "react";
 import { FloppyDisk } from "./icons";
 import { saveMoment } from "./actions";
-import { momentImagesBucket, momentTypes, type MomentContent } from "@/lib/studio/content";
+import {
+  momentImagesBucket,
+  momentTypes,
+  type MomentContent,
+  type MomentMediaType,
+} from "@/lib/studio/content";
 import { StudioImageUpload } from "./studio-image-upload";
+import { StudioVideoUpload } from "./studio-video-upload";
+import { useStudioLanguage } from "./studio-language";
 import styles from "./studio.module.css";
 
 type MomentFormProps = {
@@ -16,14 +23,46 @@ type MomentFormProps = {
 };
 
 export function MomentForm({ moment, storageConfig }: MomentFormProps) {
+  const language = useStudioLanguage();
+  const copy = momentFormCopy[language];
+  const [mediaType, setMediaType] = useState<MomentMediaType>(moment?.mediaType ?? "photo");
   const [mediaUrl, setMediaUrl] = useState(moment?.mediaUrl ?? "");
+  const [posterUrl, setPosterUrl] = useState(moment?.posterUrl ?? "");
   const [uploadBusy, setUploadBusy] = useState(false);
+
+  function chooseMediaType(nextType: MomentMediaType) {
+    if (nextType === mediaType) return;
+    setMediaType(nextType);
+    setMediaUrl("");
+    setPosterUrl("");
+  }
 
   return (
     <form action={saveMoment} className={styles.form}>
       {moment ? <input type="hidden" name="id" value={moment.id} /> : null}
+      <input type="hidden" name="mediaType" value={mediaType} />
       <input type="hidden" name="mediaUrl" value={mediaUrl} />
+      <input type="hidden" name="posterUrl" value={posterUrl} />
+      <input type="hidden" name="previousMediaType" value={moment?.mediaType ?? "photo"} />
       <input type="hidden" name="previousMediaUrl" value={moment?.mediaUrl ?? ""} />
+      <input type="hidden" name="previousPosterUrl" value={moment?.posterUrl ?? ""} />
+      <fieldset className={styles.mediaTypeField}>
+        <legend>{copy.mediaType}</legend>
+        <div className={styles.segmentedControl}>
+          {(["photo", "video"] as const).map((type) => (
+            <label key={type}>
+              <input
+                type="radio"
+                name="mediaTypeChoice"
+                value={type}
+                checked={mediaType === type}
+                onChange={() => chooseMediaType(type)}
+              />
+              <span>{type === "photo" ? copy.photo : copy.video}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <div className={styles.formRow}>
         <label>
           Title
@@ -51,14 +90,39 @@ export function MomentForm({ moment, storageConfig }: MomentFormProps) {
         <textarea name="caption" maxLength={240} rows={3} defaultValue={moment?.caption ?? ""} placeholder="A short, factual note about this moment." required />
       </label>
 
-      <StudioImageUpload
-        bucket={momentImagesBucket}
-        value={mediaUrl}
-        storageConfig={storageConfig}
-        previewAlt="Selected Moment preview"
-        onBusyChange={setUploadBusy}
-        onChange={setMediaUrl}
-      />
+      {mediaType === "photo" ? (
+        <StudioImageUpload
+          bucket={momentImagesBucket}
+          value={mediaUrl}
+          storageConfig={storageConfig}
+          previewAlt={copy.photoPreview}
+          label={copy.photo}
+          onBusyChange={setUploadBusy}
+          onChange={setMediaUrl}
+        />
+      ) : (
+        <>
+          <p className={styles.videoGuidance}>{copy.videoGuidance}</p>
+          <StudioVideoUpload
+            bucket={momentImagesBucket}
+            value={mediaUrl}
+            posterUrl={posterUrl}
+            storageConfig={storageConfig}
+            onBusyChange={setUploadBusy}
+            onChange={setMediaUrl}
+          />
+          <StudioImageUpload
+            bucket={momentImagesBucket}
+            value={posterUrl}
+            storageConfig={storageConfig}
+            previewAlt={copy.coverPreview}
+            label={copy.coverImage}
+            onBusyChange={setUploadBusy}
+            onChange={setPosterUrl}
+            optional
+          />
+        </>
+      )}
 
       <label>
         External link <span>optional</span>
@@ -76,3 +140,24 @@ export function MomentForm({ moment, storageConfig }: MomentFormProps) {
     </form>
   );
 }
+
+const momentFormCopy = {
+  en: {
+    mediaType: "Media type",
+    photo: "Photo",
+    video: "Video",
+    photoPreview: "Selected Moment photo preview",
+    coverPreview: "Selected video cover preview",
+    coverImage: "Cover image",
+    videoGuidance: "Use a short, visually strong clip showing you leading, coaching or creating energy in the room. Videos appear on the website as silent looping visuals.",
+  },
+  nl: {
+    mediaType: "Mediatype",
+    photo: "Foto",
+    video: "Video",
+    photoPreview: "Voorbeeld van de geselecteerde Moment-foto",
+    coverPreview: "Voorbeeld van de geselecteerde videocover",
+    coverImage: "Coverafbeelding",
+    videoGuidance: "Gebruik een korte, visueel sterke clip waarin je leidt, coacht of energie in de zaal brengt. Video's verschijnen op de website als stille, herhalende beelden.",
+  },
+} as const;

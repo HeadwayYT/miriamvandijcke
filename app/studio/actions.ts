@@ -8,15 +8,19 @@ import {
   aboutCoverStoragePath,
   aboutImagesBucket,
   cleanText,
+  isMomentMediaType,
   isMomentType,
   momentImagesBucket,
   momentImageStoragePath,
+  momentMediaStoragePath,
   normalizeExternalUrl,
+  normalizeImageMediaUrl,
   normalizeInstagramPostUrl,
   normalizeMomentMediaUrl,
   normalizeSpotifyPlaylistUrl,
 } from "@/lib/studio/content";
 import { isStudioAdmin } from "@/lib/studio/data";
+import { isGrowthMonthKey } from "@/lib/studio/growth";
 import {
   getIsoWeekKey,
   manualShareSourceId,
@@ -97,8 +101,8 @@ export async function saveInstagramContent(formData: FormData) {
   const postUrl = normalizeInstagramPostUrl(cleanText(formData.get("postUrl"), 500));
   const label = cleanText(formData.get("label"), 80);
   const coverUrlValue = cleanText(formData.get("coverUrl"), 1000);
-  const coverUrl = coverUrlValue ? normalizeMomentMediaUrl(coverUrlValue) : null;
-  const previousCoverUrl = normalizeMomentMediaUrl(
+  const coverUrl = coverUrlValue ? normalizeImageMediaUrl(coverUrlValue) : null;
+  const previousCoverUrl = normalizeImageMediaUrl(
     cleanText(formData.get("previousCoverUrl"), 1000),
   );
   const published = formData.get("status") === "published";
@@ -127,7 +131,7 @@ export async function saveInstagramContent(formData: FormData) {
 
   if (error) redirect("/studio?editor=instagram&error=save#instagram");
   if (previousCoverUrl && previousCoverUrl !== coverUrl) {
-    await removeStoredImage(
+    await removeStoredMedia(
       supabase,
       previousCoverUrl,
       config.url,
@@ -147,9 +151,21 @@ export async function saveMoment(formData: FormData) {
   const dateValue = cleanText(formData.get("date"), 10);
   const location = cleanText(formData.get("location"), 100);
   const caption = cleanText(formData.get("caption"), 240);
-  const media = normalizeMomentMediaUrl(cleanText(formData.get("mediaUrl"), 1000));
+  const mediaType = cleanText(formData.get("mediaType"), 10);
+  const previousMediaType = cleanText(formData.get("previousMediaType"), 10);
+  const media = isMomentMediaType(mediaType)
+    ? normalizeMomentMediaUrl(cleanText(formData.get("mediaUrl"), 1000), mediaType)
+    : null;
   const previousMedia = normalizeMomentMediaUrl(
     cleanText(formData.get("previousMediaUrl"), 1000),
+    isMomentMediaType(previousMediaType) ? previousMediaType : "photo",
+  );
+  const posterValue = cleanText(formData.get("posterUrl"), 1000);
+  const posterUrl = mediaType === "video" && posterValue
+    ? normalizeImageMediaUrl(posterValue)
+    : null;
+  const previousPosterUrl = normalizeImageMediaUrl(
+    cleanText(formData.get("previousPosterUrl"), 1000),
   );
   const rawExternalUrl = cleanText(formData.get("externalUrl"), 1000);
   const externalUrl = normalizeExternalUrl(rawExternalUrl);
@@ -163,10 +179,12 @@ export async function saveMoment(formData: FormData) {
   if (
     !title ||
     !isMomentType(type) ||
+    !isMomentMediaType(mediaType) ||
     !isValidOptionalDate(dateValue) ||
     !location ||
     !caption ||
     !media ||
+    (posterValue && !posterUrl) ||
     (rawExternalUrl && !externalUrl)
   ) {
     redirect("/studio?editor=moments&error=moment-validation#moments");
@@ -184,7 +202,9 @@ export async function saveMoment(formData: FormData) {
     event_date: dateValue || null,
     location,
     caption,
+    media_type: mediaType,
     media_url: media,
+    poster_url: posterUrl,
     external_url: externalUrl,
     published,
     updated_at: savedAt.toISOString(),
@@ -196,9 +216,18 @@ export async function saveMoment(formData: FormData) {
     await recordStudioActivity(supabase, userId, "capture", momentId, savedAt);
   }
   if (previousMedia && previousMedia !== media) {
-    await removeStoredImage(
+    await removeStoredMedia(
       supabase,
       previousMedia,
+      config.url,
+      momentImagesBucket,
+      momentMediaStoragePath,
+    );
+  }
+  if (previousPosterUrl && previousPosterUrl !== posterUrl) {
+    await removeStoredMedia(
+      supabase,
+      previousPosterUrl,
       config.url,
       momentImagesBucket,
       momentImageStoragePath,
@@ -206,6 +235,41 @@ export async function saveMoment(formData: FormData) {
   }
   refreshContent();
   redirect("/studio?editor=moments&success=moment#moments");
+}
+
+export async function saveGrowthSignal(formData: FormData) {
+  const { supabase, userId } = await requireStudioAdmin();
+  const month = cleanText(formData.get("month"), 7);
+  const instagramFollowers = parseNonNegativeInteger(formData.get("instagramFollowers"));
+  const invitations = parseNonNegativeInteger(formData.get("invitations"));
+  const collaborations = parseNonNegativeInteger(formData.get("collaborations"));
+  const note = cleanText(formData.get("note"), 160);
+
+  if (
+    !isGrowthMonthKey(month) ||
+    instagramFollowers === null ||
+    invitations === null ||
+    collaborations === null
+  ) {
+    redirect(`/studio?editor=growth&month=${encodeURIComponent(month)}&error=growth-validation#growth`);
+  }
+
+  const { error } = await supabase.from("growth_signals").upsert(
+    {
+      month,
+      instagram_followers: instagramFollowers,
+      invitations,
+      collaborations,
+      note: note || null,
+      updated_at: new Date().toISOString(),
+      updated_by: userId,
+    },
+    { onConflict: "month" },
+  );
+
+  if (error) redirect(`/studio?editor=growth&month=${month}&error=save#growth`);
+  revalidatePath("/studio");
+  redirect(`/studio?editor=growth&month=${month}&success=growth#growth`);
 }
 
 export async function markShareCompleted(formData: FormData) {
@@ -244,15 +308,24 @@ export async function deleteMoment(formData: FormData) {
 
   const { data: moment } = await supabase
     .from("site_moments")
-    .select("media_url")
+    .select("media_url,poster_url")
     .eq("id", id)
     .maybeSingle();
   const { error } = await supabase.from("site_moments").delete().eq("id", id);
   if (error) redirect("/studio?editor=moments&error=save#moments");
   if (moment?.media_url) {
-    await removeStoredImage(
+    await removeStoredMedia(
       supabase,
       moment.media_url,
+      config.url,
+      momentImagesBucket,
+      momentMediaStoragePath,
+    );
+  }
+  if (moment?.poster_url) {
+    await removeStoredMedia(
+      supabase,
+      moment.poster_url,
       config.url,
       momentImagesBucket,
       momentImageStoragePath,
@@ -275,7 +348,7 @@ async function requireStudioAdmin() {
   return { config, supabase, userId: data.user.id };
 }
 
-async function removeStoredImage(
+async function removeStoredMedia(
   supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>,
   mediaUrl: string,
   supabaseUrl: string,
@@ -284,6 +357,12 @@ async function removeStoredImage(
 ) {
   const path = getStoragePath(mediaUrl, supabaseUrl);
   if (path) await supabase.storage.from(bucket).remove([path]);
+}
+
+function parseNonNegativeInteger(value: FormDataEntryValue | null): number | null {
+  if (typeof value !== "string" || !/^\d+$/.test(value.trim())) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : null;
 }
 
 async function recordStudioActivity(
