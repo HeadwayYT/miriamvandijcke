@@ -325,9 +325,16 @@ export default function Home() {
             className="brand"
             href="/#home"
             aria-label={t("Miriam Van Dijcke home")}
-            onClick={() => setMobileNavOpen(false)}
+            onClick={(event) => {
+              setMobileNavOpen(false);
+              if (window.location.pathname === "/") {
+                event.preventDefault();
+                window.history.replaceState(null, "", "/#home");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
           >
-            MV
+            MVD
           </Link>
           <button
             className="mobile-nav-toggle"

@@ -15,7 +15,7 @@ test("server-renders Miriam's fitness hub priorities", async () => {
     /href="https:\/\/www\.instagram\.com\/mir\.i\.am_vd\/"[^>]*>[\s\S]*?Follow Miriam/i,
   );
   assert.match(html, /href="#contact"[^>]*>Collaborate<\/a>/i);
-  assert.match(html, /href="\/#home"[^>]*>\s*MV\s*<\/a>/i);
+  assert.match(html, /href="\/#home"[^>]*>\s*MVD\s*<\/a>/i);
   assert.match(html, /Booking and access are handled directly through each gym or studio\./i);
   assert.match(html, />4 Classes<\/h2>/i);
   assert.match(html, /Find me in class every week\.<\/h3>/i);
